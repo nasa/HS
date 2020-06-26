@@ -1,39 +1,29 @@
 /************************************************************************
-** File:
-**   $Id: hs_xct.c 1.1 2015/11/12 14:29:06EST wmoleski Exp  $
+** File: hs_xct.c
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose:
 **  The CFS Health and Safety (HS) Execution Counters Table Definition
 **
 ** Notes:
 **
-** $Log: hs_xct.c  $
-** Revision 1.1 2015/11/12 14:29:06EST wmoleski 
-** Initial revision
-** Member added to project /CFS-APPs-PROJECT/hs/fsw/tables/project.pj
-** Revision 1.1 2015/05/01 14:54:33EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/tables/project.pj
-** Revision 1.5 2015/04/27 14:33:47EDT lwalling 
-** Add attribute unused to default table definitions
-** Revision 1.4 2015/03/03 12:16:33EST sstrege 
-** Added copyright information
-** Revision 1.3 2011/08/15 15:43:01EDT aschoeni 
-** Updated so application name is configurable
-** Revision 1.2 2010/05/25 15:20:32EDT aschoeni 
-** Added end of comment to comment that didn't have one
-** Revision 1.1 2009/05/04 11:50:11EDT aschoeni 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/project.pj
 **
 *************************************************************************/
 

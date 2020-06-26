@@ -1,62 +1,30 @@
 /*************************************************************************
-** File:
-**   $Id: hs_custom.c 1.6 2016/09/07 18:49:18EDT mdeschu Exp  $
+** File: hs_custom.c
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
-**   Purpose: Health and Safety (HS) application custom component.
+** Purpose: 
+**   Health and Safety (HS) application custom component.
 **   This custom code is designed to work without modification; however the
 **   nature of specific platforms may make it desirable to modify this code
 **   to work in a more efficient way, or to provide greater functionality.
 **
-**   $Log: hs_custom.c  $
-**   Revision 1.6 2016/09/07 18:49:18EDT mdeschu 
-**   All CFE_EVS_SendEvents with format warning arguments were explicitly cast
-**   Revision 1.5 2016/08/05 09:43:30EDT mdeschu 
-**   Ticket #26: Fix HS build errors with strict settings
-**   
-**       Fix minor issues causing build to fail:
-**   
-**           Extra argument in CFE_SendEvent() call
-**           Unused variable in HS_CustomCleanup()
-**   Revision 1.4 2016/07/22 21:13:44EDT czogby 
-**   Function HS_CustomGetUtil Does Not Protect Against Divide-By-Zero
-**   Revision 1.3 2016/05/16 17:40:01EDT czogby 
-**   Move function prototypes and constants from hs_custom.c file to hs_custom.h file
-**   Revision 1.2 2015/11/12 14:25:19EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.4 2015/04/27 15:39:49EDT lwalling 
-**   Fix typos -- UtilMult2=HS_UTIL_CONV_DIV and UtilDiv=HS_UTIL_CONV_MULT2
-**   Revision 1.3 2015/03/03 12:16:07EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2011/10/17 16:45:21EDT aschoeni 
-**   paramters are now signed integers
-**   Revision 1.1 2011/10/13 18:48:59EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
-**   Revision 1.6 2011/08/08 14:56:08EDT aschoeni 
-**   Moved idle task execution counter increment outside of nominal loop
-**   Revision 1.5 2010/11/17 17:05:08EST aschoeni 
-**   minor fixes for CPU utilization
-**   Revision 1.4 2010/10/14 17:45:57EDT aschoeni 
-**   Removed assumptions of rate of utilization measurement
-**   Revision 1.3 2010/10/14 15:32:40EDT aschoeni 
-**   Add skipping of 'first' match for calibration to avoid 0xFFFFFFFF match
-**   Revision 1.2 2010/09/29 18:28:23EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.1 2010/09/13 16:34:37EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
-**   Revision 1.1 2010/07/19 11:49:54EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/MMS-REPOSITORY/dev/eeprom-fsw/apps/hs/fsw/src/project.pj
 **
 *************************************************************************/
 

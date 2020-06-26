@@ -1,15 +1,23 @@
 /*************************************************************************
-** File:
-**   $Id: hs_verify.h 1.3 2016/08/05 17:40:38EDT mdeschu Exp  $
+** File: hs_verify.h 
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose: 
 **   Contains CFS Health and Safety (HS) macros that run preprocessor checks
@@ -17,34 +25,6 @@
 **
 ** Notes:
 **
-**   $Log: hs_verify.h  $
-**   Revision 1.3 2016/08/05 17:40:38EDT mdeschu 
-**   Ticket #26 - Verification of watchdog values not possible at compile time
-**   Revision 1.2 2015/11/12 14:25:15EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.11 2015/05/04 11:00:02EDT lwalling 
-**   Change definitions for MAX_CRITICAL to MAX_MONITORED
-**   Revision 1.10 2015/05/01 16:48:50EDT lwalling 
-**   Remove critical from application monitor descriptions
-**   Revision 1.9 2015/03/03 12:15:59EST sstrege 
-**   Added copyright information
-**   Revision 1.8 2010/11/19 17:58:29EST aschoeni 
-**   Added command to enable and disable CPU Hogging Monitoring
-**   Revision 1.7 2010/11/16 16:36:21EST aschoeni 
-**   Move HS_MISSION_REV from local header to platform config file
-**   Revision 1.6 2010/10/14 17:43:40EDT aschoeni 
-**   Change assumptions concerning utilization time period
-**   Revision 1.5 2010/09/29 18:30:33EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.4 2009/08/20 16:01:02EDT aschoeni 
-**   Updated Watchdog to use CFE_PSP defines as limits
-**   Revision 1.3 2009/05/21 15:44:15EDT aschoeni 
-**   Updated min length check for msgacts based on the usage of CCSDS
-**   Revision 1.2 2009/05/04 17:44:14EDT aschoeni 
-**   Updated based on actions from Code Walkthrough
-**   Revision 1.1 2009/05/01 13:57:46EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _hs_verify_h_

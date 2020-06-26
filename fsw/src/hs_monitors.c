@@ -1,66 +1,28 @@
 /*************************************************************************
-** File:
-**   $Id: hs_monitors.c 1.4 2016/09/07 18:49:18EDT mdeschu Exp  $
+** File: hs_monitors.c
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose:
 **   Functions used for CFS Health and Safety Monitors for Applications
 **   and Events
 **
-**   $Log: hs_monitors.c  $
-**   Revision 1.4 2016/09/07 18:49:18EDT mdeschu 
-**   All CFE_EVS_SendEvents with format warning arguments were explicitly cast
-**   Revision 1.3 2016/08/05 09:27:05EDT mdeschu 
-**   Ticket #17 HS - Fix payload structure access
-**   Revision 1.2 2015/11/12 14:25:14EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.19 2015/05/04 11:59:20EDT lwalling 
-**   Change critical event to monitored event
-**   Revision 1.18 2015/05/04 11:00:09EDT lwalling 
-**   Change definitions for MAX_CRITICAL to MAX_MONITORED
-**   Revision 1.17 2015/05/01 16:48:56EDT lwalling 
-**   Remove critical from application monitor descriptions
-**   Revision 1.16 2015/03/03 12:16:18EST sstrege 
-**   Added copyright information
-**   Revision 1.15 2011/10/13 18:48:06EDT aschoeni 
-**   updated for hs utilization calibration changes
-**   Revision 1.14 2011/03/23 12:16:12EDT aschoeni 
-**   Fixed event number in hogging event
-**   Revision 1.13 2010/11/19 17:58:31EST aschoeni 
-**   Added command to enable and disable CPU Hogging Monitoring
-**   Revision 1.12 2010/11/17 17:05:09EST aschoeni 
-**   minor fixes for CPU utilization
-**   Revision 1.11 2010/11/16 18:19:29EST aschoeni 
-**   Added support for Device Driver and ISR Execution Counters
-**   Revision 1.10 2010/10/14 17:45:13EDT aschoeni 
-**   Removed assumptions of rate of utilization measurement
-**   Revision 1.9 2010/10/01 15:18:37EDT aschoeni 
-**   Added Telemetry point to track message actions
-**   Revision 1.8 2010/09/29 18:28:39EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.7 2010/09/13 14:41:10EDT aschoeni 
-**   Made Table validation events Info instead of Debug
-**   Revision 1.6 2009/08/20 16:03:59EDT aschoeni 
-**   Updated validation error output to output the proper app/resource name and limit it to 20 characters.
-**   Revision 1.5 2009/06/02 16:34:11EDT aschoeni 
-**   Removed 'ID' field from XCT val error event
-**   Revision 1.4 2009/05/21 16:21:36EDT aschoeni 
-**   added newline characters to syslog messages
-**   Revision 1.3 2009/05/21 16:10:55EDT aschoeni 
-**   Updated based on errors found during unit testing
-**   Revision 1.2 2009/05/04 17:44:32EDT aschoeni 
-**   Updated based on actions from Code Walkthrough
-**   Revision 1.1 2009/05/01 13:57:43EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
 **
 *************************************************************************/
 

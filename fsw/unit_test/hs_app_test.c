@@ -1,6 +1,23 @@
  /*************************************************************************
- ** File:
- **   $Id: hs_app_test.c 1.7 2016/09/09 18:13:53EDT czogby Exp  $
+ ** File: hs_app_test.c 
+ **
+ ** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+ ** Health and Safety Application Version 2"
+ ** 
+ ** Copyright © 2007-2014 United States Government as represented by the
+ ** Administrator of the National Aeronautics and Space Administration. All Rights
+ ** Reserved. 
+ ** 
+ ** Licensed under the Apache License, Version 2.0 (the "License"); 
+ ** you may not use this file except in compliance with the License. 
+ ** You may obtain a copy of the License at 
+ ** http://www.apache.org/licenses/LICENSE-2.0 
+ **
+ ** Unless required by applicable law or agreed to in writing, software 
+ ** distributed under the License is distributed on an "AS IS" BASIS, 
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ ** See the License for the specific language governing permissions and 
+ ** limitations under the License. 
  **
  ** Purpose: 
  **   This file contains unit test cases for the functions contained in the file hs_app.c
@@ -8,27 +25,9 @@
  ** References:
  **   Flight Software Branch C Coding Standard Version 1.2
  **   CFS Development Standards Document
+ **
  ** Notes:
  **
- **   $Log: hs_app_test.c  $
- **   Revision 1.7 2016/09/09 18:13:53EDT czogby 
- **   Improve Comments
- **   Revision 1.6 2016/09/07 19:17:19EDT mdeschu 
- **   Update unit test asserts to match HS updates
- **   
- **   HS_MAX_CRITICAL_APPS/EVENTS -> HS_MAX_MONITORED_APPS/EVENTS
- **   Removal of "Critical" from certain event messages.
- **   Revision 1.5 2016/09/01 18:10:12EDT czogby 
- **   Improve comments
- **   Revision 1.4 2016/08/29 16:45:49EDT czogby 
- **   Improve comments
- **   Revision 1.3 2016/08/25 20:59:18EDT czogby 
- **   Improved readability of comments
- **   Revision 1.2 2016/08/19 14:07:20EDT czogby 
- **   HS UT-Assert Unit Tests - Code Walkthrough Updates
- **   Revision 1.1 2016/06/24 14:31:51EDT czogby 
- **   Initial revision
- **   Member added to project /CFS-APPs-PROJECT/hs/fsw/unit_test/project.pj
  *************************************************************************/
 
 /*

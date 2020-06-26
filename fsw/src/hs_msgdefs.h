@@ -1,15 +1,23 @@
 /************************************************************************
-** File:
-**   $Id: hs_msgdefs.h 1.2 2015/11/12 14:25:15EST wmoleski Exp  $
+** File: hs_msgdefs.h 
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) command and telemetry
@@ -23,24 +31,6 @@
 **   TYPEDEFS OR STRUCTURE DEFINITIONS IN THIS FILE!
 **   ADD THEM TO hs_msg.h IF NEEDED!
 **
-**   $Log: hs_msgdefs.h  $
-**   Revision 1.2 2015/11/12 14:25:15EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.7 2015/05/04 11:59:07EDT lwalling 
-**   Change critical event to monitored event
-**   Revision 1.6 2015/05/01 16:48:30EDT lwalling 
-**   Remove critical from application monitor descriptions
-**   Revision 1.5 2015/03/03 12:16:09EST sstrege 
-**   Added copyright information
-**   Revision 1.4 2010/11/19 17:58:24EST aschoeni 
-**   Added command to enable and disable CPU Hogging Monitoring
-**   Revision 1.3 2009/06/02 16:38:43EDT aschoeni 
-**   Updated telemetry and internal status to support HS Internal Status bit flags
-**   Revision 1.2 2009/05/04 17:44:29EDT aschoeni 
-**   Updated based on actions from Code Walkthrough
-**   Revision 1.1 2009/05/01 13:57:45EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
 **
 *************************************************************************/
 #ifndef _hs_msgdefs_h_

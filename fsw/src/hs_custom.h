@@ -1,38 +1,28 @@
 /*************************************************************************
-** File:
-**   $Id: hs_custom.h 1.3 2016/05/16 17:40:01EDT czogby Exp  $
+** File: hs_custom.h 
 **
-**   Copyright © 2007-2016 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose: 
 **   Specification for the CFS Health and Safety (HS) mission specific
 **   custom function interface
 **
-**   $Log: hs_custom.h  $
-**   Revision 1.3 2016/05/16 17:40:01EDT czogby 
-**   Move function prototypes and constants from hs_custom.c file to hs_custom.h file
-**   Revision 1.2 2015/11/12 14:25:17EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.2 2015/03/03 12:16:02EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2011/10/13 18:49:05EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
-**   Revision 1.2 2010/09/29 18:27:42EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.1 2010/09/13 16:34:38EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
-**   Revision 1.1 2010/07/19 11:49:55EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/MMS-REPOSITORY/dev/eeprom-fsw/apps/hs/fsw/src/project.pj
 **
 **************************************************************************/
 #ifndef _hs_custom_

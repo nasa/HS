@@ -1,62 +1,29 @@
 /*************************************************************************
-** File:
-**   $Id: hs_platform_cfg.h 1.2 2016/09/07 19:17:20EDT mdeschu Exp  $
+** File: hs_platform_cfg.h 
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose: 
 **   CFS Health and Safety (HS) Application Platform Configuration Header File
 **
 ** Notes:
 **
-**   $Log: hs_platform_cfg.h  $
-**   Revision 1.2 2016/09/07 19:17:20EDT mdeschu 
-**   Update unit test asserts to match HS updates
-**   
-**   HS_MAX_CRITICAL_APPS/EVENTS -> HS_MAX_MONITORED_APPS/EVENTS
-**   Removal of "Critical" from certain event messages.
-**   Revision 1.3 2016/08/05 09:40:27EDT mdeschu 
-**   Ticket #40: HS hogging initialization
-**   Revision 1.2 2015/11/12 14:25:20EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.15 2015/05/04 11:59:20EDT lwalling 
-**   Change critical event to monitored event
-**   Revision 1.14 2015/05/04 11:00:06EDT lwalling 
-**   Change definitions for MAX_CRITICAL to MAX_MONITORED
-**   Revision 1.13 2015/05/01 16:48:50EDT lwalling 
-**   Remove critical from application monitor descriptions
-**   Revision 1.12 2015/03/03 12:16:30EST sstrege 
-**   Added copyright information
-**   Revision 1.11 2011/10/17 16:50:20EDT aschoeni 
-**   updated calibration parameter notes
-**   Revision 1.10 2011/10/13 18:49:51EDT aschoeni 
-**   Updated for changes to cpu utilization calibration
-**   Revision 1.9 2011/08/15 15:42:55EDT aschoeni 
-**   Updated so application name is configurable
-**   Revision 1.8 2010/11/19 17:58:30EST aschoeni 
-**   Added command to enable and disable CPU Hogging Monitoring
-**   Revision 1.7 2010/11/16 16:36:28EST aschoeni 
-**   Move HS_MISSION_REV from local header to platform config file
-**   Revision 1.6 2010/10/14 17:45:42EDT aschoeni 
-**   Removed assumptions of rate of utilization measurement
-**   Revision 1.5 2010/09/29 18:28:10EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.4 2010/09/13 14:41:39EDT aschoeni 
-**   add apps subdir to default table path
-**   Revision 1.3 2009/08/20 16:03:02EDT aschoeni 
-**   Changed watchdog timeout to be in milliseconds rather than seconds (to match the new API)
-**   Revision 1.2 2009/05/04 17:44:35EDT aschoeni 
-**   Updated based on actions from Code Walkthrough
-**   Revision 1.1 2009/05/01 13:52:03EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/platform_inc/project.pj
 ** 
 *************************************************************************/
 #ifndef _hs_platform_cfg_h_

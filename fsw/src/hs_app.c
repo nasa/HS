@@ -1,84 +1,30 @@
 /************************************************************************
-** File:
-**   $Id: hs_app.c 1.7 2016/09/07 18:49:19EDT mdeschu Exp  $
-** 
-**   Copyright � 2007-2016 United States Government as represented by the 
-**   Administrator of the National Aeronautics and Space Administration. 
-**   All Other Rights Reserved.  
+** File: hs_app.c 
 **
-**   This software was created at NASA's Goddard Space Flight Center.
-**   This software is governed by the NASA Open Source Agreement and may be 
-**   used, distributed and modified only pursuant to the terms of that 
-**   agreement.
+** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
+** Health and Safety Application Version 2"
+** 
+** Copyright © 2007-2014 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration. All Rights
+** Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+** 
 **
 ** Purpose:
 **   The CFS Health and Safety (HS) provides several utilities including
 **   application monitoring, event monitoring, cpu utilization monitoring,
 **   aliveness indication, and watchdog servicing.
 **
-**   $Log: hs_app.c  $
-**   Revision 1.7 2016/09/07 18:49:19EDT mdeschu 
-**   All CFE_EVS_SendEvents with format warning arguments were explicitly cast
-**   Revision 1.6 2016/08/29 23:40:08EDT mdeschu 
-**   Checkin missing change to hs_app.c from babelfish ticket #26
-**   Revision 1.5 2016/08/16 13:26:58EDT mdeschu 
-**   Remove initialization of Status in HS_AppInit as the value is never used
-**   Revision 1.4 2016/08/05 09:43:39EDT mdeschu 
-**   Ticket #26: Fix HS build errors with strict settings
-**   
-**       Fix minor issues causing build to fail:
-**   
-**           Extra argument in CFE_SendEvent() call
-**           Unused variable in HS_CustomCleanup()
-**   Revision 1.3 2016/05/16 17:28:39EDT czogby 
-**   Move function prototype from hs_app.c file to hs_app.h file
-**   Revision 1.2 2015/11/12 14:25:27EST wmoleski 
-**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
-**   Revision 1.22 2015/05/04 11:59:10EDT lwalling 
-**   Change critical event to monitored event
-**   Revision 1.21 2015/05/04 10:59:55EDT lwalling 
-**   Change definitions for MAX_CRITICAL to MAX_MONITORED
-**   Revision 1.20 2015/05/01 16:48:31EDT lwalling 
-**   Remove critical from application monitor descriptions
-**   Revision 1.19 2015/03/03 12:16:03EST sstrege 
-**   Added copyright information
-**   Revision 1.18 2011/10/13 18:47:00EDT aschoeni 
-**   updated for hs utilization calibration changes
-**   Revision 1.17 2011/08/15 18:46:04EDT aschoeni 
-**   HS Unsubscibes when eventmon is disabled
-**   Revision 1.16 2010/11/23 16:05:28EST aschoeni 
-**   Fixed CALLS_PER_MARK and CYCLES_PER_INTERVAL issue
-**   Revision 1.15 2010/11/19 17:58:26EST aschoeni 
-**   Added command to enable and disable CPU Hogging Monitoring
-**   Revision 1.14 2010/10/14 17:45:28EDT aschoeni 
-**   Removed assumptions of rate of utilization measurement
-**   Revision 1.13 2010/10/01 15:18:40EDT aschoeni 
-**   Added Telemetry point to track message actions
-**   Revision 1.12 2010/09/29 18:26:48EDT aschoeni 
-**   Added Utilization Monitoring
-**   Revision 1.11 2010/05/25 18:55:34EDT aschoeni 
-**   Updated to increase message limit from event msgid on event pipe
-**   Revision 1.10 2010/05/25 16:23:40EDT aschoeni 
-**   Removed out of date watchdog comment
-**   Revision 1.9 2009/08/20 16:02:18EDT aschoeni 
-**   Updated Watchdog API to match current design
-**   Revision 1.8 2009/06/12 15:15:28EDT rmcgraw 
-**   DCR8291:1 Put back API changes after tag (OS_BSP* to CFE_PSP_*)
-**   Revision 1.7 2009/06/11 15:36:27EDT rmcgraw 
-**   DCR8291:1 Revert to be compatible with cFE5.2 for tag
-**   Revision 1.6 2009/06/10 14:08:39EDT rmcgraw 
-**   DCR82191:1 Changed OS_BSP* function calls to CFE_PSP_*
-**   Revision 1.5 2009/06/02 16:38:45EDT aschoeni 
-**   Updated telemetry and internal status to support HS Internal Status bit flags
-**   Revision 1.4 2009/05/22 17:40:32EDT aschoeni 
-**   Updated CDS related events
-**   Revision 1.3 2009/05/21 14:48:40EDT aschoeni 
-**   Added casting of inverted data for CDS validation check
-**   Revision 1.2 2009/05/04 17:44:28EDT aschoeni 
-**   Updated based on actions from Code Walkthrough
-**   Revision 1.1 2009/05/01 13:57:24EDT aschoeni 
-**   Initial revision
-**   Member added to CFS project
 **
 *************************************************************************/
 
