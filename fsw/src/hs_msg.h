@@ -1,18 +1,17 @@
 /************************************************************************
 ** File: hs_msg.h 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -29,7 +28,6 @@
 **   integration with ASIST RDL files which can't handle typedef
 **   declarations (see the main comment block in hs_msgdefs.h for more
 **   info).
-**
 **
 *************************************************************************/
 #ifndef _hs_msg_h_
@@ -63,8 +61,7 @@
 */
 typedef struct
 {
-    uint8          CmdHeader[CFE_SB_CMD_HDR_SIZE];
-
+    CFE_SB_CmdHdr_t  CmdHeader;
 } HS_NoArgsCmd_t;
 
 /**
@@ -73,9 +70,9 @@ typedef struct
 */
 typedef struct
 {
-    uint8          CmdHeader[CFE_SB_CMD_HDR_SIZE];
-    uint16         MaxResets;
-
+    CFE_SB_CmdHdr_t  CmdHeader;
+    uint16           MaxResets;
+    uint16           Padding;     /**< \brief Structure padding */
 } HS_SetMaxResetsCmd_t;
 
 /**
@@ -83,7 +80,7 @@ typedef struct
 */
 typedef struct
 {
-    uint8     TlmHeader[CFE_SB_TLM_HDR_SIZE]; /**< \brief cFE SB Tlm Msg Hdr */
+    CFE_SB_TlmHdr_t   TlmHeader; /**< \brief cFE SB Tlm Msg Hdr */
 
     uint8     CmdCount;                       /**< \hstlmmnemonic \HS_CMDPC
                                                         \brief HS Application Command Counter       */

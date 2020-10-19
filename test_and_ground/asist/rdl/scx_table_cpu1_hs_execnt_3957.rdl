@@ -1,0 +1,50 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Oct 25 2017
+
+!
+!                    Telemetry Packet #3957  (dec)
+!                 =================================
+!
+!       Packet Application ID: 3957 (Hex '0F75')
+!       Packet Title:  SCX CPU1 HS Execution Counters Table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!       2012/01/04 WFM  : Removed VARYING from Packet definition
+!	2017/10/25	: Created from template 'template_table_HS_EXECNT_TBL.rdl'
+!	with parameters spacecraft='SCX' and processor='CPU1'.
+!==============================================================================
+!
+! #include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "hs_platform_cfg.h"
+
+TYPES
+   RECORD SCX_CPU1_HS_XCTEntry  DESC="SCX CPU1 HS Execution Counters Table Entry"
+     CHAR  ResourceName[CFE_MISSION_MAX_API_LEN] DESC="The name of the resource being monitored"
+     ULI   NullTerm      DESC="Terminator for the above app name"
+     ULI   ResourceType  DESC="The type of execution counter",
+			 DISCRETE, DRANGE=(0,1,2,3,4),
+			 DLABEL=("None","AppMain","AppChild","Device","ISR")
+   END
+END_TYPES
+
+! HS Execution Counter Table
+PACKET P0F75 APID=3957, DESC="SCX CPU1 HS AMT Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+SCX_CPU1_HS_XCTEntry SCX_CPU1_HS_XCT[HS_MAX_EXEC_CNT_SLOTS] DESC="SCX CPU1 HS Execution Counter Table"
+!
+END
+

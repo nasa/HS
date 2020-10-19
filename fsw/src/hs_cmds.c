@@ -1,18 +1,17 @@
 /************************************************************************
 ** File: hs_cmds.c 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -21,7 +20,6 @@
 **
 ** Purpose:
 **   CFS Health and Safety (HS) command handling routines
-**
 **
 *************************************************************************/
 
@@ -34,6 +32,7 @@
 #include "hs_monitors.h"
 #include "hs_msgids.h"
 #include "hs_events.h"
+#include "hs_utils.h"
 #include "hs_version.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -116,7 +115,7 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
                 default:
                     if (HS_CustomCommands(MessagePtr) != CFE_SUCCESS)
                     {
-                        CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_ERROR,
+                        CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
                                           "Invalid command code: ID = 0x%04X, CC = %d",
                                           MessageID, CommandCode);
 
@@ -132,7 +131,7 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
       */
       default:
          HS_AppData.CmdErrCount++;
-         CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR,
                            "Invalid command pipe message ID: 0x%04X", MessageID);
          break;
 
@@ -150,14 +149,15 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
 void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
 {
     uint16 ExpectedLength = sizeof(HS_NoArgsCmd_t);
-    uint32 AppId;
+    uint32 AppId = 0;
 #if HS_MAX_EXEC_CNT_SLOTS != 0
-    uint32 ExeCount;
-    uint32 TaskId;
+    uint32 ExeCount = 0;
+    uint32 TaskId = 0;
     CFE_ES_TaskInfo_t TaskInfo;
+    CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
 #endif
-    int32 Status;
-    uint32 TableIndex;
+    int32 Status = CFE_SUCCESS;
+    uint32 TableIndex = 0;
 
     /*
     ** Verify message packet length
@@ -167,8 +167,8 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
         /*
         ** Update HK variables
         */
-        HS_AppData.HkPacket.CmdCount                = (uint8) HS_AppData.CmdCount;
-        HS_AppData.HkPacket.CmdErrCount             = (uint8) HS_AppData.CmdErrCount;
+        HS_AppData.HkPacket.CmdCount                = HS_AppData.CmdCount;
+        HS_AppData.HkPacket.CmdErrCount             = HS_AppData.CmdErrCount;
         HS_AppData.HkPacket.CurrentAppMonState      = HS_AppData.CurrentAppMonState;
         HS_AppData.HkPacket.CurrentEventMonState    = HS_AppData.CurrentEventMonState;
         HS_AppData.HkPacket.CurrentAlivenessState   = HS_AppData.CurrentAlivenessState;
@@ -245,39 +245,46 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
 
             ExeCount = HS_INVALID_EXECOUNT;
 
-            if((HS_AppData.ExeCountState == HS_STATE_ENABLED) &&
-               ((HS_AppData.XCTablePtr[TableIndex].ResourceType == HS_XCT_TYPE_APP_MAIN) ||
-                (HS_AppData.XCTablePtr[TableIndex].ResourceType == HS_XCT_TYPE_APP_CHILD)))
+            if(HS_AppData.ExeCountState == HS_STATE_ENABLED) 
             {
-
-                Status = OS_TaskGetIdByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
-
-                if (Status == OS_SUCCESS)
+                switch(HS_AppData.XCTablePtr[TableIndex].ResourceType)
                 {
-                    Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId);
-                    if (Status == CFE_SUCCESS)
-                    {
-                        ExeCount = TaskInfo.ExecutionCounter;
-                    }
+                    case HS_XCT_TYPE_APP_MAIN:
+                    case HS_XCT_TYPE_APP_CHILD:
+                        Status = OS_TaskGetIdByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
 
-                }
+                        if (Status == OS_SUCCESS)
+                        {
+                            Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId);
+                            if (Status == CFE_SUCCESS)
+                            {
+                                ExeCount = TaskInfo.ExecutionCounter;
+                            }
+                        }
+                        break;
+                    case HS_XCT_TYPE_DEVICE:
+                    case HS_XCT_TYPE_ISR:
+                        Status = CFE_ES_GetGenCounterIDByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
 
-            }
-            else if((HS_AppData.ExeCountState == HS_STATE_ENABLED) &&
-               ((HS_AppData.XCTablePtr[TableIndex].ResourceType == HS_XCT_TYPE_DEVICE) ||
-                (HS_AppData.XCTablePtr[TableIndex].ResourceType == HS_XCT_TYPE_ISR)))
-            {
+                        if (Status == CFE_SUCCESS)
+                        {
+                            CFE_ES_GetGenCount(TaskId, &ExeCount);
+                        }
+                        break;
+                    case HS_XCT_TYPE_NOTYPE:
+                        /* no action - ExeCount remains HS_INVALID_EXECOUNT */
+                        break;
+                    default:
+                        /* ExeCount remains HS_INVALID_EXECOUNT */
+                        CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID,
+                                          CFE_EVS_EventType_DEBUG,
+                                          "Housekeeping req found unknown resource.  Type=0x%08X",
+                                          HS_AppData.XCTablePtr[TableIndex].ResourceType);
+                        break;
+                } /* end ResourceType switch statement */
+            } /* end ExeCountState if statement */
 
-                Status = CFE_ES_GetGenCounterIDByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
-
-                if (Status == CFE_SUCCESS)
-                {
-                    CFE_ES_GetGenCount(TaskId, &ExeCount);
-                }
-
-            }
             HS_AppData.HkPacket.ExeCounts[TableIndex] = ExeCount;
-
         }        
 
 #endif
@@ -310,7 +317,7 @@ void HS_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
     {
         HS_AppData.CmdCount++;
 
-        CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_INFORMATION,
+        CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION,
                         "No-op command: Version %d.%d.%d.%d",
                          HS_MAJOR_VERSION,
                          HS_MINOR_VERSION,
@@ -338,7 +345,7 @@ void HS_ResetCmd(CFE_SB_MsgPtr_t MessagePtr)
     {
         HS_ResetCounters();
 
-        CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_DEBUG,
+        CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG,
                           "Reset counters command");
     }
 
@@ -380,7 +387,7 @@ void HS_EnableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppMonStatusRefresh();
         HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent (HS_ENABLE_APPMON_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "Application Monitoring Enabled");
     }
 
@@ -405,7 +412,7 @@ void HS_DisableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent (HS_DISABLE_APPMON_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "Application Monitoring Disabled");
     }
 
@@ -434,14 +441,14 @@ void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
        if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
        {
 
-          Status = CFE_SB_SubscribeEx(CFE_EVS_EVENT_MSG_MID,
+          Status = CFE_SB_SubscribeEx(CFE_EVS_LONG_EVENT_MSG_MID,
                                       HS_AppData.EventPipe,
                                       CFE_SB_Default_Qos,
                                       HS_EVENT_PIPE_DEPTH);
 
           if (Status != CFE_SUCCESS)
           {
-             CFE_EVS_SendEvent(HS_EVENTMON_SUB_EID, CFE_EVS_ERROR,
+             CFE_EVS_SendEvent(HS_EVENTMON_SUB_EID, CFE_EVS_EventType_ERROR,
                  "Event Monitor Enable: Error Subscribing to Events,RC=0x%08X",(unsigned int)Status);
              HS_AppData.CmdErrCount++;
           }
@@ -452,7 +459,7 @@ void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
             HS_AppData.CmdCount++;
             HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
             CFE_EVS_SendEvent (HS_ENABLE_EVENTMON_DBG_EID,
-                               CFE_EVS_DEBUG,
+                               CFE_EVS_EventType_DEBUG,
                                "Event Monitoring Enabled");
        }
     }
@@ -483,12 +490,12 @@ void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
        if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
        {
 
-          Status =  CFE_SB_Unsubscribe ( CFE_EVS_EVENT_MSG_MID,
+          Status =  CFE_SB_Unsubscribe ( CFE_EVS_LONG_EVENT_MSG_MID,
                                          HS_AppData.EventPipe );
 
           if (Status != CFE_SUCCESS)
           {
-             CFE_EVS_SendEvent(HS_EVENTMON_UNSUB_EID, CFE_EVS_ERROR,
+             CFE_EVS_SendEvent(HS_EVENTMON_UNSUB_EID, CFE_EVS_EventType_ERROR,
                  "Event Monitor Disable: Error Unsubscribing from Events,RC=0x%08X",(unsigned int)Status);
              HS_AppData.CmdErrCount++;
           }
@@ -499,7 +506,7 @@ void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
            HS_AppData.CmdCount++;
            HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
            CFE_EVS_SendEvent (HS_DISABLE_EVENTMON_DBG_EID,
-                              CFE_EVS_DEBUG,
+                              CFE_EVS_EventType_DEBUG,
                               "Event Monitoring Disabled");
        }
     }
@@ -525,7 +532,7 @@ void HS_EnableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent (HS_ENABLE_ALIVENESS_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "Aliveness Indicator Enabled");
     }
 
@@ -550,7 +557,7 @@ void HS_DisableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent (HS_DISABLE_ALIVENESS_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "Aliveness Indicator Disabled");
     }
 
@@ -575,7 +582,7 @@ void HS_EnableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppData.CmdCount++;
         HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent (HS_ENABLE_CPUHOG_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "CPU Hogging Indicator Enabled");
     }
 
@@ -600,7 +607,7 @@ void HS_DisableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
         HS_AppData.CmdCount++;
         HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent (HS_DISABLE_CPUHOG_DBG_EID,
-                           CFE_EVS_DEBUG,
+                           CFE_EVS_EventType_DEBUG,
                            "CPU Hogging Indicator Disabled");
     }
 
@@ -624,7 +631,7 @@ void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr)
     {
         HS_AppData.CmdCount++;
         HS_SetCDSData(0, HS_AppData.CDSData.MaxResets);
-        CFE_EVS_SendEvent (HS_RESET_RESETS_DBG_EID, CFE_EVS_DEBUG,
+        CFE_EVS_SendEvent (HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                            "Processor Resets Performed by HS Counter has been Reset");
     }
 
@@ -640,7 +647,7 @@ void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr)
 void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr)
 {
     uint16            ExpectedLength = sizeof(HS_SetMaxResetsCmd_t);
-    HS_SetMaxResetsCmd_t  *CmdPtr;
+    HS_SetMaxResetsCmd_t  *CmdPtr = NULL;
 
     /*
     ** Verify message packet length
@@ -652,7 +659,7 @@ void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr)
 
         HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);
 
-        CFE_EVS_SendEvent (HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_DEBUG,
+        CFE_EVS_SendEvent (HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                            "Max Resets Performable by HS has been set to %d", 
                            HS_AppData.CDSData.MaxResets);
     }
@@ -663,62 +670,12 @@ void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* Verify message packet length                                    */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-boolean HS_VerifyMsgLength(CFE_SB_MsgPtr_t msg,
-                           uint16          ExpectedLength)
-{
-   boolean result = TRUE;
-   uint16  CommandCode;
-   uint16  ActualLength;
-   CFE_SB_MsgId_t MessageID;
-
-   /*
-   ** Verify the message packet length...
-   */
-   ActualLength = CFE_SB_GetTotalMsgLength(msg);
-   if (ExpectedLength != ActualLength)
-   {
-       MessageID   = CFE_SB_GetMsgId(msg);
-       CommandCode = CFE_SB_GetCmdCode(msg);
-
-       if (MessageID == HS_SEND_HK_MID)
-       {
-           /*
-           ** For a bad HK request, just send the event. We only increment
-           ** the error counter for ground commands and not internal messages.
-           */
-           CFE_EVS_SendEvent(HS_HKREQ_LEN_ERR_EID, CFE_EVS_ERROR,
-                   "Invalid HK request msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-                   MessageID, CommandCode, ActualLength, ExpectedLength);
-       }
-       else
-       {
-           /*
-           ** All other cases, increment error counter
-           */
-           CFE_EVS_SendEvent(HS_LEN_ERR_EID, CFE_EVS_ERROR,
-                   "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-                   MessageID, CommandCode, ActualLength, ExpectedLength);
-           HS_AppData.CmdErrCount++;
-       }
-
-       result = FALSE;
-    }
-
-    return(result);
-
-} /* End of HS_VerifyMsgLength */
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
 /* Acquire table pointers                                          */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AcquirePointers(void)
 {
-    int32  Status;
+    int32  Status = CFE_SUCCESS;
 
     /*
     ** Release the table (AppMon)
@@ -754,7 +711,7 @@ void HS_AcquirePointers(void)
         if ((HS_AppData.AppMonLoaded == HS_STATE_ENABLED) ||
             (HS_AppData.CurrentAppMonState == HS_STATE_ENABLED))
         {
-            CFE_EVS_SendEvent(HS_APPMON_GETADDR_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(HS_APPMON_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting AppMon Table address, RC=0x%08X, Application Monitoring Disabled",
                               (unsigned int)Status);
             HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
@@ -795,18 +752,18 @@ void HS_AcquirePointers(void)
         if ((HS_AppData.EventMonLoaded == HS_STATE_ENABLED) ||
             (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED))
         {
-            CFE_EVS_SendEvent(HS_EVENTMON_GETADDR_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(HS_EVENTMON_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting EventMon Table address, RC=0x%08X, Event Monitoring Disabled",
                               (unsigned int)Status);
 
             if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
             {
-                Status =  CFE_SB_Unsubscribe ( CFE_EVS_EVENT_MSG_MID,
+                Status =  CFE_SB_Unsubscribe ( CFE_EVS_LONG_EVENT_MSG_MID,
                                                HS_AppData.EventPipe );
 
                 if (Status != CFE_SUCCESS)
                 {
-                    CFE_EVS_SendEvent(HS_BADEMT_UNSUB_EID, CFE_EVS_ERROR,
+                    CFE_EVS_SendEvent(HS_BADEMT_UNSUB_EID, CFE_EVS_EventType_ERROR,
                         "Error Unsubscribing from Events,RC=0x%08X",(unsigned int)Status);
                 }
             }
@@ -857,7 +814,7 @@ void HS_AcquirePointers(void)
         */
         if(HS_AppData.MsgActsState == HS_STATE_ENABLED)
         {
-            CFE_EVS_SendEvent(HS_MSGACTS_GETADDR_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(HS_MSGACTS_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting MsgActs Table address, RC=0x%08X",
                               (unsigned int)Status);
             HS_AppData.MsgActsState = HS_STATE_DISABLED;
@@ -897,7 +854,7 @@ void HS_AcquirePointers(void)
         */
         if(HS_AppData.ExeCountState == HS_STATE_ENABLED)
         {
-            CFE_EVS_SendEvent(HS_EXECOUNT_GETADDR_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(HS_EXECOUNT_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting ExeCount Table address, RC=0x%08X",
                               (unsigned int)Status);
            HS_AppData.ExeCountState = HS_STATE_DISABLED;
@@ -924,8 +881,8 @@ void HS_AcquirePointers(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppMonStatusRefresh(void)
 {
-    uint32  TableIndex;
-    uint32  EnableIndex;
+    uint32  TableIndex = 0;
+    uint32  EnableIndex = 0;
 
     /*
     ** Clear all AppMon Enable bits
@@ -968,7 +925,7 @@ void HS_AppMonStatusRefresh(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MsgActsStatusRefresh(void)
 {
-    uint32  TableIndex;
+    uint32  TableIndex = 0;
 
     /*
     ** Clear all MsgActs Cooldowns

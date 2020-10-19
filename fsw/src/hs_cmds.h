@@ -1,18 +1,17 @@
 /*************************************************************************
 ** File: hs_cmds.h 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -22,9 +21,6 @@
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) routines that
 **   handle command processing
-**
-** Notes:
-**
 **
 **************************************************************************/
 #ifndef _hs_cmds_h_
@@ -71,33 +67,6 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr);
 *************************************************************************/
 void HS_ResetCounters(void);
 
-/************************************************************************/
-/** \brief Verify message length
-**
-**  \par Description
-**       Checks if the actual length of a software bus message matches
-**       the expected length and sends an error event if a mismatch
-**       occurs
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**
-**  \param [in]   msg              A #CFE_SB_MsgPtr_t pointer that
-**                                 references the software bus message
-**
-**  \param [in]   ExpectedLength   The expected length of the message
-**                                 based upon the command code
-**
-**  \returns
-**  \retstmt Returns TRUE if the length is as expected      \endcode
-**  \retstmt Returns FALSE if the length is not as expected \endcode
-**  \endreturns
-**
-**  \sa #HS_LEN_ERR_EID
-**
-*************************************************************************/
-boolean HS_VerifyMsgLength(CFE_SB_MsgPtr_t msg,
-                           uint16          ExpectedLength);
 /************************************************************************/
 /** \brief Manages HS tables
 **

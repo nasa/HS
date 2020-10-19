@@ -1,34 +1,28 @@
- /*************************************************************************
- ** File: hs_app_test.c 
- **
- ** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
- ** Health and Safety Application Version 2"
- ** 
- ** Copyright © 2007-2014 United States Government as represented by the
- ** Administrator of the National Aeronautics and Space Administration. All Rights
- ** Reserved. 
- ** 
- ** Licensed under the Apache License, Version 2.0 (the "License"); 
- ** you may not use this file except in compliance with the License. 
- ** You may obtain a copy of the License at 
- ** http://www.apache.org/licenses/LICENSE-2.0 
- **
- ** Unless required by applicable law or agreed to in writing, software 
- ** distributed under the License is distributed on an "AS IS" BASIS, 
- ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- ** See the License for the specific language governing permissions and 
- ** limitations under the License. 
- **
- ** Purpose: 
- **   This file contains unit test cases for the functions contained in the file hs_app.c
- **
- ** References:
- **   Flight Software Branch C Coding Standard Version 1.2
- **   CFS Development Standards Document
- **
- ** Notes:
- **
- *************************************************************************/
+/*************************************************************************
+** File: hs_app_test.c 
+**
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2” 
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+**
+** Purpose: 
+**   This file contains unit test cases for the functions contained in 
+**   the file hs_app.c
+**
+*************************************************************************/
 
 /*
  * Includes
@@ -453,7 +447,7 @@ void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
     HS_AppData.CurrentCPUHogState = 99;
 
     HS_AppData.CDSData.MaxResets    = 0;
-    HS_AppData.CDSData.MaxResetsNot = 0;
+    HS_AppData.CDSData.MaxResetsNot = (~HS_AppData.CDSData.MaxResets);
 
     HS_AppData.CDSData.ResetsPerformed    = 1;
     HS_AppData.CDSData.ResetsPerformedNot = 3;
@@ -508,7 +502,7 @@ void HS_AppInit_Test_CorruptCDSMaxResets(void)
     HS_AppData.CDSData.MaxResetsNot = 3;
 
     HS_AppData.CDSData.ResetsPerformed    = 0;
-    HS_AppData.CDSData.ResetsPerformedNot = 0;
+    HS_AppData.CDSData.ResetsPerformedNot = (~HS_AppData.CDSData.ResetsPerformedNot);
 
     /* To enter if-block after "Create Critical Data Store" */
     Ut_CFE_ES_SetReturnCode(UT_CFE_ES_REGISTERCDS_INDEX, CFE_ES_CDS_ALREADY_EXISTS, 1);
@@ -707,6 +701,50 @@ void HS_AppInit_Test_TblInitError(void)
 
 } /* end HS_AppInit_Test_TblInitError */
 
+void HS_AppInit_Test_CustomInitError(void)
+{
+    int32 Result;
+
+    HS_AppData.ServiceWatchdogFlag = 99;
+    HS_AppData.AlivenessCounter = 99;
+    HS_AppData.RunStatus = 99;
+    HS_AppData.EventsMonitoredCount = 99;
+    HS_AppData.MsgActExec = 99;
+    HS_AppData.CurrentAppMonState = 99;
+    HS_AppData.CurrentEventMonState = 99;
+    HS_AppData.CurrentAlivenessState = 99;
+    HS_AppData.CurrentCPUHogState = 99;
+
+    /* Causes HS_CustomInit to return an error */
+    Ut_CFE_ES_SetReturnCode(UT_CFE_ES_CREATECHILDTASK_INDEX, -1, 1);
+
+    /* Execute the function being tested */
+    Result = HS_AppInit();
+    
+    /* Verify results */
+    UtAssert_True (Result == -1, "Result == -1");
+
+    UtAssert_True (HS_AppData.ServiceWatchdogFlag == HS_STATE_ENABLED, "HS_AppData.ServiceWatchdogFlag == HS_STATE_ENABLED");
+    UtAssert_True (HS_AppData.AlivenessCounter == 0, "HS_AppData.AlivenessCounter == 0");
+    UtAssert_True (HS_AppData.RunStatus == CFE_ES_APP_RUN, "HS_AppData.RunStatus == CFE_ES_APP_RUN");
+    UtAssert_True (HS_AppData.EventsMonitoredCount == 0, "HS_AppData.EventsMonitoredCount == 0");
+    UtAssert_True (HS_AppData.MsgActExec == 0, "HS_AppData.MsgActExec == 0");
+    /* Not checking that HS_AppData.CurrentAppMonState == HS_APPMON_DEFAULT_STATE, because it's modified in a subfunction that we don't care about here */
+    /* Not checking that HS_AppData.CurrentEventMonState == HS_EVENTMON_DEFAULT_STATE, because it's modified in a subfunction that we don't care about here */
+    UtAssert_True (HS_AppData.CurrentAlivenessState == HS_ALIVENESS_DEFAULT_STATE, "HS_AppData.CurrentAlivenessState == HS_ALIVENESS_DEFAULT_STATE");
+    UtAssert_True (HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE, "HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE");
+
+    /* This event message is not generated directly by the function under test, but it's useful to check for it to ensure that a TBL init error occurred rather than an SB init error */
+    UtAssert_True
+        (Ut_CFE_EVS_EventSent(HS_CUSTOM_INIT_ERR_EID, CFE_EVS_ERROR, "Error in custom initialization, RC=0xFFFFFFFF"),
+        "Error in custom initialization, RC=0xFFFFFFFF");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 8, "Ut_CFE_EVS_GetEventQueueDepth() == 8");
+
+} /* end HS_AppInit_Test_TblInitError */
+
+
+
 void HS_SbInit_Test_Nominal(void)
 {
     int32 Result;
@@ -722,7 +760,6 @@ void HS_SbInit_Test_Nominal(void)
     /* Verify results */
     UtAssert_True (Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
     UtAssert_True (HS_AppData.EventPipe != 0, "HS_AppData.EventPipe != 0"); /* Set to a new value when initialized */
     UtAssert_True (HS_AppData.WakeupPipe != 0, "HS_AppData.WakeupPipe != 0"); /* Set to a new value when initialized */
@@ -749,10 +786,9 @@ void HS_SbInit_Test_CreateSBCmdPipeError(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
-    UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe == 0, "HS_AppData.EventPipe == 0");
-    UtAssert_True (HS_AppData.WakeupPipe == 0, "HS_AppData.WakeupPipe == 0");
+    UtAssert_True (HS_AppData.CmdPipe == 99, "HS_AppData.CmdPipe == 99");
+    UtAssert_True (HS_AppData.EventPipe == 99, "HS_AppData.EventPipe == 99");
+    UtAssert_True (HS_AppData.WakeupPipe == 99, "HS_AppData.WakeupPipe == 99");
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_CR_CMD_PIPE_ERR_EID, CFE_EVS_ERROR, "Error Creating SB Command Pipe,RC=0xFFFFFFFF"),
@@ -780,10 +816,9 @@ void HS_SbInit_Test_CreateSBEventPipeError(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe == 0, "HS_AppData.EventPipe == 0");
-    UtAssert_True (HS_AppData.WakeupPipe == 0, "HS_AppData.WakeupPipe == 0");
+    UtAssert_True (HS_AppData.EventPipe == 99, "HS_AppData.EventPipe == 99");
+    UtAssert_True (HS_AppData.WakeupPipe == 99, "HS_AppData.WakeupPipe == 99");
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_CR_EVENT_PIPE_ERR_EID, CFE_EVS_ERROR, "Error Creating SB Event Pipe,RC=0xFFFFFFFF"),
@@ -811,10 +846,9 @@ void HS_SbInit_Test_CreateSBWakeupPipe(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe != 0, "HS_AppData.EventPipe != 0"); /* Set to a new value when initialized */
-    UtAssert_True (HS_AppData.WakeupPipe == 0, "HS_AppData.WakeupPipe == 0");
+    UtAssert_True (HS_AppData.EventPipe != 99, "HS_AppData.EventPipe != 99"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.WakeupPipe == 99, "HS_AppData.WakeupPipe == 99");
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_CR_WAKEUP_PIPE_ERR_EID, CFE_EVS_ERROR, "Error Creating SB Wakeup Pipe,RC=0xFFFFFFFF"),
@@ -842,10 +876,9 @@ void HS_SbInit_Test_SubscribeHKRequestError(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe != 0, "HS_AppData.EventPipe != 0"); /* Set to a new value when initialized */
-    UtAssert_True (HS_AppData.WakeupPipe != 0, "HS_AppData.WakeupPipe != 0"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.EventPipe != 99, "HS_AppData.EventPipe != 99"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.WakeupPipe != 99, "HS_AppData.WakeupPipe != 99"); /* Set to a new value when initialized */
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_SUB_REQ_ERR_EID, CFE_EVS_ERROR, "Error Subscribing to HK Request,RC=0xFFFFFFFF"),
@@ -873,10 +906,9 @@ void HS_SbInit_Test_SubscribeGndCmdsError(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe != 0, "HS_AppData.EventPipe != 0"); /* Set to a new value when initialized */
-    UtAssert_True (HS_AppData.WakeupPipe != 0, "HS_AppData.WakeupPipe != 0"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.EventPipe != 99, "HS_AppData.EventPipe != 99"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.WakeupPipe != 99, "HS_AppData.WakeupPipe != 99"); /* Set to a new value when initialized */
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_SUB_CMD_ERR_EID, CFE_EVS_ERROR, "Error Subscribing to Gnd Cmds,RC=0xFFFFFFFF"),
@@ -904,10 +936,9 @@ void HS_SbInit_Test_SubscribeWakeupError(void)
     /* Verify results */
     UtAssert_True (Result == -1, "Result == -1");
 
-    UtAssert_True (HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL, "HS_AppData.MsgPtr == (CFE_SB_MsgPtr_t) NULL");
     UtAssert_True (HS_AppData.CmdPipe == 0, "HS_AppData.CmdPipe == 0");
-    UtAssert_True (HS_AppData.EventPipe != 0, "HS_AppData.EventPipe != 0"); /* Set to a new value when initialized */
-    UtAssert_True (HS_AppData.WakeupPipe != 0, "HS_AppData.WakeupPipe != 0"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.EventPipe != 99, "HS_AppData.EventPipe != 99"); /* Set to a new value when initialized */
+    UtAssert_True (HS_AppData.WakeupPipe != 99, "HS_AppData.WakeupPipe != 99"); /* Set to a new value when initialized */
 
     UtAssert_True
         (Ut_CFE_EVS_EventSent(HS_SUB_WAKEUP_ERR_EID, CFE_EVS_ERROR, "Error Subscribing to Wakeup,RC=0xFFFFFFFF"),
@@ -1244,6 +1275,7 @@ void HS_App_Test_AddTestCases(void)
     UtTest_Add(HS_AppInit_Test_DisableSavingToCDS, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_DisableSavingToCDS");
     UtTest_Add(HS_AppInit_Test_SBInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_SBInitError");
     UtTest_Add(HS_AppInit_Test_TblInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_TblInitError");
+    UtTest_Add(HS_AppInit_Test_CustomInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_CustomInitError");
 #endif
 
     UtTest_Add(HS_SbInit_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_SbInit_Test_Nominal");

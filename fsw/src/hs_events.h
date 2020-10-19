@@ -1,18 +1,17 @@
 /************************************************************************
 ** File: hs_events.h 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -21,8 +20,6 @@
 **
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) event identifers.
-**
-** Notes:
 **
 **
 *************************************************************************/
@@ -549,9 +546,12 @@
 **  \par Cause:
 **
 **  This event message is issued when an application name cannot be resolved
-**  into an application ID by the OS.
+**  into an application ID by the OS.  This event is sent the first time this
+**  error occurs in the HS_MonitorApplications function.  Subsequent 
+**  occurrences are captured with a corresponding debug event.
 **
-**  The \c APP field specifies the name in the table that was not found in the system.
+**  The \c APP field specifies the name in the table that was not found in 
+**  the system.
 */
 #define HS_APPMON_APPNAME_ERR_EID 38
 
@@ -983,6 +983,106 @@
 **  The \c Status field indicates the error status passed but the subscribe call.
 */
 #define HS_BADEMT_UNSUB_EID 68
+
+/** \brief <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
+**  \event <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
+**
+**  \par Type: DEBUG
+**
+**  \par Cause:
+**
+**  This event message is issued when an application name cannot be resolved
+**  into an application ID by the OS.  This event is sent if this error 
+**  occurs repeatedly in the HS_MonitorApplications function.  The first such
+**  occurrence is captured with a corresponding error event.
+**
+**  The \c APP field specifies the name in the table that was not found in 
+**  the system.
+*/
+#define HS_APPMON_APPNAME_DBG_EID 69
+
+/** \brief <tt> 'Housekeeping req found unknown resource.  Type=0x\%08X' </tt>
+ ** \event <tt> 'Housekeeping req found unknown resource.  Type=0x\%08X' </tt>
+ **
+ ** \par Type: DEBUG
+ **
+ ** \par Cause:
+ **
+ ** This event message is issued when the application encounters a reource
+ ** with an unknown type while populating the execution counters in the 
+ ** housekeeping telemetry packet.
+ **
+ ** The \c Type field is the detected resource type.
+ */
+#define HS_HKREQ_RESOURCE_DBG_EID 70
+
+/** \brief <tt> 'Error in custom initialization, RC=0x\%08X' </tt>
+**  \event <tt> 'Error in custom initialization, RC=0x\%08X' </tt>
+** 
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**  
+**  This event message is issued if the HS_CustomInit routine returns
+**  any value other than CFE_SUCCESS.  
+**
+**  The \c RC field indicates the error status returned from HS_CustomInit
+*/
+#define HS_CUSTOM_INIT_ERR_EID 71
+
+
+/** \brief <tt> 'Error in AM Table Validation. Table is null.' </tt>
+**  \event <tt> 'Error in AM Table Validation. Table is null.' </tt>
+** 
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**  
+**  This event message is issued if the TableData pointer passed to 
+**  HS_ValidateAMTable is null.
+**
+*/
+#define HS_AM_TBL_NULL_ERR_EID  70
+
+
+/** \brief <tt> 'Error in EM Table Validation. Table is null.' </tt>
+**  \event <tt> 'Error in EM Table Validation. Table is null.' </tt>
+** 
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**  
+**  This event message is issued if the TableData pointer passed to 
+**  HS_ValidateEMTable is null.
+**
+*/
+#define HS_EM_TBL_NULL_ERR_EID  71
+
+/** \brief <tt> 'Error in XC Table Validation. Table is null.' </tt>
+**  \event <tt> 'Error in XC Table Validation. Table is null.' </tt>
+** 
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**  
+**  This event message is issued if the TableData pointer passed to 
+**  HS_ValidateXCTable is null.
+**
+*/
+#define HS_XC_TBL_NULL_ERR_EID  72
+
+/** \brief <tt> 'Error in MA Table Validation. Table is null.' </tt>
+**  \event <tt> 'Error in MA Table Validation. Table is null.' </tt>
+** 
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**  
+**  This event message is issued if the TableData pointer passed to 
+**  HS_ValidateMATable is null.
+**
+*/
+#define HS_MA_TBL_NULL_ERR_EID  73
 
 #endif /* _hs_events_h_ */
 

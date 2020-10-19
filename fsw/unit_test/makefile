@@ -69,7 +69,7 @@ INCLUDES += -I$(HS_PATH)/fsw/platform_inc
 #
 # FLIGHT_OBJS specifies flight software object files.
 #
-FLIGHT_OBJS := hs_app.o hs_cmds.o hs_custom.o hs_monitors.o
+FLIGHT_OBJS := hs_app.o hs_cmds.o hs_custom.o hs_monitors.o hs_utils.o
 
 #
 # UT_OBJS specifies unit test object files.
@@ -101,6 +101,7 @@ UT_OBJS += hs_app_test.o
 UT_OBJS += hs_cmds_test.o
 UT_OBJS += hs_custom_test.o
 UT_OBJS += hs_monitors_test.o
+UT_OBJS += hs_utils_test.o
 UT_OBJS += hs_testrunner.o
 UT_OBJS += hs_test_utils.o
 UT_OBJS += cfs_utils.o

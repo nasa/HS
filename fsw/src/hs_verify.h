@@ -1,18 +1,17 @@
 /*************************************************************************
 ** File: hs_verify.h 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -23,9 +22,6 @@
 **   Contains CFS Health and Safety (HS) macros that run preprocessor checks
 **   on mission and platform configurable parameters
 **
-** Notes:
-**
-** 
 *************************************************************************/
 #ifndef _hs_verify_h_
 #define _hs_verify_h_
@@ -74,8 +70,8 @@
 #endif
 #endif
 
-#if HS_MAX_MSG_ACT_SIZE > CFE_SB_MAX_SB_MSG_SIZE
-    #error HS_MAX_MSG_ACT_SIZE can not exceed CFE_SB_MAX_SB_MSG_SIZE
+#if HS_MAX_MSG_ACT_SIZE > CFE_MISSION_SB_MAX_SB_MSG_SIZE
+    #error HS_MAX_MSG_ACT_SIZE can not exceed CFE_MISSION_SB_MAX_SB_MSG_SIZE
 #endif
 
 /*

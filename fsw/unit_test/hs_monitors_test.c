@@ -1,35 +1,28 @@
- /*************************************************************************
- ** File: hs_monitors_test.c 
- **
- ** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
- ** Health and Safety Application Version 2"
- ** 
- ** Copyright © 2007-2014 United States Government as represented by the
- ** Administrator of the National Aeronautics and Space Administration. All Rights
- ** Reserved. 
- ** 
- ** Licensed under the Apache License, Version 2.0 (the "License"); 
- ** you may not use this file except in compliance with the License. 
- ** You may obtain a copy of the License at 
- ** http://www.apache.org/licenses/LICENSE-2.0 
- **
- ** Unless required by applicable law or agreed to in writing, software 
- ** distributed under the License is distributed on an "AS IS" BASIS, 
- ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- ** See the License for the specific language governing permissions and 
- ** limitations under the License. 
- **
- ** Purpose: 
- **   This file contains unit test cases for the functions contained in the 
- **   file hs_monitors.c
- **
- ** References:
- **   Flight Software Branch C Coding Standard Version 1.2
- **   CFS Development Standards Document
- **
- ** Notes:
- **
- *************************************************************************/
+/*************************************************************************
+** File: hs_monitors_test.c 
+**
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2” 
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+**
+** Purpose: 
+**   This file contains unit test cases for the functions contained in 
+**   the file hs_monitors.c
+**
+*************************************************************************/
 
 /*
  * Includes
@@ -401,7 +394,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDefault(void)
     UtAssert_True (HS_AppData.AppMonCheckInCountdown[0] == 0, "HS_AppData.AppMonCheckInCountdown[0] == 0");
     UtAssert_True (HS_AppData.AppMonEnables[0] == 0, "HS_AppData.AppMonEnables[0] == 0");
 
-    UtAssert_True (HS_AppData.MsgActExec = 1, "HS_AppData.MsgActExec = 1");
+    UtAssert_True (HS_AppData.MsgActExec == 1, "HS_AppData.MsgActExec == 1");
     UtAssert_True (HS_AppData.MsgActCooldown[0] == 1, "HS_AppData.MsgActCooldown[0] == 1");
 
     UtAssert_True
@@ -1003,6 +996,24 @@ void HS_ValidateAMTable_Test_EntryGood(void)
 
 } /* end HS_ValidateAMTable_Test_EntryGood */
 
+void HS_ValidateAMTable_Test_Null(void)
+{
+    int32 Result;
+
+    /* Execute the function being tested */
+    Result = HS_ValidateAMTable(NULL);
+    
+    /* Verify results */
+    UtAssert_True
+        (Ut_CFE_EVS_EventSent(HS_AM_TBL_NULL_ERR_EID, CFE_EVS_ERROR, 
+        "Error in AM Table Validation. Table is null."),
+        "Error in AM Table Validation. Table is null.");
+
+    UtAssert_True(Result == HS_TBL_VAL_ERR, "Result == HS_TBL_VAL_ERR");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
+}
+
 void HS_ValidateEMTable_Test_UnusedTableEntryEventIDZero(void)
 {
     int32   Result;
@@ -1167,6 +1178,25 @@ void HS_ValidateEMTable_Test_EntryGood(void)
 
 } /* end HS_ValidateEMTable_Test_EntryGood */
 
+void HS_ValidateEMTable_Test_Null(void)
+{
+    int32 Result;
+
+    /* Execute the function being tested */
+    Result = HS_ValidateEMTable(NULL);
+    
+    /* Verify results */
+    UtAssert_True
+        (Ut_CFE_EVS_EventSent(HS_EM_TBL_NULL_ERR_EID, CFE_EVS_ERROR, 
+        "Error in EM Table Validation. Table is null."),
+        "Error in EM Table Validation. Table is null.");
+
+    UtAssert_True(Result == HS_TBL_VAL_ERR, "Result == HS_TBL_VAL_ERR");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
+}
+
+
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_UnusedTableEntry(void)
 {
@@ -1301,6 +1331,26 @@ void HS_ValidateXCTable_Test_EntryGood(void)
     UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
 
 } /* end HS_ValidateXCTable_Test_EntryGood */
+#endif
+
+#if HS_MAX_EXEC_CNT_SLOTS != 0
+void HS_ValidateXCTable_Test_Null(void)
+{
+    int32 Result;
+
+    /* Execute the function being tested */
+    Result = HS_ValidateXCTable(NULL);
+    
+    /* Verify results */
+    UtAssert_True
+        (Ut_CFE_EVS_EventSent(HS_XC_TBL_NULL_ERR_EID, CFE_EVS_ERROR, 
+        "Error in XC Table Validation. Table is null."),
+        "Error in XC Table Validation. Table is null.");
+
+    UtAssert_True(Result == HS_TBL_VAL_ERR, "Result == HS_TBL_VAL_ERR");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
+}
 #endif
 
 void HS_ValidateMATable_Test_UnusedTableEntry(void)
@@ -1440,7 +1490,7 @@ void HS_ValidateMATable_Test_LengthTooHigh(void)
 } /* end HS_ValidateMATable_Test_LengthTooHigh */
 
 void HS_ValidateMATable_Test_EntryGood(void)
-{
+{ 
     int32   Result;
     uint32  i;
 
@@ -1468,6 +1518,24 @@ void HS_ValidateMATable_Test_EntryGood(void)
     UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
 
 } /* end HS_ValidateMATable_Test_EntryGood */
+
+void HS_ValidateMATable_Test_Null(void)
+{
+    int32 Result;
+
+    /* Execute the function being tested */
+    Result = HS_ValidateMATable(NULL);
+    
+    /* Verify results */
+    UtAssert_True
+        (Ut_CFE_EVS_EventSent(HS_MA_TBL_NULL_ERR_EID, CFE_EVS_ERROR, 
+        "Error in MA Table Validation. Table is null."),
+        "Error in MA Table Validation. Table is null.");
+
+    UtAssert_True(Result == HS_TBL_VAL_ERR, "Result == HS_TBL_VAL_ERR");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
+}
 
 void HS_SetCDSData_Test(void)
 {
@@ -1521,18 +1589,21 @@ void HS_Monitors_Test_AddTestCases(void)
     UtTest_Add(HS_ValidateAMTable_Test_BufferNotNull, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateAMTable_Test_BufferNotNull");
     UtTest_Add(HS_ValidateAMTable_Test_ActionTypeNotValid, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateAMTable_Test_ActionTypeNotValid");
     UtTest_Add(HS_ValidateAMTable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateAMTable_Test_EntryGood");
+    UtTest_Add(HS_ValidateAMTable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateAMTable_Test_Null");
 
     UtTest_Add(HS_ValidateEMTable_Test_UnusedTableEntryEventIDZero, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_UnusedTableEntryEventIDZero");
     UtTest_Add(HS_ValidateEMTable_Test_UnusedTableEntryActionTypeNOACT, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_UnusedTableEntryActionTypeNOACT");
     UtTest_Add(HS_ValidateEMTable_Test_BufferNotNull, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_BufferNotNull");
     UtTest_Add(HS_ValidateEMTable_Test_ActionTypeNotValid, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_ActionTypeNotValid");
     UtTest_Add(HS_ValidateEMTable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_EntryGood");
+    UtTest_Add(HS_ValidateEMTable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_Null");
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_ValidateXCTable_Test_UnusedTableEntry, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_UnusedTableEntry");
     UtTest_Add(HS_ValidateXCTable_Test_BufferNotNull, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_BufferNotNull");
     UtTest_Add(HS_ValidateXCTable_Test_ResourceTypeNotValid, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_ResourceTypeNotValid");
     UtTest_Add(HS_ValidateXCTable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_EntryGood");
+    UtTest_Add(HS_ValidateXCTable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_Null");
 #endif
 
     UtTest_Add(HS_ValidateMATable_Test_UnusedTableEntry, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateMATable_Test_UnusedTableEntry");
@@ -1540,6 +1611,7 @@ void HS_Monitors_Test_AddTestCases(void)
     UtTest_Add(HS_ValidateMATable_Test_MessageIDTooHigh, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateMATable_Test_MessageIDTooHigh");
     UtTest_Add(HS_ValidateMATable_Test_LengthTooHigh, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateMATable_Test_LengthTooHigh");
     UtTest_Add(HS_ValidateMATable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateMATable_Test_EntryGood");
+    UtTest_Add(HS_ValidateMATable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateMATable_Test_Null");
 
     UtTest_Add(HS_SetCDSData_Test, HS_Test_Setup, HS_Test_TearDown, "HS_SetCDSData_Test");
 

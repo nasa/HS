@@ -1,34 +1,28 @@
- /*************************************************************************
- ** File: hs_cmds_test.c 
- **
- ** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
- ** Health and Safety Application Version 2"
- ** 
- ** Copyright © 2007-2014 United States Government as represented by the
- ** Administrator of the National Aeronautics and Space Administration. All Rights
- ** Reserved. 
- ** 
- ** Licensed under the Apache License, Version 2.0 (the "License"); 
- ** you may not use this file except in compliance with the License. 
- ** You may obtain a copy of the License at 
- ** http://www.apache.org/licenses/LICENSE-2.0 
- **
- ** Unless required by applicable law or agreed to in writing, software 
- ** distributed under the License is distributed on an "AS IS" BASIS, 
- ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- ** See the License for the specific language governing permissions and 
- ** limitations under the License. 
- **
- ** Purpose: 
- **   This file contains unit test cases for the functions contained in the file hs_cmds.c
- **
- ** References:
- **   Flight Software Branch C Coding Standard Version 1.2
- **   CFS Development Standards Document
- **
- ** Notes:
- **
- *************************************************************************/
+/*************************************************************************
+** File: hs_cmds_test.c 
+**
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2” 
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
+** 
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+**
+** Purpose: 
+**   This file contains unit test cases for the functions contained in 
+**   the file hs_cmds.c
+**
+*************************************************************************/
 
 /*
  * Includes
@@ -42,6 +36,7 @@
 #include "hs_msgids.h"
 #include "hs_events.h"
 #include "hs_version.h"
+#include "hs_utils.h"
 #include "hs_test_utils.h"
 #include "ut_osapi_stubs.h"
 #include "ut_cfe_sb_stubs.h"
@@ -404,6 +399,12 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint8             ExpectedStatusFlags = 0;
 
+    int i;
+
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = HS_XCT_TYPE_NOTYPE;
+    }
+
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.XCTablePtr = XCTable;
 
@@ -476,6 +477,12 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
     HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
+
+    int i;
+
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = HS_XCT_TYPE_APP_MAIN;
+    }
 
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.XCTablePtr = XCTable;
@@ -552,6 +559,12 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
 
+    int i;
+
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = HS_XCT_TYPE_APP_CHILD;
+    }
+
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.XCTablePtr = XCTable;
 
@@ -627,6 +640,12 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
 
+    int i;
+
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = HS_XCT_TYPE_DEVICE;
+    }
+
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.XCTablePtr = XCTable;
 
@@ -696,6 +715,12 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
 
+    int i;
+
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = HS_XCT_TYPE_ISR;
+    }
+
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.XCTablePtr = XCTable;
 
@@ -756,6 +781,89 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
 
 } /* end HS_HousekeepingReq_Test_ResourceTypeISR */
 #endif
+
+#if HS_MAX_EXEC_CNT_SLOTS != 0
+void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
+{
+    HS_NoArgsCmd_t    CmdPacket;
+    HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
+    HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
+    uint8             ExpectedStatusFlags = 0;
+
+    int i;
+
+    /* Set the XCTable Resource type to something invalid */
+    for(i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++) {
+        XCTable[i].ResourceType = (HS_XCT_TYPE_ISR * 2);
+    }
+
+    HS_AppData.EMTablePtr = EMTable;
+    HS_AppData.XCTablePtr = XCTable;
+
+    CFE_SB_InitMsg (&CmdPacket, HS_CMD_MID, sizeof(HS_NoArgsCmd_t), TRUE);
+    CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CmdPacket, HS_ENABLE_EVENTMON_CC);
+
+    HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT;
+
+    HS_AppData.CmdCount = 1;
+    HS_AppData.CmdErrCount = 2;
+    HS_AppData.CurrentAppMonState = 3;
+    HS_AppData.CurrentEventMonState = 4;
+    HS_AppData.CurrentAlivenessState = 5;
+    HS_AppData.CurrentCPUHogState = 6;
+    HS_AppData.CDSData.ResetsPerformed = 7;
+    HS_AppData.CDSData.MaxResets = 8;
+    HS_AppData.EventsMonitoredCount = 9;
+    HS_AppData.MsgActExec = 10;
+
+    HS_AppData.ExeCountState = HS_STATE_ENABLED;
+    HS_AppData.MsgActsState = HS_STATE_ENABLED;
+    HS_AppData.AppMonLoaded = HS_STATE_ENABLED;
+    HS_AppData.EventMonLoaded = HS_STATE_ENABLED;
+    HS_AppData.CDSState = HS_STATE_ENABLED;
+
+    ExpectedStatusFlags   |= HS_LOADED_XCT;
+    ExpectedStatusFlags   |= HS_LOADED_MAT;
+    ExpectedStatusFlags   |= HS_LOADED_AMT;
+    ExpectedStatusFlags   |= HS_LOADED_EMT;
+    ExpectedStatusFlags   |= HS_CDS_IN_USE;
+
+    /* Execute the function being tested */
+    HS_HousekeepingReq((CFE_SB_MsgPtr_t)&CmdPacket);
+    
+    /* Verify results */
+    UtAssert_True (HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
+    UtAssert_True (HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
+    UtAssert_True (HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
+    UtAssert_True (HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
+    UtAssert_True (HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
+    UtAssert_True (HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
+    UtAssert_True (HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
+    UtAssert_True (HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
+    UtAssert_True (HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
+    UtAssert_True (HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
+    UtAssert_True (HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+
+    UtAssert_True (HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags, "HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags");
+
+    /* Check first, middle, and last element */
+    UtAssert_True (HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+
+    UtAssert_True
+        (HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+        "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2");
+
+    UtAssert_True
+        (HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE,
+        "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE");
+
+    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == HS_MAX_EXEC_CNT_SLOTS,
+    "Ut_CFE_EVS_GetEventQueueDepth() == 32");
+
+} /* end HS_HousekeepingReq_Test_AllFlagsEnabled */
+#endif
+
+
 
 void HS_Noop_Test(void)
 {
@@ -1163,70 +1271,6 @@ void HS_SetMaxResetsCmd_Test(void)
 
 } /* end HS_SetMaxResetsCmd_Test */
 
-void HS_VerifyMsgLength_Test_Nominal(void)
-{
-    HS_NoArgsCmd_t    CmdPacket;
-    boolean           Result;
-
-    CFE_SB_InitMsg (&CmdPacket, HS_CMD_MID, sizeof(HS_NoArgsCmd_t), TRUE);
-    CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CmdPacket, HS_ENABLE_CPUHOG_CC);
-
-    /* Execute the function being tested */
-    Result = HS_VerifyMsgLength((CFE_SB_MsgPtr_t)&CmdPacket, sizeof(HS_NoArgsCmd_t));
-
-    /* Verify results */
-    UtAssert_True (Result == TRUE, "Result == TRUE");
-
-    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 0, "Ut_CFE_EVS_GetEventQueueDepth() == 0");
-
-} /* end HS_VerifyMsgLength_Test_Nominal */
-
-void HS_VerifyMsgLength_Test_LengthErrorHK(void)
-{
-    HS_NoArgsCmd_t    CmdPacket;
-    boolean           Result;
-
-    CFE_SB_InitMsg (&CmdPacket, HS_SEND_HK_MID, 1, TRUE);
-    CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CmdPacket, 0);
-
-    /* Execute the function being tested */
-    Result = HS_VerifyMsgLength((CFE_SB_MsgPtr_t)&CmdPacket, sizeof(HS_NoArgsCmd_t));
-
-    /* Verify results */
-    UtAssert_True (Result == FALSE, "Result == FALSE");
-
-    UtAssert_True
-        (Ut_CFE_EVS_EventSent(HS_HKREQ_LEN_ERR_EID, CFE_EVS_ERROR, "Invalid HK request msg length: ID = 0x18AF, CC = 0, Len = 1, Expected = 8"),
-        "Invalid HK request msg length: ID = 0x18AF, CC = 0, Len = 1, Expected = 8");
-
-    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
-
-} /* end HS_VerifyMsgLength_Test_LengthErrorHK */
-
-void HS_VerifyMsgLength_Test_LengthErrorNonHK(void)
-{
-    HS_NoArgsCmd_t    CmdPacket;
-    boolean           Result;
-
-    CFE_SB_InitMsg (&CmdPacket, HS_CMD_MID, 1, TRUE);
-    CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CmdPacket, 0);
-
-    /* Execute the function being tested */
-    Result = HS_VerifyMsgLength((CFE_SB_MsgPtr_t)&CmdPacket, sizeof(HS_NoArgsCmd_t));
-
-    /* Verify results */
-    UtAssert_True (Result == FALSE, "Result == FALSE");
-
-    UtAssert_True (HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
-
-    UtAssert_True
-        (Ut_CFE_EVS_EventSent(HS_LEN_ERR_EID, CFE_EVS_ERROR, "Invalid msg length: ID = 0x18AE, CC = 0, Len = 1, Expected = 8"),
-        "Invalid msg length: ID = 0x18AE, CC = 0, Len = 1, Expected = 8");
-
-    UtAssert_True (Ut_CFE_EVS_GetEventQueueDepth() == 1, "Ut_CFE_EVS_GetEventQueueDepth() == 1");
-
-} /* end HS_VerifyMsgLength_Test_LengthErrorNonHK */
-
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_Nominal(void)
 {
@@ -1533,6 +1577,8 @@ void HS_Cmds_Test_AddTestCases(void)
     UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppChild, HS_Test_Setup, HS_Test_TearDown, "HS_HousekeepingReq_Test_ResourceTypeAppChild");
     UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeDevice, HS_Test_Setup, HS_Test_TearDown, "HS_HousekeepingReq_Test_ResourceTypeDevice");
     UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeISR, HS_Test_Setup, HS_Test_TearDown, "HS_HousekeepingReq_Test_ResourceTypeISR");
+    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeUnknown, HS_Test_Setup, HS_Test_TearDown, "HS_HousekeepingReq_Test_ResourceTypeAppMain");
+
 #endif
 
     UtTest_Add(HS_Noop_Test, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test");
@@ -1565,9 +1611,6 @@ void HS_Cmds_Test_AddTestCases(void)
 
     UtTest_Add(HS_SetMaxResetsCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_SetMaxResetsCmd_Test");
 
-    UtTest_Add(HS_VerifyMsgLength_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_VerifyMsgLength_Test_Nominal");
-    UtTest_Add(HS_VerifyMsgLength_Test_LengthErrorHK, HS_Test_Setup, HS_Test_TearDown, "HS_VerifyMsgLength_Test_LengthErrorHK");
-    UtTest_Add(HS_VerifyMsgLength_Test_LengthErrorNonHK, HS_Test_Setup, HS_Test_TearDown, "HS_VerifyMsgLength_Test_LengthErrorNonHK");
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_AcquirePointers_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_AcquirePointers_Test_Nominal");

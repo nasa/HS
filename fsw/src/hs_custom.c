@@ -1,18 +1,17 @@
 /*************************************************************************
-** File: hs_custom.c
+** File: hs_custom.c 
 **
-** NASA Docket No. GSC-16,151-1, and identified as "Core Flight Software System (CFS)
-** Health and Safety Application Version 2"
-** 
-** Copyright © 2007-2014 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration. All Rights
-** Reserved. 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** (cFS) Health and Safety (HS) Application version 2.3.2"
+**
+** Copyright © 2020 United States Government as represented by the 
+** Administrator of the National Aeronautics and Space Administration.  
+** All Rights Reserved. 
 ** 
 ** Licensed under the Apache License, Version 2.0 (the "License"); 
 ** you may not use this file except in compliance with the License. 
 ** You may obtain a copy of the License at 
 ** http://www.apache.org/licenses/LICENSE-2.0 
-**
 ** Unless required by applicable law or agreed to in writing, software 
 ** distributed under the License is distributed on an "AS IS" BASIS, 
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -37,10 +36,14 @@
 #include "hs_app.h"
 #include "hs_cmds.h"
 #include "hs_msg.h"
+#include "hs_utils.h"
 #include "hs_custom.h"
 #include "hs_events.h"
 #include "hs_monitors.h"
 #include "hs_perfids.h"
+
+
+HS_CustomData_t HS_CustomData;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -110,7 +113,7 @@ int32 HS_CustomInit(void)
      
     if(Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_CHILD_TASK_ERR_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(HS_CR_CHILD_TASK_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Error Creating Child Task for CPU Utilization Monitoring,RC=0x%08X",
                           (unsigned int)Status);
         return (Status);
@@ -122,7 +125,7 @@ int32 HS_CustomInit(void)
     Status = CFE_TIME_RegisterSynchCallback((CFE_TIME_SynchCallbackPtr_t)&HS_MarkIdleCallback);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_SYNC_CALLBACK_ERR_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(HS_CR_SYNC_CALLBACK_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Error Registering Sync Callback for CPU Utilization Monitoring,RC=0x%08X",
                           (unsigned int)Status);
     }
@@ -289,7 +292,7 @@ void HS_UtilDiagReport(void)
     uint32 i = 0;
     uint32 j = 0;
     uint32 ThisValue = 0;
-    boolean MatchFound = FALSE;
+    bool    MatchFound = false   ;
     
     uint32 Ordinal = 0;
     uint32 NewOrdinalIndex = 0;
@@ -323,19 +326,19 @@ void HS_UtilDiagReport(void)
         }
         
         j = 0;
-        MatchFound = FALSE;
-        while((MatchFound == FALSE) && (j < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
+        MatchFound = false   ;
+        while((MatchFound == false   ) && (j < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
         {
             if(ThisValue == DiagValue[j])
             {
                 DiagCount[j]++;
-                MatchFound = TRUE;
+                MatchFound = true   ;
             }
             else if (DiagValue[j] == 0xFFFFFFFF)
             {
                 DiagValue[j] = ThisValue;
                 DiagCount[j]++;
-                MatchFound = TRUE;
+                MatchFound = true   ;
             }
             else
             {
@@ -347,8 +350,13 @@ void HS_UtilDiagReport(void)
 
     /* Calculate the lowest time jumps */
     i = 0;
-    while((DiagValue[i] != 0xFFFFFFFF) && (i < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
+    while(i < HS_UTIL_TIME_DIAG_ARRAY_LENGTH)
     {
+        if(DiagValue[i] == 0xFFFFFFFF) 
+        {
+            break;
+        }
+
         Ordinal = 0;
         for(j = 0; j < HS_UTIL_DIAG_REPORTS; j++)
         {
@@ -379,7 +387,7 @@ void HS_UtilDiagReport(void)
     }
     
     /* Output the HS_UTIL_DIAG_REPORTS as en event */
-    CFE_EVS_SendEvent(HS_UTIL_DIAG_REPORT_EID, CFE_EVS_INFORMATION,
+    CFE_EVS_SendEvent(HS_UTIL_DIAG_REPORT_EID, CFE_EVS_EventType_INFORMATION,
                       "Mask 0x%08X Base Time Ticks per Idle Ticks (frequency): %i(%i), %i(%i), %i(%i), %i(%i)", (unsigned int)HS_CustomData.UtilMask,
                        (int)OutputValue[OutputOrdinal[0]], (int)OutputCount[OutputOrdinal[0]], (int)OutputValue[OutputOrdinal[1]], (int)OutputCount[OutputOrdinal[1]], 
                        (int)OutputValue[OutputOrdinal[2]], (int)OutputCount[OutputOrdinal[2]], (int)OutputValue[OutputOrdinal[3]], (int)OutputCount[OutputOrdinal[3]]);
@@ -413,7 +421,7 @@ int32 HS_CustomGetUtil(void)
 void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr)
 {
     uint16            ExpectedLength = sizeof(HS_SetUtilParamsCmd_t);
-    HS_SetUtilParamsCmd_t  *CmdPtr;
+    HS_SetUtilParamsCmd_t  *CmdPtr = NULL;
 
     /*
     ** Verify message packet length
@@ -430,14 +438,14 @@ void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr)
             HS_CustomData.UtilMult2 = CmdPtr->Mult2;
             HS_CustomData.UtilDiv   = CmdPtr->Div;
             HS_AppData.CmdCount++;
-            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_DBG_EID, CFE_EVS_DEBUG,
+            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_DBG_EID, CFE_EVS_EventType_DEBUG,
                                "Utilization Parms set: Mult1: %d Div: %d Mult2: %d", 
                                (int)HS_CustomData.UtilMult1, (int)HS_CustomData.UtilDiv, (int)HS_CustomData.UtilMult2);
         }
         else
         {
             HS_AppData.CmdErrCount++;
-            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_ERR_EID, CFE_EVS_EventType_ERROR,
                                "Utilization Parms Error: No parameter may be 0: Mult1: %d Div: %d Mult2: %d", 
                                (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
         }
@@ -450,7 +458,7 @@ void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr)
 void HS_SetUtilDiagCmd(CFE_SB_MsgPtr_t MessagePtr)
 {
     uint16            ExpectedLength = sizeof(HS_SetUtilDiagCmd_t);
-    HS_SetUtilDiagCmd_t  *CmdPtr;
+    HS_SetUtilDiagCmd_t  *CmdPtr = NULL;
 
     /*
     ** Verify message packet length
@@ -461,7 +469,7 @@ void HS_SetUtilDiagCmd(CFE_SB_MsgPtr_t MessagePtr)
         CmdPtr = ((HS_SetUtilDiagCmd_t *)MessagePtr);
 
         HS_CustomData.UtilMask  = CmdPtr->Mask;
-        CFE_EVS_SendEvent (HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_DEBUG,
+        CFE_EVS_SendEvent (HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_EventType_DEBUG,
                            "Utilization Diagnostics Mask has been set to %08X", 
                            (unsigned int)HS_CustomData.UtilMask);
     }
