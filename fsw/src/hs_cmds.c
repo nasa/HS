@@ -683,7 +683,7 @@ void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AcquirePointers(void)
 {
-    int32 Status = CFE_SUCCESS;
+    int32 Status;
 
     /*
     ** Release the table (AppMon)

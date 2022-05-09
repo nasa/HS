@@ -87,7 +87,7 @@ void HS_IdleTask(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int32 HS_CustomInit(void)
 {
-    int32 Status = CFE_SUCCESS;
+    int32 Status;
 
     /*
     ** Spawn the Idle Task
