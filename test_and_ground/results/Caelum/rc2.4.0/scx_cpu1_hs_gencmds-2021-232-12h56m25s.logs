@@ -1,0 +1,743 @@
+21-232-12:56:25.572 00     SPR-I:OPRO         ****************** FSW Configuration ******************
+21-232-12:56:25.572 00     SPR-I:OPRO                 Checksum:    29237
+21-232-12:56:25.573 00     SPR-I:OPRO                 cFE Version: 6.7.99.0
+21-232-12:56:25.573 00     SPR-I:OPRO                 OS Version:  5.0.0.255
+21-232-12:56:25.573 00     SPR-I:OPRO          
+21-232-12:56:25.573 00     SPR-I:OPRO                 Connection Status
+21-232-12:56:25.573 00     SPR-I:OPRO                 -----------------
+21-232-12:56:25.573 00     SPR-I:OPRO                 CFDP: DOWN
+21-232-12:56:25.574 00     SPR-I:OPRO                 UDP:  UP 
+21-232-12:56:25.575 00     SPR-I:OPRO                 SWTS:  UNK
+21-232-12:56:25.576 00     SPR-I:OPRO         
+21-232-12:56:25.576 00     SPR-I:OPRO                 CMD / TLM Path
+21-232-12:56:25.576 00     SPR-I:OPRO                 --------------
+21-232-12:56:25.576 00     SPR-I:OPRO                 UDP
+21-232-12:56:25.576 00     SPR-I:OPRO                 
+21-232-12:56:25.576 00     SPR-I:OPRO         
+21-232-12:56:25.576 00     SPR-I:OPRO                 ASIST / GDS Configuration
+21-232-12:56:25.576 00     SPR-I:OPRO                 -------------------------
+21-232-12:56:25.576 00     SPR-I:OPRO                 Workstation: GS582CFSLAB4
+21-232-12:56:25.576 00     SPR-I:OPRO                 Account: cfs_test
+21-232-12:56:25.577 00     SPR-I:OPRO                 Version: 21.0.7
+21-232-12:56:25.577 00     SPR-I:OPRO                 Tlm DB:  Version: 1.983  Date: 07-13-21  Time: 10:22:58 AM.
+21-232-12:56:25.577 00     SPR-I:OPRO                 Cmd DB:  Version: 1.51  Date: 05-21-21  Time: 08:24:49 AM.EDT
+21-232-12:56:25.577 00     SPR-I:OPRO         
+21-232-12:56:25.577 00     SPR-I:OPRO                 Telemetry Info
+21-232-12:56:25.577 00     SPR-I:OPRO                 --------------
+21-232-12:56:25.577 00     SPR-I:OPRO                 Pkt Loss Count: N/A
+21-232-12:56:25.586 00     SPR-I:OPRO         ****************  End FSW Configuration ***************
+21-232-12:56:25.586 00     SPR-I:OPRO         Starting Procedure.... scx_cpu1_hs_gencmds
+21-232-12:56:25.674 00     SPR-I:OPRI     --> start scx_cpu1_hs_gencmds
+21-232-12:56:25.675 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/scx_cpu1_hs_gencmds.i
+21-232-12:56:25.679 00     SPR-I:STS          Procedure SCX_CPU1_HS_GENCMDS started
+21-232-12:56:25.757 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:56:25.757 00     SPR-I:OPRO         ;  Step 1.0: Health and Safety Test Setup.
+21-232-12:56:25.757 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:56:25.757 00     SPR-I:OPRO         ;  Step 1.1: Command a Power-on Reset on CPU1.
+21-232-12:56:25.757 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:56:25.758 00     CMH-I:CMD             Command SFDU received:<1806C000000302220002> from gs582cfslab4:SPR
+21-232-12:56:25.769 00     SPR-I:STTE         Wait mode - waiting 10 seconds ...
+21-232-12:56:35.779 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/clear_spacecraft_status.i
+21-232-12:56:35.780 00     SPR-I:STS          Procedure CLEAR_SPACECRAFT_STATUS started
+21-232-12:56:35.786 00     SPR-I:STS          Procedure CLEAR_SPACECRAFT_STATUS completed
+21-232-12:56:35.809 00     SPR-I:STTE         Wait mode - waiting 60 seconds ...
+21-232-12:57:35.869 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:57:41.838 00     CMH-I:STS          Connected to FEDS:FEDS for commanding (internal ID 0). 
+21-232-12:57:45.879 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:57:45.947 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/send_that_to_command.i
+21-232-12:57:45.947 00     SPR-I:STS          Procedure SEND_THAT_TO_COMMAND started
+21-232-12:57:45.948 00     SPR-I:OPRO         Sending: /SCX_CPU1_TO_OUTPUT_ENA gs582cfslab4
+21-232-12:57:45.949 00     CMH-I:CMD             Command SFDU received:<1880C0000011069A3139322E3136382E312E313031000000> from gs582cfslab4:SPR
+21-232-12:57:46.000 00     SPR-I:STS          Procedure SEND_THAT_TO_COMMAND completed
+21-232-12:57:46.000 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:57:47.071 00    TLMH-I:STS          58-012-14:03:48.917 INFO CPU=CPU1 APPNAME=TO_LAB_APP EVENT ID=3 TO telemetry output enabled for IP 192.168.1.101
+21-232-12:57:51.006 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:57:51.006 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/fill_in_spacecraft_status.i
+21-232-12:57:51.008 00     SPR-I:STS          Procedure FILL_IN_SPACECRAFT_STATUS started
+21-232-12:57:51.012 00     SPR-I:STS          Procedure FILL_IN_SPACECRAFT_STATUS completed
+21-232-12:57:51.012 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:57:56.017 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:57:56.017 00     SPR-I:OPRO         ;  Step 1.2: Display the Housekeeping pages 
+21-232-12:57:56.018 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:57:56.141 00     DPD-I:STS          Page SCX_CPU1_HS_HK added (cid:1).
+21-232-12:57:56.144 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:57:56.145 00     SPR-I:OPRO         ;  Step 1.3: Create & load the default definition tables. 
+21-232-12:57:56.145 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:57:56.145 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/scx_cpu1_hs_amt1.i
+21-232-12:57:56.145 00     SPR-I:STS          Procedure SCX_CPU1_HS_AMT1 started
+21-232-12:57:56.158 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.158 00     SPR-I:OPRO         ;  define local variables 
+21-232-12:57:56.158 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.158 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.158 00     SPR-I:OPRO         ;  Define the Application Monitoring Table 
+21-232-12:57:56.158 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.172 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/create_tbl_file_from_cvt.i
+21-232-12:57:56.173 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT started
+21-232-12:57:56.179 00     SPR-I:OPRO         **********  hs_def_amt1  **********
+21-232-12:57:56.179 00     SPR-I:OPRO         
+21-232-12:57:56.179 00     SPR-I:OPRO                Content Type: cFE1
+21-232-12:57:56.179 00     SPR-I:OPRO                    Sub Type: 8
+21-232-12:57:56.179 00     SPR-I:OPRO                      Length: 12
+21-232-12:57:56.179 00     SPR-I:OPRO               Spacecraft Id: SCX
+21-232-12:57:56.179 00     SPR-I:OPRO                Processor Id: CPU3
+21-232-12:57:56.179 00     SPR-I:OPRO              Application Id: 3954
+21-232-12:57:56.180 00     SPR-I:OPRO            Create Time Secs: 1629464276
+21-232-12:57:56.180 00     SPR-I:OPRO         Create Time Subsecs: 0
+21-232-12:57:56.180 00     SPR-I:OPRO            File Description: App Monitoring Table Load 1
+21-232-12:57:56.180 00     SPR-I:OPRO         
+21-232-12:57:56.180 00     SPR-I:OPRO         **********  HS.AppMon_Tbl  **********
+21-232-12:57:56.180 00     SPR-I:OPRO         
+21-232-12:57:56.180 00     SPR-I:OPRO              Start Mnemonic: SCX_CPU1_HS_AMT[1].AppName
+21-232-12:57:56.180 00     SPR-I:OPRO                 Byte Offset: 0
+21-232-12:57:56.180 00     SPR-I:OPRO                End Mnemonic: SCX_CPU1_HS_AMT[32].ActionType
+21-232-12:57:56.180 00     SPR-I:OPRO             Number of Bytes: 832
+21-232-12:57:56.180 00     SPR-I:OPRO         
+21-232-12:57:56.188 00     SPR-I:STS          Loading file /s/opr/accounts/global/prc/partial_cvt_to_file_beta.i
+21-232-12:57:56.191 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA started
+21-232-12:57:56.192 00     SPR-I:OPRO         The unix command is cd /s/opr/accounts/cfs_test/image;cvt2file  -s 116 -e 947 P0F72 hs.appmon_tbl
+21-232-12:57:56.200 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA completed
+21-232-12:57:56.200 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;cat hs_def_amt1.tmp hs.appmon_tbl > hs_def_amt1
+21-232-12:57:56.205 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;rm hs.appmon_tbl hs_def_amt1.tmp
+21-232-12:57:56.208 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT completed
+21-232-12:57:56.209 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.209 00     SPR-I:OPRO         ;  End procedure SCX_CPU1_hs_amt1 
+21-232-12:57:56.209 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:57:56.209 00     SPR-I:STS          Procedure SCX_CPU1_HS_AMT1 completed
+21-232-12:57:56.210 00     SPR-I:OPRO         ==> Default Application Monitoring Table filename = 'hs_amt.tbl'
+21-232-12:57:56.210 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/load_table.i
+21-232-12:57:56.210 00     SPR-I:STS          Procedure LOAD_TABLE started
+21-232-12:57:56.217 00     SPR-I:OPRO         Table Filename: hs_def_amt1
+21-232-12:57:56.219 00     SPR-I:OPRO         The perl command is: perl /s/opr/accounts/global/tools/table_ftp.pl 192.168.1.8 hs_def_amt1 RAM:0 3
+21-232-12:57:56.219 00     SPR-I:OPRO         
+21-232-12:57:56.365 00     SPR-I:OPRO         Return code from ftp_file.pl: 0
+21-232-12:57:56.366 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:01.369 00     SPR-I:OPRO         
+21-232-12:58:01.370 00     SPR-I:OPRO         Sending Command: /SCX_CPU1_TBL_LOAD LFILENAME="/ram/hs_def_amt1"
+21-232-12:58:01.370 00     CMH-I:CMD             Command SFDU received:<1804C0000041022B2F72616D2F68735F6465665F616D7431000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:01.385 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:58:02.074 00    TLMH-I:STS          58-012-14:04:04.001 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_amt1' into 'HS.AppMon_Tbl' working buffer
+21-232-12:58:02.387 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:58:02.389 00     SPR-I:STS          Procedure LOAD_TABLE completed
+21-232-12:58:02.390 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:07.395 00     CMH-I:CMD             Command SFDU received:<1804C000002B0431000048532E4170704D6F6E5F54626C000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:07.405 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:08.070 00    TLMH-I:STS          58-012-14:04:10.233 INFO CPU=CPU1 APPNAME=HS EVENT ID=50 AppMon verify results: good = 5, bad = 0, unused = 27
+21-232-12:58:08.072 00    TLMH-I:STS          58-012-14:04:10.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.AppMon_Tbl'
+21-232-12:58:12.410 00     CMH-I:CMD             Command SFDU received:<1804C0000029053248532E4170704D6F6E5F54626C000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:12.421 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:13.078 00    TLMH-I:STS          58-012-14:04:15.033 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.AppMon_Tbl'
+21-232-12:58:17.425 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/scx_cpu1_hs_emt1.i
+21-232-12:58:17.427 00     SPR-I:STS          Procedure SCX_CPU1_HS_EMT1 started
+21-232-12:58:17.450 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.450 00     SPR-I:OPRO         ;  define local variables 
+21-232-12:58:17.450 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.451 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.451 00     SPR-I:OPRO         ;  Define the Application Monitoring Table 
+21-232-12:58:17.451 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.458 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/create_tbl_file_from_cvt.i
+21-232-12:58:17.459 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT started
+21-232-12:58:17.461 00     SPR-I:OPRO         **********  hs_def_emt1  **********
+21-232-12:58:17.461 00     SPR-I:OPRO         
+21-232-12:58:17.461 00     SPR-I:OPRO                Content Type: cFE1
+21-232-12:58:17.461 00     SPR-I:OPRO                    Sub Type: 8
+21-232-12:58:17.461 00     SPR-I:OPRO                      Length: 12
+21-232-12:58:17.461 00     SPR-I:OPRO               Spacecraft Id: SCX
+21-232-12:58:17.462 00     SPR-I:OPRO                Processor Id: CPU3
+21-232-12:58:17.462 00     SPR-I:OPRO              Application Id: 3955
+21-232-12:58:17.462 00     SPR-I:OPRO            Create Time Secs: 1629464297
+21-232-12:58:17.462 00     SPR-I:OPRO         Create Time Subsecs: 0
+21-232-12:58:17.462 00     SPR-I:OPRO            File Description: Event Monitoring Table Load 1
+21-232-12:58:17.462 00     SPR-I:OPRO         
+21-232-12:58:17.462 00     SPR-I:OPRO         **********  HS.EventMon_Tbl  **********
+21-232-12:58:17.462 00     SPR-I:OPRO         
+21-232-12:58:17.462 00     SPR-I:OPRO              Start Mnemonic: SCX_CPU1_HS_EMT[1].AppName
+21-232-12:58:17.462 00     SPR-I:OPRO                 Byte Offset: 0
+21-232-12:58:17.462 00     SPR-I:OPRO                End Mnemonic: SCX_CPU1_HS_EMT[16].ActionType
+21-232-12:58:17.462 00     SPR-I:OPRO             Number of Bytes: 416
+21-232-12:58:17.462 00     SPR-I:OPRO         
+21-232-12:58:17.469 00     SPR-I:STS          Loading file /s/opr/accounts/global/prc/partial_cvt_to_file_beta.i
+21-232-12:58:17.469 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA started
+21-232-12:58:17.470 00     SPR-I:OPRO         The unix command is cd /s/opr/accounts/cfs_test/image;cvt2file  -s 116 -e 531 P0F73 hs.eventmon_tbl
+21-232-12:58:17.478 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA completed
+21-232-12:58:17.478 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;cat hs_def_emt1.tmp hs.eventmon_tbl > hs_def_emt1
+21-232-12:58:17.482 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;rm hs.eventmon_tbl hs_def_emt1.tmp
+21-232-12:58:17.487 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT completed
+21-232-12:58:17.487 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.487 00     SPR-I:OPRO         ;  End procedure SCX_CPU1_hs_emt1 
+21-232-12:58:17.487 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:17.487 00     SPR-I:STS          Procedure SCX_CPU1_HS_EMT1 completed
+21-232-12:58:17.488 00     SPR-I:OPRO         ==> Default Event Monitoring Table filename = 'hs_emt.tbl'
+21-232-12:58:17.488 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/load_table.i
+21-232-12:58:17.488 00     SPR-I:STS          Procedure LOAD_TABLE started
+21-232-12:58:17.499 00     SPR-I:OPRO         Table Filename: hs_def_emt1
+21-232-12:58:17.500 00     SPR-I:OPRO         The perl command is: perl /s/opr/accounts/global/tools/table_ftp.pl 192.168.1.8 hs_def_emt1 RAM:0 3
+21-232-12:58:17.500 00     SPR-I:OPRO         
+21-232-12:58:17.642 00     SPR-I:OPRO         Return code from ftp_file.pl: 0
+21-232-12:58:17.642 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:22.646 00     SPR-I:OPRO         
+21-232-12:58:22.649 00     SPR-I:OPRO         Sending Command: /SCX_CPU1_TBL_LOAD LFILENAME="/ram/hs_def_emt1"
+21-232-12:58:22.650 00     CMH-I:CMD             Command SFDU received:<1804C0000041022F2F72616D2F68735F6465665F656D7431000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:22.678 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:58:23.577 00    TLMH-I:STS          58-012-14:04:25.500 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_emt1' into 'HS.EventMon_Tbl' working buffer
+21-232-12:58:26.684 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:58:26.685 00     SPR-I:STS          Procedure LOAD_TABLE completed
+21-232-12:58:26.687 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:31.693 00     CMH-I:CMD             Command SFDU received:<1804C000002B043C000048532E4576656E744D6F6E5F54626C00000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:31.707 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:33.578 00    TLMH-I:STS          58-012-14:04:35.433 INFO CPU=CPU1 APPNAME=HS EVENT ID=52 EventMon verify results: good = 0, bad = 0, unused = 16
+21-232-12:58:33.579 00    TLMH-I:STS          58-012-14:04:35.433 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.EventMon_Tbl'
+21-232-12:58:36.712 00     CMH-I:CMD             Command SFDU received:<1804C0000029053F48532E4576656E744D6F6E5F54626C00000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:36.725 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:38.074 00    TLMH-I:STS          58-012-14:04:40.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.EventMon_Tbl'
+21-232-12:58:41.731 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/scx_cpu1_hs_mat1.i
+21-232-12:58:41.732 00     SPR-I:STS          Procedure SCX_CPU1_HS_MAT1 started
+21-232-12:58:41.742 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.742 00     SPR-I:OPRO         ;  define local variables 
+21-232-12:58:41.742 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.743 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.743 00     SPR-I:OPRO         ;  Define the Application Monitoring Table 
+21-232-12:58:41.743 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.746 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/create_tbl_file_from_cvt.i
+21-232-12:58:41.746 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT started
+21-232-12:58:41.748 00     SPR-I:OPRO         **********  hs_def_mat1  **********
+21-232-12:58:41.748 00     SPR-I:OPRO         
+21-232-12:58:41.748 00     SPR-I:OPRO                Content Type: cFE1
+21-232-12:58:41.748 00     SPR-I:OPRO                    Sub Type: 8
+21-232-12:58:41.748 00     SPR-I:OPRO                      Length: 12
+21-232-12:58:41.748 00     SPR-I:OPRO               Spacecraft Id: SCX
+21-232-12:58:41.748 00     SPR-I:OPRO                Processor Id: CPU3
+21-232-12:58:41.748 00     SPR-I:OPRO              Application Id: 3956
+21-232-12:58:41.749 00     SPR-I:OPRO            Create Time Secs: 1629464321
+21-232-12:58:41.749 00     SPR-I:OPRO         Create Time Subsecs: 0
+21-232-12:58:41.749 00     SPR-I:OPRO            File Description: Message Actions Table Load 1
+21-232-12:58:41.749 00     SPR-I:OPRO         
+21-232-12:58:41.749 00     SPR-I:OPRO         **********  HS.MsgActs_Tbl  **********
+21-232-12:58:41.749 00     SPR-I:OPRO         
+21-232-12:58:41.749 00     SPR-I:OPRO              Start Mnemonic: SCX_CPU1_HS_MAT[1].EnableState
+21-232-12:58:41.749 00     SPR-I:OPRO                 Byte Offset: 0
+21-232-12:58:41.749 00     SPR-I:OPRO                End Mnemonic: SCX_CPU1_HS_MAT[8].MessageData
+21-232-12:58:41.749 00     SPR-I:OPRO             Number of Bytes: 192
+21-232-12:58:41.749 00     SPR-I:OPRO         
+21-232-12:58:41.757 00     SPR-I:STS          Loading file /s/opr/accounts/global/prc/partial_cvt_to_file_beta.i
+21-232-12:58:41.757 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA started
+21-232-12:58:41.758 00     SPR-I:OPRO         The unix command is cd /s/opr/accounts/cfs_test/image;cvt2file  -s 116 -e 307 P0F74 hs.msgacts_tbl
+21-232-12:58:41.765 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA completed
+21-232-12:58:41.765 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;cat hs_def_mat1.tmp hs.msgacts_tbl > hs_def_mat1
+21-232-12:58:41.769 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;rm hs.msgacts_tbl hs_def_mat1.tmp
+21-232-12:58:41.774 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT completed
+21-232-12:58:41.774 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.774 00     SPR-I:OPRO         ;  End procedure SCX_CPU1_hs_mat1 
+21-232-12:58:41.774 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:58:41.774 00     SPR-I:STS          Procedure SCX_CPU1_HS_MAT1 completed
+21-232-12:58:41.775 00     SPR-I:OPRO         ==> Default Message Actions Table filename = 'hs_mat.tbl'
+21-232-12:58:41.775 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/load_table.i
+21-232-12:58:41.776 00     SPR-I:STS          Procedure LOAD_TABLE started
+21-232-12:58:41.779 00     SPR-I:OPRO         Table Filename: hs_def_mat1
+21-232-12:58:41.780 00     SPR-I:OPRO         The perl command is: perl /s/opr/accounts/global/tools/table_ftp.pl 192.168.1.8 hs_def_mat1 RAM:0 3
+21-232-12:58:41.780 00     SPR-I:OPRO         
+21-232-12:58:41.917 00     SPR-I:OPRO         Return code from ftp_file.pl: 0
+21-232-12:58:41.917 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:46.921 00     SPR-I:OPRO         
+21-232-12:58:46.922 00     SPR-I:OPRO         Sending Command: /SCX_CPU1_TBL_LOAD LFILENAME="/ram/hs_def_mat1"
+21-232-12:58:46.922 00     CMH-I:CMD             Command SFDU received:<1804C0000041022B2F72616D2F68735F6465665F6D617431000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:46.946 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:58:47.569 00    TLMH-I:STS          58-012-14:04:49.500 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_mat1' into 'HS.MsgActs_Tbl' working buffer
+21-232-12:58:50.950 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:58:50.951 00     SPR-I:STS          Procedure LOAD_TABLE completed
+21-232-12:58:50.951 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:55.957 00     CMH-I:CMD             Command SFDU received:<1804C000002B0440000048532E4D7367416374735F54626C0000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:58:55.970 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:58:57.569 00    TLMH-I:STS          58-012-14:04:59.433 INFO CPU=CPU1 APPNAME=HS EVENT ID=56 MsgActs verify results: good = 2, bad = 0, unused = 6
+21-232-12:58:57.570 00    TLMH-I:STS          58-012-14:04:59.434 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.MsgActs_Tbl'
+21-232-12:59:00.975 00     CMH-I:CMD             Command SFDU received:<1804C0000029054348532E4D7367416374735F54626C0000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:59:00.987 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:02.078 00    TLMH-I:STS          58-012-14:05:04.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.MsgActs_Tbl'
+21-232-12:59:05.991 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/scx_cpu1_hs_xct1.i
+21-232-12:59:05.994 00     SPR-I:STS          Procedure SCX_CPU1_HS_XCT1 started
+21-232-12:59:06.024 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.024 00     SPR-I:OPRO         ;  define local variables 
+21-232-12:59:06.024 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.025 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.025 00     SPR-I:OPRO         ;  Define the Application Monitoring Table 
+21-232-12:59:06.025 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.039 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/create_tbl_file_from_cvt.i
+21-232-12:59:06.040 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT started
+21-232-12:59:06.043 00     SPR-I:OPRO         **********  hs_def_xct1  **********
+21-232-12:59:06.043 00     SPR-I:OPRO         
+21-232-12:59:06.043 00     SPR-I:OPRO                Content Type: cFE1
+21-232-12:59:06.043 00     SPR-I:OPRO                    Sub Type: 8
+21-232-12:59:06.043 00     SPR-I:OPRO                      Length: 12
+21-232-12:59:06.043 00     SPR-I:OPRO               Spacecraft Id: SCX
+21-232-12:59:06.043 00     SPR-I:OPRO                Processor Id: CPU3
+21-232-12:59:06.043 00     SPR-I:OPRO              Application Id: 3957
+21-232-12:59:06.044 00     SPR-I:OPRO            Create Time Secs: 1629464346
+21-232-12:59:06.044 00     SPR-I:OPRO         Create Time Subsecs: 0
+21-232-12:59:06.044 00     SPR-I:OPRO            File Description: Execution Counter Table Load 1
+21-232-12:59:06.044 00     SPR-I:OPRO         
+21-232-12:59:06.044 00     SPR-I:OPRO         **********  HS.ExeCount_Tbl  **********
+21-232-12:59:06.044 00     SPR-I:OPRO         
+21-232-12:59:06.044 00     SPR-I:OPRO              Start Mnemonic: SCX_CPU1_HS_XCT[1].ResourceName
+21-232-12:59:06.044 00     SPR-I:OPRO                 Byte Offset: 0
+21-232-12:59:06.044 00     SPR-I:OPRO                End Mnemonic: SCX_CPU1_HS_XCT[32].ResourceType
+21-232-12:59:06.044 00     SPR-I:OPRO             Number of Bytes: 896
+21-232-12:59:06.044 00     SPR-I:OPRO         
+21-232-12:59:06.050 00     SPR-I:STS          Loading file /s/opr/accounts/global/prc/partial_cvt_to_file_beta.i
+21-232-12:59:06.051 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA started
+21-232-12:59:06.051 00     SPR-I:OPRO         The unix command is cd /s/opr/accounts/cfs_test/image;cvt2file  -s 116 -e 1011 P0F75 hs.execount_tbl
+21-232-12:59:06.057 00     SPR-I:STS          Procedure PARTIAL_CVT_TO_FILE_BETA completed
+21-232-12:59:06.058 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;cat hs_def_xct1.tmp hs.execount_tbl > hs_def_xct1
+21-232-12:59:06.062 00     SPR-I:OPRO         cd /s/opr/accounts/cfs_test/image;rm hs.execount_tbl hs_def_xct1.tmp
+21-232-12:59:06.066 00     SPR-I:STS          Procedure CREATE_TBL_FILE_FROM_CVT completed
+21-232-12:59:06.067 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.067 00     SPR-I:OPRO         ;  End procedure SCX_CPU1_hs_xct1 
+21-232-12:59:06.067 00     SPR-I:OPRO         ;*********************************************************************
+21-232-12:59:06.067 00     SPR-I:STS          Procedure SCX_CPU1_HS_XCT1 completed
+21-232-12:59:06.071 00     SPR-I:OPRO         ==> Default Execution Counter Table filename = 'hs_xct.tbl'
+21-232-12:59:06.072 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/load_table.i
+21-232-12:59:06.072 00     SPR-I:STS          Procedure LOAD_TABLE started
+21-232-12:59:06.073 00     SPR-I:OPRO         Table Filename: hs_def_xct2
+21-232-12:59:06.074 00     SPR-I:OPRO         The perl command is: perl /s/opr/accounts/global/tools/table_ftp.pl 192.168.1.8 hs_def_xct2 RAM:0 3
+21-232-12:59:06.074 00     SPR-I:OPRO         
+21-232-12:59:06.210 00     SPR-I:OPRO         Return code from ftp_file.pl: 0
+21-232-12:59:06.210 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:11.214 00     SPR-I:OPRO         
+21-232-12:59:11.217 00     SPR-I:OPRO         Sending Command: /SCX_CPU1_TBL_LOAD LFILENAME="/ram/hs_def_xct2"
+21-232-12:59:11.219 00     CMH-I:CMD             Command SFDU received:<1804C0000041023F2F72616D2F68735F6465665F78637432000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:59:11.246 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:59:12.077 00    TLMH-I:STS          58-012-14:05:14.001 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_xct2' into 'HS.ExeCount_Tbl' working buffer
+21-232-12:59:14.251 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:14.252 00     SPR-I:STS          Procedure LOAD_TABLE completed
+21-232-12:59:14.253 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:19.260 00     CMH-I:CMD             Command SFDU received:<1804C000002B0427000048532E457865436F756E745F54626C00000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:59:19.272 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:20.076 00    TLMH-I:STS          58-012-14:05:22.233 INFO CPU=CPU1 APPNAME=HS EVENT ID=54 ExeCount verify results: good = 7, bad = 0, unused = 25
+21-232-12:59:20.077 00    TLMH-I:STS          58-012-14:05:22.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.ExeCount_Tbl'
+21-232-12:59:24.279 00     CMH-I:CMD             Command SFDU received:<1804C0000029052448532E457865436F756E745F54626C00000000000000000000000000000000000000000000000000> from gs582cfslab4:SPR
+21-232-12:59:24.292 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:25.068 00    TLMH-I:STS          58-012-14:05:27.033 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.ExeCount_Tbl'
+21-232-12:59:29.298 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:29.298 00     SPR-I:OPRO         ;  Step 1.4:  Start the Health and Safety (HS) and Test Applications.   
+21-232-12:59:29.298 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:29.298 00     SPR-I:OPRO         ; Skipped this step 
+21-232-12:59:29.299 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:29.299 00     SPR-I:OPRO         ;  Step 1.5: Enable DEBUG Event Messages 
+21-232-12:59:29.299 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:29.302 00     CMH-I:CMD             Command SFDU received:<1801C0000017052E48530000000000000000000000000000000000000100> from gs582cfslab4:SPR
+21-232-12:59:29.319 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:59:30.320 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:30.322 00     SPR-I:OPRO         <*> Passed - Enable Debug events command sent properly.
+21-232-12:59:30.323 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:30.323 00     SPR-I:OPRO         ;  Step 1.6: Verify that the HS Housekeeping telemetry packet is being 
+21-232-12:59:30.323 00     SPR-I:OPRO         ;  generated and the appropriate items are initialized to zero (0). 
+21-232-12:59:30.323 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:30.328 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:59:35.334 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:35.336 00     SPR-I:OPRO         <*> Passed (7100) - Housekeeping packet is being generated.
+21-232-12:59:35.341 00     SPR-I:OPRO         <*> Passed (8000) - Housekeeping telemetry initialized properly.
+21-232-12:59:35.343 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:40.347 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:40.347 00     SPR-I:OPRO         ;  Step 2.0: Commanding Test.
+21-232-12:59:40.347 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:40.348 00     SPR-I:OPRO         ;  Step 2.1: Send the NO-OP command.
+21-232-12:59:40.348 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:40.353 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:40.353 00     SPR-I:OPRO         ; Setup event 1 with HS INFO 23
+21-232-12:59:40.353 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:40.354 00     CMH-I:CMD             Command SFDU received:<18AEC00000010088> from gs582cfslab4:SPR
+21-232-12:59:40.367 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:59:41.576 00    TLMH-I:STS          58-012-14:05:43.834 INFO CPU=CPU1 APPNAME=HS EVENT ID=23 No-op command: Version 2.4.0.0
+21-232-12:59:43.371 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:43.373 00     SPR-I:OPRO         <*> Passed (1000;1003) - HS NO-OP command sent properly.
+21-232-12:59:43.379 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:43.380 00     SPR-I:OPRO         <*> Passed (1000;1003) - Expected Event Msg 23 rcv'd.
+21-232-12:59:43.381 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:48.386 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:48.387 00     SPR-I:OPRO         ;  Step 2.2: Send the NO-OP command with an invalid length.
+21-232-12:59:48.387 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:48.392 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:48.392 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-12:59:48.392 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:48.398 00     SPR-I:OPRO         Sending:  18AEc000000200B0
+21-232-12:59:48.399 00     CMH-I:CMD             Command SFDU received:<18AEC000000200B0> from gs582cfslab4:SPR
+21-232-12:59:48.403 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-12:59:48.404 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-12:59:49.070 00    TLMH-I:STS          58-012-14:05:51.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 0, Len = 9, Expected = 8
+21-232-12:59:50.406 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:50.413 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-12:59:50.414 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-12:59:50.416 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-12:59:50.416 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:55.423 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:55.423 00     SPR-I:OPRO         ;  Step 2.4: Verify that all the counters are non-zero and send the   
+21-232-12:59:55.423 00     SPR-I:OPRO         ;  Reset command if so.                                               
+21-232-12:59:55.423 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:55.424 00     SPR-I:OPRO         <*> Counters are all non-zero. Sending reset command.
+21-232-12:59:55.428 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:55.428 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 24
+21-232-12:59:55.428 00     SPR-I:OPRO         ;***********************************************************************
+21-232-12:59:55.429 00     CMH-I:CMD             Command SFDU received:<18AEC00000010189> from gs582cfslab4:SPR
+21-232-12:59:55.440 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-12:59:56.071 00    TLMH-I:STS          58-012-14:05:58.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=24 Reset counters command
+21-232-13:00:00.449 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:00.450 00     SPR-I:OPRO         <*> Passed (1001;1003) - Expected Event Msg 24 rcv'd.
+21-232-13:00:00.451 00     SPR-I:OPRO         <*> Passed (1001) - Counters all reset to zero.
+21-232-13:00:00.452 00     SPR-I:OPRO         CMDPC           = 0
+21-232-13:00:00.458 00     SPR-I:OPRO         CMDEC           = 0
+21-232-13:00:00.458 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:05.463 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:05.463 00     SPR-I:OPRO         ;  Step 2.5: Send the Reset command with an invalid length.             
+21-232-13:00:05.463 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:05.468 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:05.468 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:00:05.468 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:05.473 00     SPR-I:OPRO         Sending:  18AEc000000201B0
+21-232-13:00:05.474 00     CMH-I:CMD             Command SFDU received:<18AEC000000201B0> from gs582cfslab4:SPR
+21-232-13:00:05.489 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:00:05.489 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:07.071 00    TLMH-I:STS          58-012-14:06:09.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 1, Len = 9, Expected = 8
+21-232-13:00:07.492 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:07.508 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:07.509 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:00:07.516 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:00:07.536 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:12.541 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:12.541 00     SPR-I:OPRO         ;  Step 2.6: Send the Disable CPU Aliveness command.
+21-232-13:00:12.541 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:12.547 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:12.548 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 30
+21-232-13:00:12.548 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:12.552 00     CMH-I:CMD             Command SFDU received:<18AEC0000001078F> from gs582cfslab4:SPR
+21-232-13:00:12.568 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:13.071 00    TLMH-I:STS          58-012-14:06:15.034 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=30 Aliveness Indicator Disabled
+21-232-13:00:14.569 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:14.570 00     SPR-I:OPRO         <*> Passed (1003;6007) - HS Disable CPU Aliveness command sent properly.
+21-232-13:00:14.574 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:14.575 00     SPR-I:OPRO         <*> Passed (1003;6007) - Expected Event Msg 23 rcv'd.
+21-232-13:00:14.576 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:19.586 00     SPR-I:OPRO         <*> Passed (6007) - Telemetry indicates CPU Alive State is Disabled.
+21-232-13:00:19.586 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:19.587 00     SPR-I:OPRO         ;  Step 2.7: Send the Disable CPU Aliveness command with an invalid 
+21-232-13:00:19.587 00     SPR-I:OPRO         ;  length.
+21-232-13:00:19.587 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:19.588 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:19.588 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:00:19.588 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:19.595 00     SPR-I:OPRO         Sending:  18AEc000000207B0
+21-232-13:00:19.596 00     CMH-I:CMD             Command SFDU received:<18AEC000000207B0> from gs582cfslab4:SPR
+21-232-13:00:19.610 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:00:19.611 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:20.071 00    TLMH-I:STS          58-012-14:06:22.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 7, Len = 9, Expected = 8
+21-232-13:00:22.614 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:22.629 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:22.631 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:00:22.637 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:00:22.640 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:27.645 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:27.645 00     SPR-I:OPRO         ;  Step 2.8: Send the Enable CPU Aliveness command.
+21-232-13:00:27.646 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:27.651 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:27.651 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 29
+21-232-13:00:27.651 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:27.652 00     CMH-I:CMD             Command SFDU received:<18AEC0000001068E> from gs582cfslab4:SPR
+21-232-13:00:27.668 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:28.576 00    TLMH-I:STS          58-012-14:06:30.634 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=29 Aliveness Indicator Enabled
+21-232-13:00:31.673 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:31.673 00     SPR-I:OPRO         <*> Passed (1003;6006) - HS Enable CPU Aliveness command sent properly.
+21-232-13:00:31.677 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:31.677 00     SPR-I:OPRO         <*> Passed (1003;6006) - Expected Event Msg 29 rcv'd.
+21-232-13:00:31.679 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:36.692 00     SPR-I:OPRO         <*> Passed (6006) - Telemetry indicates CPU Alive State is Enabled.
+21-232-13:00:36.696 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:36.696 00     SPR-I:OPRO         ;  Step 2.9: Send the Enable CPU Aliveness command with an invalid 
+21-232-13:00:36.696 00     SPR-I:OPRO         ;  length.
+21-232-13:00:36.696 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:36.699 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:36.699 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:00:36.699 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:36.710 00     SPR-I:OPRO         Sending:  18AEc000000206B0
+21-232-13:00:36.711 00     CMH-I:CMD             Command SFDU received:<18AEC000000206B0> from gs582cfslab4:SPR
+21-232-13:00:36.727 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:00:36.728 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:38.070 00    TLMH-I:STS          58-012-14:06:40.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 6, Len = 9, Expected = 8
+21-232-13:00:38.730 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:38.737 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:38.737 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:00:38.739 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:00:38.747 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:43.752 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:43.752 00     SPR-I:OPRO         ;  Step 2.11: Send the Reset Processor Resets command.
+21-232-13:00:43.752 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:43.757 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:43.758 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 31
+21-232-13:00:43.758 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:43.759 00     CMH-I:CMD             Command SFDU received:<18AEC00000010880> from gs582cfslab4:SPR
+21-232-13:00:43.773 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:45.568 00    TLMH-I:STS          58-012-14:06:47.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=31 Processor Resets Performed by HS Counter has been Reset
+21-232-13:00:46.776 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:46.778 00     SPR-I:OPRO         <*> Passed (1003;7000) - HS Reset Processor Reset Counter command sent properly.
+21-232-13:00:46.786 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:46.786 00     SPR-I:OPRO         <*> Passed (1003;7000) - Expected Event Msg 31 rcv'd.
+21-232-13:00:46.788 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:00:51.793 00     SPR-I:OPRO         <*> Passed (7000) - The cFE Processor Resets Performed Counter was set to 0.
+21-232-13:00:51.796 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:51.796 00     SPR-I:OPRO         ;  Step 2.12: Send the Reset Processor Resets command with an invalid 
+21-232-13:00:51.797 00     SPR-I:OPRO         ;  length.
+21-232-13:00:51.797 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:51.799 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:51.799 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:00:51.799 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:00:51.806 00     SPR-I:OPRO         Sending:  18AEc000000208B0
+21-232-13:00:51.807 00     CMH-I:CMD             Command SFDU received:<18AEC000000208B0> from gs582cfslab4:SPR
+21-232-13:00:51.821 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:00:51.822 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:00:52.572 00    TLMH-I:STS          58-012-14:06:54.634 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 8, Len = 9, Expected = 8
+21-232-13:00:55.826 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:55.835 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:00:55.836 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:00:55.838 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:00:55.839 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:00.844 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:00.844 00     SPR-I:OPRO         ;  Step 2.13: Send the Set Max Processor Resets command.
+21-232-13:01:00.844 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:00.850 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:00.851 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 32
+21-232-13:01:00.851 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:00.854 00     CMH-I:CMD             Command SFDU received:<18AEC0000005099C00190000> from gs582cfslab4:SPR
+21-232-13:01:00.884 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:02.069 00    TLMH-I:STS          58-012-14:07:04.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=32 Max Resets Performable by HS has been set to 25
+21-232-13:01:02.887 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:02.889 00     SPR-I:OPRO         <*> Passed (1003;7001) - HS Set Max Processor Resets command sent properly.
+21-232-13:01:02.895 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:02.895 00     SPR-I:OPRO         <*> Passed (1003;7001) - Expected Event Msg 32 rcv'd.
+21-232-13:01:02.897 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:07.902 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:07.902 00     SPR-I:OPRO         ;  Step 2.14: Send the Set Max Processor Resets command with an invalid 
+21-232-13:01:07.902 00     SPR-I:OPRO         ;  length.
+21-232-13:01:07.902 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:07.908 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:07.909 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:01:07.909 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:07.913 00     SPR-I:OPRO         Sending:  18AEc000000209B0
+21-232-13:01:07.914 00     CMH-I:CMD             Command SFDU received:<18AEC000000209B0> from gs582cfslab4:SPR
+21-232-13:01:07.929 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:01:07.929 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:09.577 00    TLMH-I:STS          58-012-14:07:11.434 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 9, Len = 9, Expected = 12
+21-232-13:01:10.933 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:10.941 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:10.942 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:01:10.944 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:01:10.945 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:15.951 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:15.952 00     SPR-I:OPRO         ;  Step 2.15: Send the Disable CPU Utilization Monitoring command.
+21-232-13:01:15.952 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:15.957 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:15.957 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 65
+21-232-13:01:15.957 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:15.958 00     CMH-I:CMD             Command SFDU received:<18AEC00000010B83> from gs582cfslab4:SPR
+21-232-13:01:15.973 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:16.573 00    TLMH-I:STS          58-012-14:07:18.634 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=65 CPU Hogging Indicator Disabled
+21-232-13:01:19.978 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:19.980 00     SPR-I:OPRO         <*> Passed (1003;6012) - HS Disable CPU Utilization command sent properly.
+21-232-13:01:19.987 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:19.988 00     SPR-I:OPRO         <*> Passed (1003;6012) - Expected Event Msg 65 rcv'd.
+21-232-13:01:19.989 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:24.994 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:24.994 00     SPR-I:OPRO         ;  Step 2.16: Send the Disable CPU Utilization Monotoring command with 
+21-232-13:01:24.994 00     SPR-I:OPRO         ;  an invalid length.
+21-232-13:01:24.994 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:25.000 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:25.000 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:01:25.000 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:25.004 00     SPR-I:OPRO         Sending:  18AEc00000020B83
+21-232-13:01:25.005 00     CMH-I:CMD             Command SFDU received:<18AEC00000020B83> from gs582cfslab4:SPR
+21-232-13:01:25.009 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:01:25.010 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:26.072 00    TLMH-I:STS          58-012-14:07:28.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 11, Len = 9, Expected = 8
+21-232-13:01:27.012 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:27.020 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:27.020 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:01:27.022 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:01:27.023 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:32.036 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:32.036 00     SPR-I:OPRO         ;  Step 2.17: Send the Enable CPU Utilization Monitoring command.
+21-232-13:01:32.036 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:32.038 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:32.038 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 64
+21-232-13:01:32.038 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:32.039 00     CMH-I:CMD             Command SFDU received:<18AEC00000010A82> from gs582cfslab4:SPR
+21-232-13:01:32.053 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:33.575 00    TLMH-I:STS          58-012-14:07:35.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=64 CPU Hogging Indicator Enabled
+21-232-13:01:35.056 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:35.057 00     SPR-I:OPRO         <*> Passed (1003;6011) - HS Enable CPU Utilization command sent properly.
+21-232-13:01:35.063 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:35.064 00     SPR-I:OPRO         <*> Passed (1003;6011) - Expected Event Msg 64 rcv'd.
+21-232-13:01:35.065 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:39.571 00    TLMH-I:STS          58-012-14:07:41.434 ERROR CPU=CPU1 APPNAME=HS EVENT ID=61 CPU Hogging Detected
+21-232-13:01:40.070 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:40.070 00     SPR-I:OPRO         ;  Step 2.18: Send the Enable CPU Utilization Monotoring command with 
+21-232-13:01:40.070 00     SPR-I:OPRO         ;  an invalid length.
+21-232-13:01:40.071 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:40.076 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:40.076 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:01:40.077 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:40.082 00     SPR-I:OPRO         Sending:  18AEc00000020A82
+21-232-13:01:40.083 00     CMH-I:CMD             Command SFDU received:<18AEC00000020A82> from gs582cfslab4:SPR
+21-232-13:01:40.088 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:01:40.089 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:40.575 00    TLMH-I:STS          58-012-14:07:42.634 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 10, Len = 9, Expected = 8
+21-232-13:01:43.092 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:43.103 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:43.104 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:01:43.106 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:01:43.106 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:48.110 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:48.110 00     SPR-I:OPRO         ;  Step 2.19: Send an invalid command.  
+21-232-13:01:48.111 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:48.117 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:48.118 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 19
+21-232-13:01:48.118 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:48.134 00     SPR-I:OPRO         Sending:  18AEc0000001AA00
+21-232-13:01:48.137 00     CMH-I:CMD             Command SFDU received:<18AEC0000001AA00> from gs582cfslab4:SPR
+21-232-13:01:48.158 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:01:48.158 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:49.071 00    TLMH-I:STS          58-012-14:07:51.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=19 Invalid command code: ID = 0x000018AE, CC = 42
+21-232-13:01:50.161 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:50.177 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:50.178 00     SPR-I:OPRO         <*> Passed (1004) - Command Rejected Counter incremented.
+21-232-13:01:50.182 00     SPR-I:OPRO         <*> Passed (1004) - Event message 19 received
+21-232-13:01:50.185 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:01:55.190 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:55.190 00     SPR-I:OPRO         ;  Step 2.20: Send the Report Diagnostics command.  
+21-232-13:01:55.190 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:55.195 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:55.196 00     SPR-I:OPRO         ; Setup event 1 with HS INFO 103
+21-232-13:01:55.196 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:55.197 00     CMH-I:CMD             Command SFDU received:<18AEC00000010C84> from gs582cfslab4:SPR
+21-232-13:01:55.211 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:56.072 00    TLMH-I:STS          58-012-14:07:58.234 INFO CPU=CPU1 APPNAME=HS EVENT ID=103 Mask 0xFFFFFFFF Base Time Ticks per Idle Ticks (frequency): 0(16), -1(0), -1(0), -1(0)
+21-232-13:01:56.213 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:56.216 00     SPR-I:OPRO         <*> Passed - HS Report Diagnostics event message was generated.
+21-232-13:01:56.216 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:56.216 00     SPR-I:OPRO         ;  Step 2.21: Send the Set CPU Utilization Parameters command.  
+21-232-13:01:56.217 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:56.224 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:56.225 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 104
+21-232-13:01:56.225 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:56.229 00     CMH-I:CMD             Command SFDU received:<18AEC000000D0DC9000009C40000C54900000001> from gs582cfslab4:SPR
+21-232-13:01:56.255 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:01:57.569 00    TLMH-I:STS          58-012-14:07:59.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=104 Utilization Parms set: Mult1: 2500 Div: 50505 Mult2: 1
+21-232-13:01:59.258 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:59.260 00     SPR-I:OPRO         <*> Passed - HS Set CPU Utilization parameters command sent properly.
+21-232-13:01:59.266 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:01:59.267 00     SPR-I:OPRO         <*> Passed - Event message was generated.
+21-232-13:01:59.267 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:59.267 00     SPR-I:OPRO         ;  Step 2.22: Send the Set CPU Utilization Parameters command with 
+21-232-13:01:59.267 00     SPR-I:OPRO         ;  an invalid length.
+21-232-13:01:59.267 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:59.269 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:59.269 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:01:59.269 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:01:59.276 00     SPR-I:OPRO         Sending:  18AEC000000E0D62000009C40000C54900000001
+21-232-13:01:59.277 00     CMH-I:CMD             Command SFDU received:<18AEC000000E0D62000009C40000C54900000001> from gs582cfslab4:SPR
+21-232-13:01:59.292 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:01:59.293 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:02:01.070 00    TLMH-I:STS          58-012-14:08:03.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 13, Len = 21, Expected = 20
+21-232-13:02:02.296 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:02.304 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:02.304 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:02:02.306 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:02:02.307 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:02:07.312 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:07.312 00     SPR-I:OPRO         ;  Step 2.23: Send the Set CPU Utilization Mask command.  
+21-232-13:02:07.312 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:07.317 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:07.317 00     SPR-I:OPRO         ; Setup event 1 with HS DEBUG 106
+21-232-13:02:07.317 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:07.318 00     CMH-I:CMD             Command SFDU received:<18AEC00000050E820000FFFF> from gs582cfslab4:SPR
+21-232-13:02:07.333 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:02:08.075 00    TLMH-I:STS          58-012-14:08:10.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=106 Utilization Diagnostics Mask has been set to 0000FFFF
+21-232-13:02:11.337 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:11.340 00     SPR-I:OPRO         <*> Passed - HS Set CPU Utilization Mask command sent properly.
+21-232-13:02:11.346 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:11.347 00     SPR-I:OPRO         <*> Passed - Event message was generated.
+21-232-13:02:11.347 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:11.347 00     SPR-I:OPRO         ;  Step 2.24: Send the Set CPU Utilization Mask command with 
+21-232-13:02:11.347 00     SPR-I:OPRO         ;  an invalid length.
+21-232-13:02:11.347 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:11.349 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:11.349 00     SPR-I:OPRO         ; Setup event 1 with HS ERROR 22
+21-232-13:02:11.349 00     SPR-I:OPRO         ;***********************************************************************
+21-232-13:02:11.357 00     SPR-I:OPRO         Sending:  18AEC00000060E82FFFFFFFF
+21-232-13:02:11.358 00     CMH-I:CMD             Command SFDU received:<18AEC00000060E82FFFFFFFF> from gs582cfslab4:SPR
+21-232-13:02:11.366 00     SPR-I:OPRO          ; Telemetry update will wait a maximum of 24 seconds
+21-232-13:02:11.366 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:02:13.074 00    TLMH-I:STS          58-012-14:08:15.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 14, Len = 13, Expected = 12
+21-232-13:02:14.370 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:14.379 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:02:14.379 00     SPR-I:OPRO         <*> Passed (1002;1004) - Command Rejected Counter incremented.
+21-232-13:02:14.381 00     SPR-I:OPRO         <*> Passed (1004) - Event message 22 received
+21-232-13:02:14.382 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:02:19.387 00     SPR-I:OPRO         ;*********************************************************************
+21-232-13:02:19.387 00     SPR-I:OPRO         ;  Step 3.0: Clean-up - Send the Processor Reset command.             
+21-232-13:02:19.388 00     SPR-I:OPRO         ;*********************************************************************
+21-232-13:02:19.390 00     CMH-I:CMD             Command SFDU received:<1806C000000302210001> from gs582cfslab4:SPR
+21-232-13:02:19.403 00     SPR-I:STTE         Wait mode - waiting 10 seconds ...
+21-232-13:02:29.412 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/clear_spacecraft_status.i
+21-232-13:02:29.413 00     SPR-I:STS          Procedure CLEAR_SPACECRAFT_STATUS started
+21-232-13:02:29.419 00     SPR-I:STS          Procedure CLEAR_SPACECRAFT_STATUS completed
+21-232-13:02:29.466 00     SPR-I:STTE         Wait mode - waiting 60 seconds ...
+21-232-13:03:29.511 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:03:35.487 00     CMH-I:STS          Connected to FEDS:FEDS for commanding (internal ID 0). 
+21-232-13:03:39.519 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:03:39.583 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/send_that_to_command.i
+21-232-13:03:39.584 00     SPR-I:STS          Procedure SEND_THAT_TO_COMMAND started
+21-232-13:03:39.586 00     SPR-I:OPRO         Sending: /SCX_CPU1_TO_OUTPUT_ENA gs582cfslab4
+21-232-13:03:39.587 00     CMH-I:CMD             Command SFDU received:<1880C0000011069A3139322E3136382E312E313031000000> from gs582cfslab4:SPR
+21-232-13:03:39.638 00     SPR-I:STS          Procedure SEND_THAT_TO_COMMAND completed
+21-232-13:03:39.638 00     SPR-I:STTE         Wait mode - WAIT UNTIL ...
+21-232-13:03:40.175 00    TLMH-I:STS          58-012-14:08:49.033 INFO CPU=CPU1 APPNAME=TO_LAB_APP EVENT ID=3 TO telemetry output enabled for IP 192.168.1.101
+21-232-13:03:43.643 00     SPR-I:STTE         WAIT UNTIL completed
+21-232-13:03:43.643 00     SPR-I:STS          Loading file /s/opr/accounts/cfs_test/prc/fill_in_spacecraft_status.i
+21-232-13:03:43.643 00     SPR-I:STS          Procedure FILL_IN_SPACECRAFT_STATUS started
+21-232-13:03:43.646 00     SPR-I:STS          Procedure FILL_IN_SPACECRAFT_STATUS completed
+21-232-13:03:43.647 00     SPR-I:STTE         Wait mode - waiting 5 seconds ...
+21-232-13:03:48.651 00     SPR-I:OPRO         **** Requirements Status Reporting
+21-232-13:03:48.651 00     SPR-I:OPRO         --------------------------
+21-232-13:03:48.651 00     SPR-I:OPRO            Requirement(s) Report
+21-232-13:03:48.651 00     SPR-I:OPRO         --------------------------
+21-232-13:03:48.651 00     SPR-I:OPRO         FSW Requirement: HS_1000                          P/F: P
+21-232-13:03:48.652 00     SPR-I:OPRO         FSW Requirement: HS_1001                          P/F: P
+21-232-13:03:48.653 00     SPR-I:OPRO         FSW Requirement: HS_1002                          P/F: P
+21-232-13:03:48.654 00     SPR-I:OPRO         FSW Requirement: HS_1003                          P/F: P
+21-232-13:03:48.655 00     SPR-I:OPRO         FSW Requirement: HS_1004                          P/F: P
+21-232-13:03:48.665 00     SPR-I:OPRO         FSW Requirement: HS_6005                          P/F: A
+21-232-13:03:48.666 00     SPR-I:OPRO         FSW Requirement: HS_6006                          P/F: P
+21-232-13:03:48.667 00     SPR-I:OPRO         FSW Requirement: HS_6007                          P/F: P
+21-232-13:03:48.678 00     SPR-I:OPRO         FSW Requirement: HS_6011                          P/F: P
+21-232-13:03:48.679 00     SPR-I:OPRO         FSW Requirement: HS_6012                          P/F: P
+21-232-13:03:48.680 00     SPR-I:OPRO         FSW Requirement: HS_7000                          P/F: P
+21-232-13:03:48.689 00     SPR-I:OPRO         FSW Requirement: HS_7001                          P/F: P
+21-232-13:03:48.690 00     SPR-I:OPRO         FSW Requirement: HS_7100                          P/F: P
+21-232-13:03:48.690 00     SPR-I:OPRO         FSW Requirement: HS_8000                          P/F: P
+21-232-13:03:48.698 00     SPR-I:STS          Variable "UT_REQUIREMENT" deleted
+21-232-13:03:48.698 00     SPR-I:STS          Variable "UT_REQ_ARRAY_SIZE" deleted
+21-232-13:03:48.698 00     SPR-I:OPRO         ;*********************************************************************
+21-232-13:03:48.698 00     SPR-I:OPRO         ;  End procedure SCX_CPU1_hs_gencmds
+21-232-13:03:48.698 00     SPR-I:OPRO         ;*********************************************************************
+21-232-13:03:48.698 00     SPR-I:STS          Procedure SCX_CPU1_HS_GENCMDS completed
+21-232-13:03:48.703 00     SPR-I:OPRO         *** Telemetry Info ***
+21-232-13:03:48.703 00     SPR-I:OPRO         
+21-232-13:03:48.703 00     SPR-I:OPRO         Pkt Loss Count: N/A
+21-232-13:03:48.703 00     SPR-I:OPRO         
+21-232-13:03:48.703 00     SPR-I:OPRO         ******************
+21-232-13:03:48.703 00     SPR-I:OPRO         
+21-232-13:03:48.703 00     SPR-I:OPRO         Elapsed time:  443.117 seconds
+21-232-13:03:48.703 00     SPR-I:OPRO         Elapsed time:  7.38528 minutes
+21-232-13:03:48.705 00     SPR-I:STTE         Wait mode - waiting 10 seconds ...
+21-232-13:03:52.260 00     DPD-I:STS          Deleting page SCX_CPU1_HS_HK
+21-232-13:03:58.715 00     SPR-I:OPRO         Creating filtered log at /s/opr/accounts/cfs_test/test_logs/HS2.4.0/scx_cpu1_hs_gencmds-2021-232-12h56m25s.logf
+21-232-13:03:58.715 00     SPR-I:OPRO         Creating filtered output log at /s/opr/accounts/cfs_test/test_logs/HS2.4.0/scx_cpu1_hs_gencmds-2021-232-12h56m25s.logp
+21-232-13:03:58.716 00     SPR-I:OPRO         Creating filtered output log (without SFDUs) at /s/opr/accounts/cfs_test/test_logs/HS2.4.0/scx_cpu1_hs_gencmds-2021-232-12h56m25s.logs
+21-232-13:03:58.716 00     SPR-I:OPRO         Creating filtered event log at /s/opr/accounts/cfs_test/test_logs/HS2.4.0/scx_cpu1_hs_gencmds-2021-232-12h56m25s.loge
+21-232-13:03:58.716 00     SPR-I:OPRO         Creating filtered requirements log at /s/opr/accounts/cfs_test/test_logs/HS2.4.0/scx_cpu1_hs_gencmds-2021-232-12h56m25s.logr
+21-232-13:03:58.805 00     SPR-I:OPRI     --> newlog scx_cpu1_hs_gencmds-2021-232-12h56m25s.log

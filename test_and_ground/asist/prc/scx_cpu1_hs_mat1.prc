@@ -57,39 +57,39 @@ write ";*********************************************************************"
 SCX_CPU1_HS_MAT[1].EnableState = HS_MAT_STATE_ENABLED
 SCX_CPU1_HS_MAT[1].Cooldown= 10
 SCX_CPU1_HS_MAT[1].MessageData[1] = 0x18
-SCX_CPU1_HS_MAT[1].MessageData[8] = 0x88
-if ("CPU1" = "CPU2") then
-  SCX_CPU1_HS_MAT[1].MessageData[1] = 0x19
-  SCX_CPU1_HS_MAT[1].MessageData[8] = 0x89
-elseif ("CPU1" = "CPU3") then
-  SCX_CPU1_HS_MAT[1].MessageData[1] = 0x1A
-  SCX_CPU1_HS_MAT[1].MessageData[8] = 0x8A
-endif
 SCX_CPU1_HS_MAT[1].MessageData[2] = 0xAE
 SCX_CPU1_HS_MAT[1].MessageData[3] = 0xC0
 SCX_CPU1_HS_MAT[1].MessageData[4] = 0
 SCX_CPU1_HS_MAT[1].MessageData[5] = 0
 SCX_CPU1_HS_MAT[1].MessageData[6] = 1
 SCX_CPU1_HS_MAT[1].MessageData[7] = 0
+SCX_CPU1_HS_MAT[1].MessageData[8] = 0x88
 
+; Old test with TST_HS
 ; Entry 2 - TST_HS NOOP Command
+;SCX_CPU1_HS_MAT[2].EnableState = HS_MAT_STATE_ENABLED
+;SCX_CPU1_HS_MAT[2].Cooldown= 10
+;SCX_CPU1_HS_MAT[2].MessageData[1] = 0x19
+;SCX_CPU1_HS_MAT[2].MessageData[2] = 0x3B
+;SCX_CPU1_HS_MAT[2].MessageData[3] = 0xC0
+;SCX_CPU1_HS_MAT[2].MessageData[4] = 0
+;SCX_CPU1_HS_MAT[2].MessageData[5] = 0
+;SCX_CPU1_HS_MAT[2].MessageData[6] = 1
+;SCX_CPU1_HS_MAT[2].MessageData[7] = 0
+;SCX_CPU1_HS_MAT[2].MessageData[8] = 0x1C
+
+; Caelum Test with CFE_ES
+; Entry 2 - NOOP Command
 SCX_CPU1_HS_MAT[2].EnableState = HS_MAT_STATE_ENABLED
 SCX_CPU1_HS_MAT[2].Cooldown= 10
-SCX_CPU1_HS_MAT[2].MessageData[1] = 0x19
-SCX_CPU1_HS_MAT[2].MessageData[8] = 0x1C
-if ("CPU1" = "CPU2") then
-  SCX_CPU1_HS_MAT[2].MessageData[1] = 0x1A
-  SCX_CPU1_HS_MAT[2].MessageData[8] = 0x1F
-elseif ("CPU1" = "CPU3") then
-  SCX_CPU1_HS_MAT[2].MessageData[1] = 0x1B
-  SCX_CPU1_HS_MAT[2].MessageData[8] = 0x1E
-endif
-SCX_CPU1_HS_MAT[2].MessageData[2] = 0x3B
+SCX_CPU1_HS_MAT[2].MessageData[1] = 0x18
+SCX_CPU1_HS_MAT[2].MessageData[2] = 0x01
 SCX_CPU1_HS_MAT[2].MessageData[3] = 0xC0
 SCX_CPU1_HS_MAT[2].MessageData[4] = 0
 SCX_CPU1_HS_MAT[2].MessageData[5] = 0
 SCX_CPU1_HS_MAT[2].MessageData[6] = 1
 SCX_CPU1_HS_MAT[2].MessageData[7] = 0
+SCX_CPU1_HS_MAT[2].MessageData[8] = 0x27
 
 for index = 3 to HS_MAX_MSG_ACT_TYPES do
   SCX_CPU1_HS_MAT[index].EnableState = HS_MAT_STATE_DISABLED

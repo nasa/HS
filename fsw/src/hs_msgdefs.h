@@ -1,22 +1,22 @@
 /************************************************************************
-** File: hs_msgdefs.h 
+** File: hs_msgdefs.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
 **
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) command and telemetry
@@ -41,18 +41,18 @@
 /**
 ** \name HS Switch States (AppMon, EventMon, Aliveness) */
 /** \{ */
-#define HS_STATE_DISABLED           0
-#define HS_STATE_ENABLED            1
+#define HS_STATE_DISABLED 0
+#define HS_STATE_ENABLED  1
 /** \} */
 
 /**
 ** \name HS Internal Status Flags */
 /** \{ */
-#define HS_LOADED_XCT            0x01
-#define HS_LOADED_MAT            0x02
-#define HS_LOADED_AMT            0x04
-#define HS_LOADED_EMT            0x08
-#define HS_CDS_IN_USE            0x10
+#define HS_LOADED_XCT 0x01
+#define HS_LOADED_MAT 0x02
+#define HS_LOADED_AMT 0x04
+#define HS_LOADED_EMT 0x08
+#define HS_CDS_IN_USE 0x10
 /** \} */
 
 /**
@@ -91,7 +91,7 @@
 **
 **  \sa #HS_RESET_CC
 */
-#define HS_NOOP_CC                  0
+#define HS_NOOP_CC 0
 
 /** \hscmd Reset Counters
 **
@@ -125,7 +125,7 @@
 **
 **  \sa #HS_NOOP_CC
 */
-#define HS_RESET_CC                 1
+#define HS_RESET_CC 1
 
 /** \hscmd Enable Applications Monitor
 **
@@ -158,7 +158,7 @@
 **
 **  \sa #HS_DISABLE_APPMON_CC
 */
-#define HS_ENABLE_APPMON_CC          2
+#define HS_ENABLE_APPMON_CC 2
 
 /** \hscmd Disable Applications Monitor
 **
@@ -191,7 +191,7 @@
 **
 **  \sa #HS_ENABLE_APPMON_CC
 */
-#define HS_DISABLE_APPMON_CC          3
+#define HS_DISABLE_APPMON_CC 3
 
 /** \hscmd Enable Events Monitor
 **
@@ -224,7 +224,7 @@
 **
 **  \sa #HS_DISABLE_EVENTMON_CC
 */
-#define HS_ENABLE_EVENTMON_CC          4
+#define HS_ENABLE_EVENTMON_CC 4
 
 /** \hscmd Disable Events Monitor
 **
@@ -257,7 +257,7 @@
 **
 **  \sa #HS_ENABLE_EVENTMON_CC
 */
-#define HS_DISABLE_EVENTMON_CC          5
+#define HS_DISABLE_EVENTMON_CC 5
 
 /** \hscmd Enable Aliveness Indicator
 **
@@ -290,7 +290,7 @@
 **
 **  \sa #HS_DISABLE_ALIVENESS_CC
 */
-#define HS_ENABLE_ALIVENESS_CC          6
+#define HS_ENABLE_ALIVENESS_CC 6
 
 /** \hscmd Disable Aliveness Indicator
 **
@@ -323,7 +323,7 @@
 **
 **  \sa #HS_ENABLE_ALIVENESS_CC
 */
-#define HS_DISABLE_ALIVENESS_CC          7
+#define HS_DISABLE_ALIVENESS_CC 7
 
 /** \hscmd Reset Processor Resets Performed Count
 **
@@ -356,7 +356,7 @@
 **
 **  \sa #HS_SET_MAX_RESETS_CC
 */
-#define HS_RESET_RESETS_PERFORMED_CC     8
+#define HS_RESET_RESETS_PERFORMED_CC 8
 
 /** \hscmd Set Max Processor Resets Performed Count
 **
@@ -389,7 +389,7 @@
 **
 **  \sa #HS_RESET_RESETS_PERFORMED_CC
 */
-#define HS_SET_MAX_RESETS_CC     9
+#define HS_SET_MAX_RESETS_CC 9
 
 /** \hscmd Enable CPU Hogging Indicator
 **
@@ -422,7 +422,7 @@
 **
 **  \sa #HS_DISABLE_CPUHOG_CC
 */
-#define HS_ENABLE_CPUHOG_CC          10
+#define HS_ENABLE_CPUHOG_CC 10
 
 /** \hscmd Disable CPU Hogging Indicator
 **
@@ -455,7 +455,7 @@
 **
 **  \sa #HS_ENABLE_CPUHOG_CC
 */
-#define HS_DISABLE_CPUHOG_CC          11
+#define HS_DISABLE_CPUHOG_CC 11
 
 #endif /* _hs_msgdefs_h_ */
 

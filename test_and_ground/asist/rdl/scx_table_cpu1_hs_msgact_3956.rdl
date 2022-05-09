@@ -29,10 +29,11 @@
 
 TYPES
    RECORD SCX_CPU1_HS_MATEntry  DESC="SCX CPU1 HS Message Actions Table Entry"
-     UI    EnableState   DESC="The State of this message entry",
-			 DISCRETE, DRANGE=(0,1,2),
-			 DLABEL=("Disabled","Enabled","No Event")
-     UI    Cooldown       DESC="The minimum rate at which the event can be sent"
+     UI    EnableState  DESC="The State of this message entry",
+			DISCRETE, DRANGE=(0,1,2),
+			DLABEL=("Disabled","Enabled","No Event")
+     UI    Cooldown     DESC="The minimum rate at which the event can be sent"
+     ULI   Spare	DESC="Alignment spare"
      UB    MessageData[HS_MAX_MSG_ACT_SIZE] DESC="The Software Bus message to send"
    END
 END_TYPES

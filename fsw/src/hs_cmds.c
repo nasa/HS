@@ -1,22 +1,22 @@
 /************************************************************************
-** File: hs_cmds.c 
+** File: hs_cmds.c
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
 **
 ** Purpose:
 **   CFS Health and Safety (HS) command handling routines
@@ -40,12 +40,13 @@
 /* Process a command pipe message                                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
+void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
 {
-    CFE_SB_MsgId_t  MessageID   = 0;
-    uint16          CommandCode = 0;
+    CFE_MSG_FcnCode_t CommandCode = 0;
+    CFE_SB_MsgId_t    MessageID   = CFE_SB_INVALID_MSG_ID;
 
-    MessageID = CFE_SB_GetMsgId(MessagePtr);
+    CFE_MSG_GetMsgId(&BufPtr->Msg, &MessageID);
+
     switch (MessageID)
     {
 
@@ -53,7 +54,7 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
         ** Housekeeping telemetry request
         */
         case HS_SEND_HK_MID:
-            HS_HousekeepingReq(MessagePtr);
+            HS_HousekeepingReq(BufPtr);
             break;
 
         /*
@@ -61,63 +62,63 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
         */
         case HS_CMD_MID:
 
-            CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+            CFE_MSG_GetFcnCode(&BufPtr->Msg, &CommandCode);
+
             switch (CommandCode)
             {
                 case HS_NOOP_CC:
-                    HS_NoopCmd(MessagePtr);
+                    HS_NoopCmd(BufPtr);
                     break;
 
                 case HS_RESET_CC:
-                    HS_ResetCmd(MessagePtr);
+                    HS_ResetCmd(BufPtr);
                     break;
 
                 case HS_ENABLE_APPMON_CC:
-                    HS_EnableAppMonCmd(MessagePtr);
+                    HS_EnableAppMonCmd(BufPtr);
                     break;
 
                 case HS_DISABLE_APPMON_CC:
-                    HS_DisableAppMonCmd(MessagePtr);
+                    HS_DisableAppMonCmd(BufPtr);
                     break;
 
                 case HS_ENABLE_EVENTMON_CC:
-                    HS_EnableEventMonCmd(MessagePtr);
+                    HS_EnableEventMonCmd(BufPtr);
                     break;
 
                 case HS_DISABLE_EVENTMON_CC:
-                    HS_DisableEventMonCmd(MessagePtr);
+                    HS_DisableEventMonCmd(BufPtr);
                     break;
 
                 case HS_ENABLE_ALIVENESS_CC:
-                    HS_EnableAlivenessCmd(MessagePtr);
+                    HS_EnableAlivenessCmd(BufPtr);
                     break;
 
                 case HS_DISABLE_ALIVENESS_CC:
-                    HS_DisableAlivenessCmd(MessagePtr);
+                    HS_DisableAlivenessCmd(BufPtr);
                     break;
 
                 case HS_RESET_RESETS_PERFORMED_CC:
-                    HS_ResetResetsPerformedCmd(MessagePtr);
+                    HS_ResetResetsPerformedCmd(BufPtr);
                     break;
 
                 case HS_SET_MAX_RESETS_CC:
-                    HS_SetMaxResetsCmd(MessagePtr);
+                    HS_SetMaxResetsCmd(BufPtr);
                     break;
 
                 case HS_ENABLE_CPUHOG_CC:
-                    HS_EnableCPUHogCmd(MessagePtr);
+                    HS_EnableCPUHogCmd(BufPtr);
                     break;
 
                 case HS_DISABLE_CPUHOG_CC:
-                    HS_DisableCPUHogCmd(MessagePtr);
+                    HS_DisableCPUHogCmd(BufPtr);
                     break;
 
                 default:
-                    if (HS_CustomCommands(MessagePtr) != CFE_SUCCESS)
+                    if (HS_CustomCommands(BufPtr) != CFE_SUCCESS)
                     {
                         CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
-                                          "Invalid command code: ID = 0x%04X, CC = %d",
-                                          MessageID, CommandCode);
+                                          "Invalid command code: ID = 0x%08X, CC = %d", MessageID, CommandCode);
 
                         HS_AppData.CmdErrCount++;
                     }
@@ -126,14 +127,14 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
             } /* end CommandCode switch */
             break;
 
-      /*
-      ** Unrecognized Message ID
-      */
-      default:
-         HS_AppData.CmdErrCount++;
-         CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR,
-                           "Invalid command pipe message ID: 0x%04X", MessageID);
-         break;
+        /*
+        ** Unrecognized Message ID
+        */
+        default:
+            HS_AppData.CmdErrCount++;
+            CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR, "Invalid command pipe message ID: 0x%08X",
+                              MessageID);
+            break;
 
     } /* end MessageID switch */
 
@@ -146,53 +147,53 @@ void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
 /* Housekeeping request                                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
+void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16 ExpectedLength = sizeof(HS_NoArgsCmd_t);
-    uint32 AppId = 0;
+    size_t         ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    CFE_ES_AppId_t AppId          = CFE_ES_APPID_UNDEFINED;
 #if HS_MAX_EXEC_CNT_SLOTS != 0
-    uint32 ExeCount = 0;
-    uint32 TaskId = 0;
-    CFE_ES_TaskInfo_t TaskInfo;
+    uint32             ExeCount  = 0;
+    CFE_ES_TaskId_t    TaskId    = CFE_ES_TASKID_UNDEFINED;
+    CFE_ES_CounterId_t CounterId = CFE_ES_COUNTERID_UNDEFINED;
+    CFE_ES_TaskInfo_t  TaskInfo;
     CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
 #endif
-    int32 Status = CFE_SUCCESS;
+    int32  Status     = CFE_SUCCESS;
     uint32 TableIndex = 0;
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         /*
         ** Update HK variables
         */
-        HS_AppData.HkPacket.CmdCount                = HS_AppData.CmdCount;
-        HS_AppData.HkPacket.CmdErrCount             = HS_AppData.CmdErrCount;
-        HS_AppData.HkPacket.CurrentAppMonState      = HS_AppData.CurrentAppMonState;
-        HS_AppData.HkPacket.CurrentEventMonState    = HS_AppData.CurrentEventMonState;
-        HS_AppData.HkPacket.CurrentAlivenessState   = HS_AppData.CurrentAlivenessState;
-        HS_AppData.HkPacket.CurrentCPUHogState      = HS_AppData.CurrentCPUHogState;
-        HS_AppData.HkPacket.ResetsPerformed         = HS_AppData.CDSData.ResetsPerformed;
-        HS_AppData.HkPacket.MaxResets               = HS_AppData.CDSData.MaxResets;
-        HS_AppData.HkPacket.EventsMonitoredCount    = HS_AppData.EventsMonitoredCount;
-        HS_AppData.HkPacket.MsgActExec              = HS_AppData.MsgActExec;
+        HS_AppData.HkPacket.CmdCount              = HS_AppData.CmdCount;
+        HS_AppData.HkPacket.CmdErrCount           = HS_AppData.CmdErrCount;
+        HS_AppData.HkPacket.CurrentAppMonState    = HS_AppData.CurrentAppMonState;
+        HS_AppData.HkPacket.CurrentEventMonState  = HS_AppData.CurrentEventMonState;
+        HS_AppData.HkPacket.CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
+        HS_AppData.HkPacket.CurrentCPUHogState    = HS_AppData.CurrentCPUHogState;
+        HS_AppData.HkPacket.ResetsPerformed       = HS_AppData.CDSData.ResetsPerformed;
+        HS_AppData.HkPacket.MaxResets             = HS_AppData.CDSData.MaxResets;
+        HS_AppData.HkPacket.EventsMonitoredCount  = HS_AppData.EventsMonitoredCount;
+        HS_AppData.HkPacket.MsgActExec            = HS_AppData.MsgActExec;
 
         /*
         ** Calculate the current number of invalid event monitor entries
         */
-        HS_AppData.HkPacket.InvalidEventMonCount    = 0;
+        HS_AppData.HkPacket.InvalidEventMonCount = 0;
 
-        for(TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
+        for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
         {
-            if(HS_AppData.EMTablePtr[TableIndex].ActionType != HS_EMT_ACT_NOACT)
+            if (HS_AppData.EMTablePtr[TableIndex].ActionType != HS_EMT_ACT_NOACT)
             {
                 Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
 
-                if (Status == CFE_ES_ERR_APPNAME)
+                if (Status != CFE_SUCCESS)
                 {
                     HS_AppData.HkPacket.InvalidEventMonCount++;
-
                 }
             }
         }
@@ -200,60 +201,59 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
         /*
         ** Build the HK status flags byte
         */
-        HS_AppData.HkPacket.StatusFlags             = 0;
+        HS_AppData.HkPacket.StatusFlags = 0;
 #if HS_MAX_EXEC_CNT_SLOTS != 0
-        if(HS_AppData.ExeCountState == HS_STATE_ENABLED)
+        if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags   |= HS_LOADED_XCT;
+            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_XCT;
         }
 #endif
-        if(HS_AppData.MsgActsState == HS_STATE_ENABLED)
+        if (HS_AppData.MsgActsState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags   |= HS_LOADED_MAT;
+            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_MAT;
         }
-        if(HS_AppData.AppMonLoaded == HS_STATE_ENABLED)
+        if (HS_AppData.AppMonLoaded == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags   |= HS_LOADED_AMT;
+            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_AMT;
         }
-        if(HS_AppData.EventMonLoaded == HS_STATE_ENABLED)
+        if (HS_AppData.EventMonLoaded == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags   |= HS_LOADED_EMT;
+            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_EMT;
         }
-        if(HS_AppData.CDSState == HS_STATE_ENABLED)
+        if (HS_AppData.CDSState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags   |= HS_CDS_IN_USE;
+            HS_AppData.HkPacket.StatusFlags |= HS_CDS_IN_USE;
         }
 
         /*
         ** Update the AppMon Enables
         */
-        for(TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
+        for (TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
         {
             HS_AppData.HkPacket.AppMonEnables[TableIndex] = HS_AppData.AppMonEnables[TableIndex];
         }
 
-
-        HS_AppData.HkPacket.UtilCpuAvg = HS_AppData.UtilCpuAvg;
+        HS_AppData.HkPacket.UtilCpuAvg  = HS_AppData.UtilCpuAvg;
         HS_AppData.HkPacket.UtilCpuPeak = HS_AppData.UtilCpuPeak;
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
         /*
         ** Add the execution counters
         */
-        for(TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
+        for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
         {
 
             ExeCount = HS_INVALID_EXECOUNT;
 
-            if(HS_AppData.ExeCountState == HS_STATE_ENABLED) 
+            if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
             {
-                switch(HS_AppData.XCTablePtr[TableIndex].ResourceType)
+                switch (HS_AppData.XCTablePtr[TableIndex].ResourceType)
                 {
                     case HS_XCT_TYPE_APP_MAIN:
                     case HS_XCT_TYPE_APP_CHILD:
-                        Status = OS_TaskGetIdByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
+                        Status = CFE_ES_GetTaskIDByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
 
-                        if (Status == OS_SUCCESS)
+                        if (Status == CFE_SUCCESS)
                         {
                             Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId);
                             if (Status == CFE_SUCCESS)
@@ -264,11 +264,12 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
                         break;
                     case HS_XCT_TYPE_DEVICE:
                     case HS_XCT_TYPE_ISR:
-                        Status = CFE_ES_GetGenCounterIDByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
+                        Status =
+                            CFE_ES_GetGenCounterIDByName(&CounterId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
 
                         if (Status == CFE_SUCCESS)
                         {
-                            CFE_ES_GetGenCount(TaskId, &ExeCount);
+                            CFE_ES_GetGenCount(CounterId, &ExeCount);
                         }
                         break;
                     case HS_XCT_TYPE_NOTYPE:
@@ -276,24 +277,23 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
                         break;
                     default:
                         /* ExeCount remains HS_INVALID_EXECOUNT */
-                        CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID,
-                                          CFE_EVS_EventType_DEBUG,
+                        CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID, CFE_EVS_EventType_DEBUG,
                                           "Housekeeping req found unknown resource.  Type=0x%08X",
                                           HS_AppData.XCTablePtr[TableIndex].ResourceType);
                         break;
                 } /* end ResourceType switch statement */
-            } /* end ExeCountState if statement */
+            }     /* end ExeCountState if statement */
 
             HS_AppData.HkPacket.ExeCounts[TableIndex] = ExeCount;
-        }        
+        }
 
 #endif
 
         /*
         ** Timestamp and send housekeeping packet
         */
-        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &HS_AppData.HkPacket);
-        CFE_SB_SendMsg((CFE_SB_Msg_t *) &HS_AppData.HkPacket);
+        CFE_SB_TimeStampMsg(&HS_AppData.HkPacket.TlmHeader.Msg);
+        CFE_SB_TransmitMsg(&HS_AppData.HkPacket.TlmHeader.Msg, true);
 
     } /* end HS_VerifyMsgLength if */
 
@@ -306,23 +306,19 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
 /* Noop command                                                    */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16 ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
 
-        CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION,
-                        "No-op command: Version %d.%d.%d.%d",
-                         HS_MAJOR_VERSION,
-                         HS_MINOR_VERSION,
-                         HS_REVISION,
-                         HS_MISSION_REV);
+        CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION, "No-op command: Version %d.%d.%d.%d",
+                          HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
     }
 
     return;
@@ -334,19 +330,18 @@ void HS_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Reset counters command                                          */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_ResetCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16 ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_ResetCounters();
 
-        CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG,
-                          "Reset counters command");
+        CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
     }
 
     return;
@@ -360,10 +355,10 @@ void HS_ResetCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_ResetCounters(void)
 {
-    HS_AppData.CmdCount     = 0;
-    HS_AppData.CmdErrCount  = 0;
-    HS_AppData.EventsMonitoredCount   = 0;
-    HS_AppData.MsgActExec = 0;
+    HS_AppData.CmdCount             = 0;
+    HS_AppData.CmdErrCount          = 0;
+    HS_AppData.EventsMonitoredCount = 0;
+    HS_AppData.MsgActExec           = 0;
 
     return;
 
@@ -374,21 +369,19 @@ void HS_ResetCounters(void)
 /* Enable applications monitor command                             */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppMonStatusRefresh();
         HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
-        CFE_EVS_SendEvent (HS_ENABLE_APPMON_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "Application Monitoring Enabled");
+        CFE_EVS_SendEvent(HS_ENABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Enabled");
     }
 
     return;
@@ -400,20 +393,18 @@ void HS_EnableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Disable applications monitor command                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
-        CFE_EVS_SendEvent (HS_DISABLE_APPMON_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "Application Monitoring Disabled");
+        CFE_EVS_SendEvent(HS_DISABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Disabled");
     }
 
     return;
@@ -425,43 +416,56 @@ void HS_DisableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Enable events monitor command                                   */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
-    int32             Status = CFE_SUCCESS;
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    int32  Status         = CFE_SUCCESS;
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-       /*
-       ** Subscribe to Event Messages if currently disabled
-       */
-       if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
-       {
+        /*
+        ** Subscribe to Event Messages if currently disabled
+        */
+        if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
+        {
 
-          Status = CFE_SB_SubscribeEx(CFE_EVS_LONG_EVENT_MSG_MID,
-                                      HS_AppData.EventPipe,
-                                      CFE_SB_Default_Qos,
-                                      HS_EVENT_PIPE_DEPTH);
+            Status = CFE_SB_SubscribeEx(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
+                                        HS_EVENT_PIPE_DEPTH);
 
-          if (Status != CFE_SUCCESS)
-          {
-             CFE_EVS_SendEvent(HS_EVENTMON_SUB_EID, CFE_EVS_EventType_ERROR,
-                 "Event Monitor Enable: Error Subscribing to Events,RC=0x%08X",(unsigned int)Status);
-             HS_AppData.CmdErrCount++;
-          }
-       }
+            if (Status != CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_LONG_SUB_EID, CFE_EVS_EventType_ERROR,
+                                  "Event Monitor Enable: Error Subscribing to long-format Events,RC=0x%08X",
+                                  (unsigned int)Status);
+            }
 
-       if(Status == CFE_SUCCESS)
-       {
+            if (Status == CFE_SUCCESS)
+            {
+                Status = CFE_SB_SubscribeEx(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
+                                            HS_EVENT_PIPE_DEPTH);
+
+                if (Status != CFE_SUCCESS)
+                {
+                    CFE_EVS_SendEvent(HS_EVENTMON_SHORT_SUB_EID, CFE_EVS_EventType_ERROR,
+                                      "Event Monitor Enable: Error Subscribing to short-format Events,RC=0x%08X",
+                                      (unsigned int)Status);
+                }
+            }
+        }
+
+        if (Status == CFE_SUCCESS)
+        {
             HS_AppData.CmdCount++;
             HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
-            CFE_EVS_SendEvent (HS_ENABLE_EVENTMON_DBG_EID,
-                               CFE_EVS_EventType_DEBUG,
-                               "Event Monitoring Enabled");
-       }
+            CFE_EVS_SendEvent(HS_ENABLE_EVENTMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Event Monitoring Enabled");
+        }
+        else
+        {
+            HS_AppData.CmdErrCount++;
+        }
     }
 
     return;
@@ -473,42 +477,55 @@ void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Disable event monitor command                                   */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
-    int32             Status = CFE_SUCCESS;
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    int32  Status         = CFE_SUCCESS;
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
 
-       /*
-       ** Unsubscribe from Event Messages if currently enabled
-       */
-       if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
-       {
+        /*
+        ** Unsubscribe from Event Messages if currently enabled
+        */
+        if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
+        {
 
-          Status =  CFE_SB_Unsubscribe ( CFE_EVS_LONG_EVENT_MSG_MID,
-                                         HS_AppData.EventPipe );
+            Status = CFE_SB_Unsubscribe(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe);
 
-          if (Status != CFE_SUCCESS)
-          {
-             CFE_EVS_SendEvent(HS_EVENTMON_UNSUB_EID, CFE_EVS_EventType_ERROR,
-                 "Event Monitor Disable: Error Unsubscribing from Events,RC=0x%08X",(unsigned int)Status);
-             HS_AppData.CmdErrCount++;
-          }
-       }
+            if (Status != CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_LONG_UNSUB_EID, CFE_EVS_EventType_ERROR,
+                                  "Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x%08X",
+                                  (unsigned int)Status);
+            }
 
-       if(Status == CFE_SUCCESS)
-       {
-           HS_AppData.CmdCount++;
-           HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
-           CFE_EVS_SendEvent (HS_DISABLE_EVENTMON_DBG_EID,
-                              CFE_EVS_EventType_DEBUG,
-                              "Event Monitoring Disabled");
-       }
+            if (Status == CFE_SUCCESS)
+            {
+                Status = CFE_SB_Unsubscribe(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe);
+
+                if (Status != CFE_SUCCESS)
+                {
+                    CFE_EVS_SendEvent(HS_EVENTMON_SHORT_UNSUB_EID, CFE_EVS_EventType_ERROR,
+                                      "Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x%08X",
+                                      (unsigned int)Status);
+                }
+            }
+        }
+
+        if (Status == CFE_SUCCESS)
+        {
+            HS_AppData.CmdCount++;
+            HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
+            CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Event Monitoring Disabled");
+        }
+        else
+        {
+            HS_AppData.CmdErrCount++;
+        }
     }
 
     return;
@@ -520,20 +537,18 @@ void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Enable aliveness indicator command                              */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
-        CFE_EVS_SendEvent (HS_ENABLE_ALIVENESS_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "Aliveness Indicator Enabled");
+        CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Enabled");
     }
 
     return;
@@ -545,20 +560,18 @@ void HS_EnableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Disable aliveness indicator command                             */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
-        CFE_EVS_SendEvent (HS_DISABLE_ALIVENESS_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "Aliveness Indicator Disabled");
+        CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Disabled");
     }
 
     return;
@@ -570,20 +583,18 @@ void HS_DisableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Enable cpu hogging indicator command                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
-        CFE_EVS_SendEvent (HS_ENABLE_CPUHOG_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "CPU Hogging Indicator Enabled");
+        CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Enabled");
     }
 
     return;
@@ -595,20 +606,18 @@ void HS_EnableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Disable cpu hogging indicator command                           */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
-        CFE_EVS_SendEvent (HS_DISABLE_CPUHOG_DBG_EID,
-                           CFE_EVS_EventType_DEBUG,
-                           "CPU Hogging Indicator Disabled");
+        CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Disabled");
     }
 
     return;
@@ -620,19 +629,19 @@ void HS_DisableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Reset processor resets performed count command                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
         HS_SetCDSData(0, HS_AppData.CDSData.MaxResets);
-        CFE_EVS_SendEvent (HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
-                           "Processor Resets Performed by HS Counter has been Reset");
+        CFE_EVS_SendEvent(HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
+                          "Processor Resets Performed by HS Counter has been Reset");
     }
 
     return;
@@ -644,24 +653,23 @@ void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* Set max processor resets command                                */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr)
+void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    uint16            ExpectedLength = sizeof(HS_SetMaxResetsCmd_t);
-    HS_SetMaxResetsCmd_t  *CmdPtr = NULL;
+    size_t                ExpectedLength = sizeof(HS_SetMaxResetsCmd_t);
+    HS_SetMaxResetsCmd_t *CmdPtr         = NULL;
 
     /*
     ** Verify message packet length
     */
-    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
-        CmdPtr = ((HS_SetMaxResetsCmd_t *)MessagePtr);
+        CmdPtr = ((HS_SetMaxResetsCmd_t *)BufPtr);
 
         HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);
 
-        CFE_EVS_SendEvent (HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
-                           "Max Resets Performable by HS has been set to %d", 
-                           HS_AppData.CDSData.MaxResets);
+        CFE_EVS_SendEvent(HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
+                          "Max Resets Performable by HS has been set to %d", HS_AppData.CDSData.MaxResets);
     }
 
     return;
@@ -675,7 +683,7 @@ void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AcquirePointers(void)
 {
-    int32  Status = CFE_SUCCESS;
+    int32 Status = CFE_SUCCESS;
 
     /*
     ** Release the table (AppMon)
@@ -703,19 +711,18 @@ void HS_AcquirePointers(void)
     /*
     ** If Address acquisition fails and currently enabled, report and disable (AppMon)
     */
-    if(Status < CFE_SUCCESS)
+    if (Status < CFE_SUCCESS)
     {
         /*
         ** Only report and disable if enabled or the table was previously loaded (AppMon)
         */
-        if ((HS_AppData.AppMonLoaded == HS_STATE_ENABLED) ||
-            (HS_AppData.CurrentAppMonState == HS_STATE_ENABLED))
+        if ((HS_AppData.AppMonLoaded == HS_STATE_ENABLED) || (HS_AppData.CurrentAppMonState == HS_STATE_ENABLED))
         {
             CFE_EVS_SendEvent(HS_APPMON_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting AppMon Table address, RC=0x%08X, Application Monitoring Disabled",
                               (unsigned int)Status);
             HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
-            HS_AppData.AppMonLoaded = HS_STATE_DISABLED;
+            HS_AppData.AppMonLoaded       = HS_STATE_DISABLED;
         }
     }
     /*
@@ -744,13 +751,12 @@ void HS_AcquirePointers(void)
     /*
     ** If Address acquisition fails and currently enabled, report and disable (EventMon)
     */
-    if(Status < CFE_SUCCESS)
+    if (Status < CFE_SUCCESS)
     {
         /*
         ** Only report and disable if enabled or the table was previously loaded (EventMon)
         */
-        if ((HS_AppData.EventMonLoaded == HS_STATE_ENABLED) ||
-            (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED))
+        if ((HS_AppData.EventMonLoaded == HS_STATE_ENABLED) || (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED))
         {
             CFE_EVS_SendEvent(HS_EVENTMON_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
                               "Error getting EventMon Table address, RC=0x%08X, Event Monitoring Disabled",
@@ -758,19 +764,25 @@ void HS_AcquirePointers(void)
 
             if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
             {
-                Status =  CFE_SB_Unsubscribe ( CFE_EVS_LONG_EVENT_MSG_MID,
-                                               HS_AppData.EventPipe );
+                Status = CFE_SB_Unsubscribe(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe);
 
                 if (Status != CFE_SUCCESS)
                 {
-                    CFE_EVS_SendEvent(HS_BADEMT_UNSUB_EID, CFE_EVS_EventType_ERROR,
-                        "Error Unsubscribing from Events,RC=0x%08X",(unsigned int)Status);
+                    CFE_EVS_SendEvent(HS_BADEMT_LONG_UNSUB_EID, CFE_EVS_EventType_ERROR,
+                                      "Error Unsubscribing from long-format Events,RC=0x%08X", (unsigned int)Status);
+                }
+
+                Status = CFE_SB_Unsubscribe(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe);
+
+                if (Status != CFE_SUCCESS)
+                {
+                    CFE_EVS_SendEvent(HS_BADEMT_SHORT_UNSUB_EID, CFE_EVS_EventType_ERROR,
+                                      "Error Unsubscribing from short-format Events,RC=0x%08X", (unsigned int)Status);
                 }
             }
 
             HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
-            HS_AppData.EventMonLoaded = HS_STATE_DISABLED;
-
+            HS_AppData.EventMonLoaded       = HS_STATE_DISABLED;
         }
     }
     /*
@@ -807,16 +819,15 @@ void HS_AcquirePointers(void)
     /*
     ** If Address acquisition fails report and disable (MsgActs)
     */
-    if(Status < CFE_SUCCESS)
+    if (Status < CFE_SUCCESS)
     {
         /*
         ** To prevent redundant reporting, only report if enabled (MsgActs)
         */
-        if(HS_AppData.MsgActsState == HS_STATE_ENABLED)
+        if (HS_AppData.MsgActsState == HS_STATE_ENABLED)
         {
             CFE_EVS_SendEvent(HS_MSGACTS_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "Error getting MsgActs Table address, RC=0x%08X",
-                              (unsigned int)Status);
+                              "Error getting MsgActs Table address, RC=0x%08X", (unsigned int)Status);
             HS_AppData.MsgActsState = HS_STATE_DISABLED;
         }
     }
@@ -847,17 +858,16 @@ void HS_AcquirePointers(void)
     /*
     ** If Address acquisition fails report and disable (ExeCount)
     */
-    if(Status < CFE_SUCCESS)
+    if (Status < CFE_SUCCESS)
     {
         /*
         ** To prevent redundant reporting, only report if enabled (ExeCount)
         */
-        if(HS_AppData.ExeCountState == HS_STATE_ENABLED)
+        if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
         {
             CFE_EVS_SendEvent(HS_EXECOUNT_GETADDR_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "Error getting ExeCount Table address, RC=0x%08X",
-                              (unsigned int)Status);
-           HS_AppData.ExeCountState = HS_STATE_DISABLED;
+                              "Error getting ExeCount Table address, RC=0x%08X", (unsigned int)Status);
+            HS_AppData.ExeCountState = HS_STATE_DISABLED;
         }
     }
     /*
@@ -881,22 +891,21 @@ void HS_AcquirePointers(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppMonStatusRefresh(void)
 {
-    uint32  TableIndex = 0;
-    uint32  EnableIndex = 0;
+    uint32 TableIndex  = 0;
+    uint32 EnableIndex = 0;
 
     /*
     ** Clear all AppMon Enable bits
     */
-    for (EnableIndex = 0; EnableIndex <= ((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE); EnableIndex++ )
+    for (EnableIndex = 0; EnableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); EnableIndex++)
     {
         HS_AppData.AppMonEnables[EnableIndex] = 0;
-
     }
 
     /*
     ** Set AppMon enable bits and reset Countups and Exec Counter comparisons
     */
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++ )
+    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
         HS_AppData.AppMonLastExeCount[TableIndex] = 0;
 
@@ -911,7 +920,6 @@ void HS_AppMonStatusRefresh(void)
             CFE_SET((HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE]),
                     (TableIndex % HS_BITS_PER_APPMON_ENABLE));
         }
-
     }
 
     return;
@@ -925,7 +933,7 @@ void HS_AppMonStatusRefresh(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MsgActsStatusRefresh(void)
 {
-    uint32  TableIndex = 0;
+    uint32 TableIndex = 0;
 
     /*
     ** Clear all MsgActs Cooldowns

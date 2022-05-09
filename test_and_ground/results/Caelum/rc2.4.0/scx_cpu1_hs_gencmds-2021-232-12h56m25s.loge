@@ -1,0 +1,41 @@
+21-232-12:57:47.071 00    TLMH-I:STS          58-012-14:03:48.917 INFO CPU=CPU1 APPNAME=TO_LAB_APP EVENT ID=3 TO telemetry output enabled for IP 192.168.1.101
+21-232-12:58:02.074 00    TLMH-I:STS          58-012-14:04:04.001 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_amt1' into 'HS.AppMon_Tbl' working buffer
+21-232-12:58:08.070 00    TLMH-I:STS          58-012-14:04:10.233 INFO CPU=CPU1 APPNAME=HS EVENT ID=50 AppMon verify results: good = 5, bad = 0, unused = 27
+21-232-12:58:08.072 00    TLMH-I:STS          58-012-14:04:10.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.AppMon_Tbl'
+21-232-12:58:13.078 00    TLMH-I:STS          58-012-14:04:15.033 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.AppMon_Tbl'
+21-232-12:58:23.577 00    TLMH-I:STS          58-012-14:04:25.500 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_emt1' into 'HS.EventMon_Tbl' working buffer
+21-232-12:58:33.578 00    TLMH-I:STS          58-012-14:04:35.433 INFO CPU=CPU1 APPNAME=HS EVENT ID=52 EventMon verify results: good = 0, bad = 0, unused = 16
+21-232-12:58:33.579 00    TLMH-I:STS          58-012-14:04:35.433 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.EventMon_Tbl'
+21-232-12:58:38.074 00    TLMH-I:STS          58-012-14:04:40.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.EventMon_Tbl'
+21-232-12:58:47.569 00    TLMH-I:STS          58-012-14:04:49.500 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_mat1' into 'HS.MsgActs_Tbl' working buffer
+21-232-12:58:57.569 00    TLMH-I:STS          58-012-14:04:59.433 INFO CPU=CPU1 APPNAME=HS EVENT ID=56 MsgActs verify results: good = 2, bad = 0, unused = 6
+21-232-12:58:57.570 00    TLMH-I:STS          58-012-14:04:59.434 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.MsgActs_Tbl'
+21-232-12:59:02.078 00    TLMH-I:STS          58-012-14:05:04.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.MsgActs_Tbl'
+21-232-12:59:12.077 00    TLMH-I:STS          58-012-14:05:14.001 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=12 Successful load of '/ram/hs_def_xct2' into 'HS.ExeCount_Tbl' working buffer
+21-232-12:59:20.076 00    TLMH-I:STS          58-012-14:05:22.233 INFO CPU=CPU1 APPNAME=HS EVENT ID=54 ExeCount verify results: good = 7, bad = 0, unused = 25
+21-232-12:59:20.077 00    TLMH-I:STS          58-012-14:05:22.233 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=36 HS validation successful for Inactive 'HS.ExeCount_Tbl'
+21-232-12:59:25.068 00    TLMH-I:STS          58-012-14:05:27.033 INFO CPU=CPU1 APPNAME=CFE_TBL EVENT ID=37 HS Successfully Updated 'HS.ExeCount_Tbl'
+21-232-12:59:41.576 00    TLMH-I:STS          58-012-14:05:43.834 INFO CPU=CPU1 APPNAME=HS EVENT ID=23 No-op command: Version 2.4.0.0
+21-232-12:59:49.070 00    TLMH-I:STS          58-012-14:05:51.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 0, Len = 9, Expected = 8
+21-232-12:59:56.071 00    TLMH-I:STS          58-012-14:05:58.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=24 Reset counters command
+21-232-13:00:07.071 00    TLMH-I:STS          58-012-14:06:09.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 1, Len = 9, Expected = 8
+21-232-13:00:13.071 00    TLMH-I:STS          58-012-14:06:15.034 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=30 Aliveness Indicator Disabled
+21-232-13:00:20.071 00    TLMH-I:STS          58-012-14:06:22.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 7, Len = 9, Expected = 8
+21-232-13:00:28.576 00    TLMH-I:STS          58-012-14:06:30.634 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=29 Aliveness Indicator Enabled
+21-232-13:00:38.070 00    TLMH-I:STS          58-012-14:06:40.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 6, Len = 9, Expected = 8
+21-232-13:00:45.568 00    TLMH-I:STS          58-012-14:06:47.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=31 Processor Resets Performed by HS Counter has been Reset
+21-232-13:00:52.572 00    TLMH-I:STS          58-012-14:06:54.634 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 8, Len = 9, Expected = 8
+21-232-13:01:02.069 00    TLMH-I:STS          58-012-14:07:04.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=32 Max Resets Performable by HS has been set to 25
+21-232-13:01:09.577 00    TLMH-I:STS          58-012-14:07:11.434 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 9, Len = 9, Expected = 12
+21-232-13:01:16.573 00    TLMH-I:STS          58-012-14:07:18.634 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=65 CPU Hogging Indicator Disabled
+21-232-13:01:26.072 00    TLMH-I:STS          58-012-14:07:28.234 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 11, Len = 9, Expected = 8
+21-232-13:01:33.575 00    TLMH-I:STS          58-012-14:07:35.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=64 CPU Hogging Indicator Enabled
+21-232-13:01:39.571 00    TLMH-I:STS          58-012-14:07:41.434 ERROR CPU=CPU1 APPNAME=HS EVENT ID=61 CPU Hogging Detected
+21-232-13:01:40.575 00    TLMH-I:STS          58-012-14:07:42.634 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 10, Len = 9, Expected = 8
+21-232-13:01:49.071 00    TLMH-I:STS          58-012-14:07:51.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=19 Invalid command code: ID = 0x000018AE, CC = 42
+21-232-13:01:56.072 00    TLMH-I:STS          58-012-14:07:58.234 INFO CPU=CPU1 APPNAME=HS EVENT ID=103 Mask 0xFFFFFFFF Base Time Ticks per Idle Ticks (frequency): 0(16), -1(0), -1(0), -1(0)
+21-232-13:01:57.569 00    TLMH-I:STS          58-012-14:07:59.434 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=104 Utilization Parms set: Mult1: 2500 Div: 50505 Mult2: 1
+21-232-13:02:01.070 00    TLMH-I:STS          58-012-14:08:03.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 13, Len = 21, Expected = 20
+21-232-13:02:08.075 00    TLMH-I:STS          58-012-14:08:10.234 DEBUG CPU=CPU1 APPNAME=HS EVENT ID=106 Utilization Diagnostics Mask has been set to 0000FFFF
+21-232-13:02:13.074 00    TLMH-I:STS          58-012-14:08:15.034 ERROR CPU=CPU1 APPNAME=HS EVENT ID=22 Invalid msg length: ID = 0x000018AE, CC = 14, Len = 13, Expected = 12
+21-232-13:03:40.175 00    TLMH-I:STS          58-012-14:08:49.033 INFO CPU=CPU1 APPNAME=TO_LAB_APP EVENT ID=3 TO telemetry output enabled for IP 192.168.1.101

@@ -1,24 +1,24 @@
 /*************************************************************************
-** File: hs_custom.h 
+** File: hs_custom.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
 **
-** Purpose: 
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+**
+** Purpose:
 **   Specification for the CFS Health and Safety (HS) mission specific
 **   custom function interface
 **
@@ -69,7 +69,7 @@
 **  \par Criticality
 **       None
 */
-#define HS_REPORT_DIAG_CC          12
+#define HS_REPORT_DIAG_CC 12
 
 /** \hscmd Set Utilization Calibration Parameters
 **
@@ -97,7 +97,7 @@
 **  \par Criticality
 **       None
 */
-#define HS_SET_UTIL_PARAMS_CC      13
+#define HS_SET_UTIL_PARAMS_CC 13
 
 /** \hscmd Set Utilization Diagnostics Parameter
 **
@@ -124,7 +124,7 @@
 **  \par Criticality
 **       None
 */
-#define HS_SET_UTIL_DIAG_CC        14
+#define HS_SET_UTIL_DIAG_CC 14
 
 /*
 ** Event IDs
@@ -222,16 +222,18 @@
 *************************************************************************/
 typedef struct
 {
-    uint8          CmdHeader[CFE_SB_CMD_HDR_SIZE];
-    int32          Mult1;
-    int32          Div;
-    int32          Mult2;
+    CFE_MSG_CommandHeader_t CmdHeader;
+
+    int32 Mult1;
+    int32 Div;
+    int32 Mult2;
 } HS_SetUtilParamsCmd_t;
 
 typedef struct
 {
-    uint8          CmdHeader[CFE_SB_CMD_HDR_SIZE];
-    uint32         Mask;
+    CFE_MSG_CommandHeader_t CmdHeader;
+
+    uint32 Mask;
 } HS_SetUtilDiagCmd_t;
 
 /*************************************************************************
@@ -239,24 +241,24 @@ typedef struct
 *************************************************************************/
 typedef struct
 {
-  int32    UtilMult1;/**< \brief CPU Utilization Conversion Factor Multiplication 1 */
-  int32    UtilDiv;/**< \brief CPU Utilization Conversion Factor Division */
-  int32    UtilMult2;/**< \brief CPU Utilization Conversion Factor Multiplication 2 */
+    int32 UtilMult1; /**< \brief CPU Utilization Conversion Factor Multiplication 1 */
+    int32 UtilDiv;   /**< \brief CPU Utilization Conversion Factor Division */
+    int32 UtilMult2; /**< \brief CPU Utilization Conversion Factor Multiplication 2 */
 
-  uint32   UtilMask;/**< \brief Mask for determining Idle Tick length */
-  uint32   UtilArrayIndex;/**< \brief Index for determining where to write in Util Array */
-  uint32   UtilArrayMask;/**< \brief Mask for determining where to write in Util Array */
-  uint32   UtilArray[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];/**< \brief Array to store time stamps for determining idle tick length */
+    uint32 UtilMask;                                  /**< \brief Mask for determining Idle Tick length */
+    uint32 UtilArrayIndex;                            /**< \brief Index for determining where to write in Util Array */
+    uint32 UtilArrayMask;                             /**< \brief Mask for determining where to write in Util Array */
+    uint32 UtilArray[HS_UTIL_TIME_DIAG_ARRAY_LENGTH]; /**< \brief Array to store time stamps for determining idle tick
+                                                         length */
 
-  uint32   ThisIdleTaskExec;/**< \brief Idle Task Exec Counter */
-  uint32   LastIdleTaskExec;/**< \brief Idle Task Exec Counter at Previous Interval */
-  uint32   LastIdleTaskInterval;/**< \brief Idle Task Increments during Previous Interval */
-  uint32   UtilCycleCounter;/**< \brief Counter to determine when to monitor utilization */
+    uint32 ThisIdleTaskExec;     /**< \brief Idle Task Exec Counter */
+    uint32 LastIdleTaskExec;     /**< \brief Idle Task Exec Counter at Previous Interval */
+    uint32 LastIdleTaskInterval; /**< \brief Idle Task Increments during Previous Interval */
+    uint32 UtilCycleCounter;     /**< \brief Counter to determine when to monitor utilization */
 
+    int32           IdleTaskRunStatus; /**< \brief HS Idle Task Run Status */
+    CFE_ES_TaskId_t IdleTaskID;        /**< \brief HS Idle Task Task ID */
 
-   int32   IdleTaskRunStatus;/**< \brief HS Idle Task Run Status */
-  uint32   IdleTaskID;/**< \brief HS Idle Task Task ID */
- 
 } HS_CustomData_t;
 
 extern HS_CustomData_t HS_CustomData;
@@ -274,13 +276,13 @@ extern HS_CustomData_t HS_CustomData;
 **       this initializes the Idle Task, spawning the task itself,
 **       and creating a 1Hz sync callback to mark the idle time.
 **       It is called at the end of #HS_AppInit .
-**       It may be updated to include other initializations, or 
+**       It may be updated to include other initializations, or
 **       modifications to already set parameters.
 **
 **  \par Assumptions, External Events, and Notes:
 **       CFE_SUCCESS will be returned if all creation was performed
 **       properly.
-**       
+**
 **  \returns
 **  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
 **  \retstmt Return codes from #CFE_ES_CreateChildTask \endcode
@@ -353,7 +355,7 @@ int32 HS_CustomGetUtil(void);
 **       If a command is found, this function MUST return #CFE_SUCCESS,
 **       otherwise is must not return #CFE_SUCCESS
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \returns
@@ -361,7 +363,7 @@ int32 HS_CustomGetUtil(void);
 **  \retcode !#CFE_SUCCESS \endcode
 **  \endreturns
 *************************************************************************/
-int32 HS_CustomCommands(CFE_SB_MsgPtr_t MessagePtr);
+int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Task that increments counters
@@ -443,11 +445,11 @@ void HS_UtilDiagReport(void);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 *************************************************************************/
-void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Set Utilization Diagnostics Paramater
@@ -458,16 +460,14 @@ void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 *************************************************************************/
-void HS_SetUtilDiagCmd(CFE_SB_MsgPtr_t MessagePtr);
-
+void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr);
 
 #endif /* _hs_custom_ */
 
 /************************/
 /*  End of File Comment */
 /************************/
-

@@ -1,22 +1,22 @@
 /*************************************************************************
-** File: hs_utils.h 
+** File: hs_utils.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
 **
 ** Purpose:
 **   Utility functions for the cFS Health and Safety (HS) application.
@@ -30,7 +30,6 @@
 *************************************************************************/
 #include "cfe.h"
 
-
 /************************************************************************/
 /** \brief Verify message length
 **
@@ -42,7 +41,7 @@
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   msg              A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   msg              A #CFE_SB_Buffer_t* pointer that
 **                                 references the software bus message
 **
 **  \param [in]   ExpectedLength   The expected length of the message
@@ -56,9 +55,7 @@
 **  \sa #HS_LEN_ERR_EID
 **
 *************************************************************************/
-bool    HS_VerifyMsgLength(CFE_SB_MsgPtr_t msg,
-                           uint16          ExpectedLength);
-
+bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength);
 
 /************************************************************************/
 /** \brief Verify AMT Action Type
@@ -77,8 +74,7 @@ bool    HS_VerifyMsgLength(CFE_SB_MsgPtr_t msg,
 **  \endreturns
 **
 *************************************************************************/
-bool    HS_AMTActionIsValid(uint16 ActionType);
-
+bool HS_AMTActionIsValid(uint16 ActionType);
 
 /************************************************************************/
 /** \brief Verify EMT Action Type
@@ -97,7 +93,6 @@ bool    HS_AMTActionIsValid(uint16 ActionType);
 **  \endreturns
 **
 *************************************************************************/
-bool    HS_EMTActionIsValid(uint16 ActionType);
-
+bool HS_EMTActionIsValid(uint16 ActionType);
 
 #endif /* _hs_utils_h_ */

@@ -1,22 +1,22 @@
 /*************************************************************************
-** File: hs_cmds.h 
+** File: hs_cmds.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
 **
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) routines that
@@ -45,13 +45,13 @@
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #CFE_SB_RcvMsg
 **
 *************************************************************************/
-void HS_AppPipe(CFE_SB_MsgPtr_t MessagePtr);
+void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Reset counters
@@ -93,11 +93,11 @@ void HS_AcquirePointers(void);
 **  \par Assumptions, External Events, and Notes:
 **       This message does not affect the command execution counter
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 *************************************************************************/
-void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr);
+void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Noop command
@@ -108,13 +108,13 @@ void HS_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_NOOP_CC
 **
 *************************************************************************/
-void HS_NoopCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Reset counters command
@@ -128,13 +128,13 @@ void HS_NoopCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_RESET_CC
 **
 *************************************************************************/
-void HS_ResetCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process an enable critical applications monitor command
@@ -145,13 +145,13 @@ void HS_ResetCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_ENABLE_APPMON_CC
 **
 *************************************************************************/
-void HS_EnableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a disable critical applications monitor command
@@ -162,13 +162,13 @@ void HS_EnableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_DISABLE_APPMON_CC
 **
 *************************************************************************/
-void HS_DisableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process an enable critical events monitor command
@@ -179,13 +179,13 @@ void HS_DisableAppMonCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_ENABLE_EVENTMON_CC
 **
 *************************************************************************/
-void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a disable critical events monitor command
@@ -196,13 +196,13 @@ void HS_EnableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_DISABLE_EVENTMON_CC
 **
 *************************************************************************/
-void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process an enable aliveness indicator command
@@ -213,13 +213,13 @@ void HS_DisableEventMonCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_ENABLE_ALIVENESS_CC
 **
 *************************************************************************/
-void HS_EnableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a disable aliveness indicator command
@@ -230,13 +230,13 @@ void HS_EnableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_DISABLE_ALIVENESS_CC
 **
 *************************************************************************/
-void HS_DisableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process an enable CPU Hogging indicator command
@@ -247,13 +247,13 @@ void HS_DisableAlivenessCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_ENABLE_CPUHOG_CC
 **
 *************************************************************************/
-void HS_EnableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a disable CPU Hogging indicator command
@@ -264,13 +264,13 @@ void HS_EnableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_DISABLE_CPUHOG_CC
 **
 *************************************************************************/
-void HS_DisableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a reset resets performed command
@@ -281,13 +281,13 @@ void HS_DisableCPUHogCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_SET_MAX_RESETS_CC
 **
 *************************************************************************/
-void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Process a set max resets command
@@ -298,13 +298,13 @@ void HS_ResetResetsPerformedCmd(CFE_SB_MsgPtr_t MessagePtr);
 **  \par Assumptions, External Events, and Notes:
 **       None
 **
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**  \param [in]   BufPtr   A #CFE_SB_Buffer_t* pointer that
 **                             references the software bus message
 **
 **  \sa #HS_RESET_RESETS_PERFORMED_CC
 **
 *************************************************************************/
-void HS_SetMaxResetsCmd(CFE_SB_MsgPtr_t MessagePtr);
+void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /************************************************************************/
 /** \brief Refresh Critical Applications Monitor Status

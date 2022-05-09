@@ -1,22 +1,22 @@
 /************************************************************************
-** File: hs_events.h 
+** File: hs_events.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
 **
 ** Purpose:
 **   Specification for the CFS Health and Safety (HS) event identifers.
@@ -120,18 +120,18 @@
 */
 #define HS_CR_WAKEUP_PIPE_ERR_EID 6
 
-/** \brief <tt> 'Error Subscribing to Events,RC=0x\%08X' </tt>
-**  \event <tt> 'Error Subscribing to Events,RC=0x\%08X' </tt>
+/** \brief <tt> 'Error Subscribing to long-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Error Subscribing to long-format Events,RC=0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
 **  \par Cause:
 **
 **  This event message is issued when the call to #CFE_SB_Subscribe
-**  for the #CFE_EVS_EVENT_MSG_MID, during initialization returns
+**  for the #CFE_EVS_LONG_EVENT_MSG_MID, during initialization returns
 **  a value other than CFE_SUCCESS
 */
-#define HS_SUB_EVS_ERR_EID 7
+#define HS_SUB_LONG_EVS_ERR_EID 7
 
 /** \brief <tt> 'Error Subscribing to HK Request,RC=0x\%08X' </tt>
 **  \event <tt> 'Error Subscribing to HK Request,RC=0x\%08X' </tt>
@@ -275,8 +275,8 @@
 */
 #define HS_CDS_CORRUPT_ERR_EID 18
 
-/** \brief <tt> 'Invalid command code: ID = 0x\%04X, CC = \%d' </tt>
-**  \event <tt> 'Invalid command code: ID = 0x\%04X, CC = \%d' </tt>
+/** \brief <tt> 'Invalid command code: ID = 0x\%08X, CC = \%d' </tt>
+**  \event <tt> 'Invalid command code: ID = 0x\%08X, CC = \%d' </tt>
 **
 **  \par Type: ERROR
 **
@@ -290,8 +290,8 @@
 */
 #define HS_CC_ERR_EID 19
 
-/** \brief <tt> 'Invalid command pipe message ID: 0x\%04X' </tt>
-**  \event <tt> 'Invalid command pipe message ID: 0x\%04X' </tt>
+/** \brief <tt> 'Invalid command pipe message ID: 0x\%08X' </tt>
+**  \event <tt> 'Invalid command pipe message ID: 0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
@@ -305,8 +305,8 @@
 */
 #define HS_MID_ERR_EID 20
 
-/** \brief <tt> 'Invalid HK request msg length: ID = 0x\%04X, CC = \%d, Len = \%d, Expected = \%d' </tt>
-**  \event <tt> 'Invalid HK request msg length: ID = 0x\%04X, CC = \%d, Len = \%d, Expected = \%d' </tt>
+/** \brief <tt> 'Invalid HK request msg length: ID = 0x\%08X, CC = \%d, Len = \%d, Expected = \%d' </tt>
+**  \event <tt> 'Invalid HK request msg length: ID = 0x\%08X, CC = \%d, Len = \%d, Expected = \%d' </tt>
 **
 **  \par Type: ERROR
 **
@@ -322,8 +322,8 @@
 */
 #define HS_HKREQ_LEN_ERR_EID 21
 
-/** \brief <tt> 'Invalid msg length: ID = 0x\%04X, CC = \%d, Len = \%d, Expected = \%d' </tt>
-**  \event <tt> 'Invalid msg length: ID = 0x\%04X, CC = \%d, Len = \%d, Expected = \%d' </tt>
+/** \brief <tt> 'Invalid msg length: ID = 0x\%08X, CC = \%d, Len = \%d, Expected = \%d' </tt>
+**  \event <tt> 'Invalid msg length: ID = 0x\%08X, CC = \%d, Len = \%d, Expected = \%d' </tt>
 **
 **  \par Type: ERROR
 **
@@ -537,7 +537,6 @@
 */
 #define HS_RESET_LIMIT_ERR_EID 37
 
-
 /** \brief <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
 **  \event <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
 **
@@ -547,10 +546,10 @@
 **
 **  This event message is issued when an application name cannot be resolved
 **  into an application ID by the OS.  This event is sent the first time this
-**  error occurs in the HS_MonitorApplications function.  Subsequent 
+**  error occurs in the HS_MonitorApplications function.  Subsequent
 **  occurrences are captured with a corresponding debug event.
 **
-**  The \c APP field specifies the name in the table that was not found in 
+**  The \c APP field specifies the name in the table that was not found in
 **  the system.
 */
 #define HS_APPMON_APPNAME_ERR_EID 38
@@ -848,8 +847,8 @@
 */
 #define HS_MATVAL_INF_EID 56
 
-/** \brief <tt> 'MsgActs verify err: Entry = \%d, Err = \%d, Length = \%d, ID = \%d' </tt>
-**  \event <tt> 'MsgActs verify err: Entry = \%d, Err = \%d, Length = \%d, ID = \%d' </tt>
+/** \brief <tt> 'MsgActs verify err: Entry = \%d, Err = \%d, Length = \%d, ID = 0x\%08X' </tt>
+**  \event <tt> 'MsgActs verify err: Entry = \%d, Err = \%d, Length = \%d, ID = 0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
@@ -939,8 +938,8 @@
 */
 #define HS_DISABLE_CPUHOG_DBG_EID 65
 
-/** \brief <tt> 'Event Monitor Enable: Error Subscribing to Events,RC=0x\%08X' </tt>
-**  \event <tt> 'Event Monitor Enable: Error Subscribing to Events,RC=0x\%08X' </tt>
+/** \brief <tt> 'Event Monitor Enable: Error Subscribing to long-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Event Monitor Enable: Error Subscribing to long-format Events,RC=0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
@@ -948,14 +947,29 @@
 **
 **  This event message is issued when a ground command message is received
 **  to enable event monitoring while it is disabled, and there is an error
-**  subscribing to the event mid.
+**  subscribing to the long-format event mid (#CFE_EVS_LONG_EVENT_MSG_MID).
 **
 **  The \c Status field indicates the error status passed but the subscribe call.
 */
-#define HS_EVENTMON_SUB_EID 66
+#define HS_EVENTMON_LONG_SUB_EID 66
 
-/** \brief <tt> 'Event Monitor Disable: Error Unsubscribing from Events,RC=0x\%08X' </tt>
-**  \event <tt> 'Event Monitor Disable: Error Unsubscribing from Events,RC=0x\%08X' </tt>
+/** \brief <tt> 'Event Monitor Enable: Error Subscribing to short-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Event Monitor Enable: Error Subscribing to short-format Events,RC=0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when a ground command message is received
+**  to enable event monitoring while it is disabled, and there is an error
+**  subscribing to the short-format event mid (#CFE_EVS_SHORT_EVENT_MSG_MID).
+**
+**  The \c Status field indicates the error status passed but the subscribe call.
+*/
+#define HS_EVENTMON_SHORT_SUB_EID 67
+
+/** \brief <tt> 'Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
@@ -963,14 +977,29 @@
 **
 **  This event message is issued when a ground command message is received
 **  to disable event monitoring while it is enabled, and there is an error
-**  unsubscribing from the event mid.
+**  unsubscribing from the long-format event mid (#CFE_EVS_LONG_EVENT_MSG_MID).
 **
 **  The \c Status field indicates the error status passed but the subscribe call.
 */
-#define HS_EVENTMON_UNSUB_EID 67
+#define HS_EVENTMON_LONG_UNSUB_EID 68
 
-/** \brief <tt> 'Error Unsubscribing from Events,RC=0x\%08X' </tt>
-**  \event <tt> 'Error Unsubscribing from Events,RC=0x\%08X' </tt>
+/** \brief <tt> 'Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when a ground command message is received
+**  to disable event monitoring while it is enabled, and there is an error
+**  unsubscribing from the long-format event mid (#CFE_EVS_SHORT_EVENT_MSG_MID).
+**
+**  The \c Status field indicates the error status passed but the subscribe call.
+*/
+#define HS_EVENTMON_SHORT_UNSUB_EID 69
+
+/** \brief <tt> 'Error Unsubscribing from long-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Error Unsubscribing from long-format Events,RC=0x\%08X' </tt>
 **
 **  \par Type: ERROR
 **
@@ -982,7 +1011,22 @@
 **
 **  The \c Status field indicates the error status passed but the subscribe call.
 */
-#define HS_BADEMT_UNSUB_EID 68
+#define HS_BADEMT_LONG_UNSUB_EID 70
+
+/** \brief <tt> 'Error Unsubscribing from short-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Error Unsubscribing from short-format Events,RC=0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued if when acquiring the event monitor table
+**  from table services, it is bad and event monitoring is disabled, but
+**  there is a failure unsubscribing from the event mid.
+**
+**  The \c Status field indicates the error status passed but the subscribe call.
+*/
+#define HS_BADEMT_SHORT_UNSUB_EID 71
 
 /** \brief <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
 **  \event <tt> 'App Monitor App Name not found: APP:(\%s)' </tt>
@@ -992,14 +1036,14 @@
 **  \par Cause:
 **
 **  This event message is issued when an application name cannot be resolved
-**  into an application ID by the OS.  This event is sent if this error 
+**  into an application ID by the OS.  This event is sent if this error
 **  occurs repeatedly in the HS_MonitorApplications function.  The first such
 **  occurrence is captured with a corresponding error event.
 **
-**  The \c APP field specifies the name in the table that was not found in 
+**  The \c APP field specifies the name in the table that was not found in
 **  the system.
 */
-#define HS_APPMON_APPNAME_DBG_EID 69
+#define HS_APPMON_APPNAME_DBG_EID 72
 
 /** \brief <tt> 'Housekeeping req found unknown resource.  Type=0x\%08X' </tt>
  ** \event <tt> 'Housekeeping req found unknown resource.  Type=0x\%08X' </tt>
@@ -1009,80 +1053,91 @@
  ** \par Cause:
  **
  ** This event message is issued when the application encounters a reource
- ** with an unknown type while populating the execution counters in the 
+ ** with an unknown type while populating the execution counters in the
  ** housekeeping telemetry packet.
  **
  ** The \c Type field is the detected resource type.
  */
-#define HS_HKREQ_RESOURCE_DBG_EID 70
+#define HS_HKREQ_RESOURCE_DBG_EID 73
 
 /** \brief <tt> 'Error in custom initialization, RC=0x\%08X' </tt>
 **  \event <tt> 'Error in custom initialization, RC=0x\%08X' </tt>
-** 
+**
 **  \par Type: ERROR
-** 
+**
 **  \par Cause:
-**  
+**
 **  This event message is issued if the HS_CustomInit routine returns
-**  any value other than CFE_SUCCESS.  
+**  any value other than CFE_SUCCESS.
 **
 **  The \c RC field indicates the error status returned from HS_CustomInit
 */
-#define HS_CUSTOM_INIT_ERR_EID 71
-
+#define HS_CUSTOM_INIT_ERR_EID 74
 
 /** \brief <tt> 'Error in AM Table Validation. Table is null.' </tt>
 **  \event <tt> 'Error in AM Table Validation. Table is null.' </tt>
-** 
+**
 **  \par Type: ERROR
-** 
+**
 **  \par Cause:
-**  
-**  This event message is issued if the TableData pointer passed to 
+**
+**  This event message is issued if the TableData pointer passed to
 **  HS_ValidateAMTable is null.
 **
 */
-#define HS_AM_TBL_NULL_ERR_EID  70
-
+#define HS_AM_TBL_NULL_ERR_EID 75
 
 /** \brief <tt> 'Error in EM Table Validation. Table is null.' </tt>
 **  \event <tt> 'Error in EM Table Validation. Table is null.' </tt>
-** 
+**
 **  \par Type: ERROR
-** 
+**
 **  \par Cause:
-**  
-**  This event message is issued if the TableData pointer passed to 
+**
+**  This event message is issued if the TableData pointer passed to
 **  HS_ValidateEMTable is null.
 **
 */
-#define HS_EM_TBL_NULL_ERR_EID  71
+#define HS_EM_TBL_NULL_ERR_EID 76
 
 /** \brief <tt> 'Error in XC Table Validation. Table is null.' </tt>
 **  \event <tt> 'Error in XC Table Validation. Table is null.' </tt>
-** 
+**
 **  \par Type: ERROR
-** 
+**
 **  \par Cause:
-**  
-**  This event message is issued if the TableData pointer passed to 
+**
+**  This event message is issued if the TableData pointer passed to
 **  HS_ValidateXCTable is null.
 **
 */
-#define HS_XC_TBL_NULL_ERR_EID  72
+#define HS_XC_TBL_NULL_ERR_EID 77
 
 /** \brief <tt> 'Error in MA Table Validation. Table is null.' </tt>
 **  \event <tt> 'Error in MA Table Validation. Table is null.' </tt>
-** 
+**
 **  \par Type: ERROR
-** 
+**
 **  \par Cause:
-**  
-**  This event message is issued if the TableData pointer passed to 
+**
+**  This event message is issued if the TableData pointer passed to
 **  HS_ValidateMATable is null.
 **
 */
-#define HS_MA_TBL_NULL_ERR_EID  73
+#define HS_MA_TBL_NULL_ERR_EID 78
+
+/** \brief <tt> 'Error Subscribing to short-format Events,RC=0x\%08X' </tt>
+**  \event <tt> 'Error Subscribing to short-format Events,RC=0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the call to #CFE_SB_Subscribe
+**  for the #CFE_EVS_SHORT_EVENT_MSG_MID, during initialization returns
+**  a value other than CFE_SUCCESS
+*/
+#define HS_SUB_SHORT_EVS_ERR_EID 79
 
 #endif /* _hs_events_h_ */
 

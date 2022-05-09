@@ -172,6 +172,12 @@ local HSAppName = HS_APP_NAME
 local defTblDir = "CF:0"
 local hostCPU = "CPU3"
 
+;; Table Names
+local AppMonTblName = HSAppName & "." & HS_AMT_TABLENAME
+local EvtMonTblName = HSAppName & "." & HS_EMT_TABLENAME
+local ExeCntTblName = HSAppName & "." & HS_XCT_TABLENAME
+local MsgActTblName = HSAppName & "." & HS_MAT_TABLENAME
+
 write ";***********************************************************************"
 write ";  Step 1.0: Health and Safety Test Setup."
 write ";***********************************************************************"
@@ -190,7 +196,7 @@ write ";***********************************************************************"
 write ";  Step 1.2: Display the Housekeeping pages "
 write ";***********************************************************************"
 page SCX_CPU1_HS_HK
-page SCX_CPU1_TST_HS_HK
+;page SCX_CPU1_TST_HS_HK
 
 write ";***********************************************************************"
 write ";  Step 1.3: Create & load the default definition tables. "
@@ -210,9 +216,23 @@ enddo
 
 write "==> Default Application Monitoring Table filename = '",amtFileName,"'"
 
+;; Since the HS app is started in the startup script,
+;; perform a load, validate and activate on this table rather than replacing
+;; the default table
 ;; Upload the file created above to the default location
-s ftp_file (defTblDir,"hs_def_amt1",amtFileName,hostCPU,"P")
-wait 10
+;;s ftp_file (defTblDir,"hs_def_amt1",amtFileName,hostCPU,"P")
+;;wait 10
+;; Send the command to load the Critical Application Table
+s load_table("hs_def_amt1",hostCPU)
+wait 5
+
+;; Send the command to validate the Critical Application Table
+/SCX_CPU1_TBL_VALIDATE INACTIVE VTABLENAME=AppMonTblName
+wait 5
+
+;; Send the command to activate the Critical Application Table
+/SCX_CPU1_TBL_ACTIVATE ATABLENAME=AppMonTblName
+wait 5
 
 ;; Event Monitoring Table
 s scx_cpu1_hs_emt1
@@ -229,9 +249,23 @@ enddo
 
 write "==> Default Event Monitoring Table filename = '",emtFileName,"'"
 
+;; Since the HS app is started in the startup script,
+;; perform a load, validate and activate on this table rather than replacing
+;; the default table
 ;; Upload the file created above to the default location
-s ftp_file (defTblDir,"hs_def_emt1",emtFileName,hostCPU,"P")
-wait 10
+;;s ftp_file (defTblDir,"hs_def_emt1",emtFileName,hostCPU,"P")
+;;wait 10
+;; Send the command to load the Critical Event Table
+s load_table("hs_def_emt1",hostCPU)
+wait 5
+
+;; Send the command to validate the Critical Event Table
+/SCX_CPU1_TBL_VALIDATE INACTIVE VTABLENAME=EvtMonTblName
+wait 5
+
+;; Send the command to activate the Critical Event Table
+/SCX_CPU1_TBL_ACTIVATE ATABLENAME=EvtMonTblName
+wait 5
 
 ;; Message Actions Table
 s scx_cpu1_hs_mat1
@@ -248,9 +282,23 @@ enddo
 
 write "==> Default Message Actions Table filename = '",matFileName,"'"
 
+;; Since the HS app is started in the startup script,
+;; perform a load, validate and activate on this table rather than replacing
+;; the default table
 ;; Upload the file created above to the default location
-s ftp_file (defTblDir,"hs_def_mat1",matFileName,hostCPU,"P")
-wait 10
+;;s ftp_file (defTblDir,"hs_def_mat1",matFileName,hostCPU,"P")
+;;wait 10
+;; Send the command to load the Message Actions Table
+s load_table("hs_def_mat1",hostCPU)
+wait 5
+
+;; Send the command to validate the Message Actions Table
+/SCX_CPU1_TBL_VALIDATE INACTIVE VTABLENAME=MsgActTblName
+wait 5
+
+;; Send the command to activate the Message Actions Table
+/SCX_CPU1_TBL_ACTIVATE ATABLENAME=MsgActTblName
+wait 5
 
 ;; Execution Counter Table
 s scx_cpu1_hs_xct1
@@ -267,15 +315,30 @@ enddo
 
 write "==> Default Execution Counter Table filename = '",xctFileName,"'"
 
+;; Since the HS app is started in the startup script,
+;; perform a load, validate and activate on this table rather than replacing
+;; the default table
 ;; Upload the file created above to the default location
-s ftp_file (defTblDir,"hs_def_xct1",xctFileName,hostCPU,"P")
-wait 10
+;;s ftp_file (defTblDir,"hs_def_xct1",xctFileName,hostCPU,"P")
+;;wait 10
+;; Send the command to load the Critical Event Table
+s load_table("hs_def_xct2",hostCPU)
+wait 5
+
+;; Send the command to validate the Execution Counter Table
+/SCX_CPU1_TBL_VALIDATE INACTIVE VTABLENAME=ExeCntTblName
+wait 5
+
+/SCX_CPU1_TBL_ACTIVATE ATABLENAME=ExeCntTblName
+wait 5
+
 
 write ";***********************************************************************"
 write ";  Step 1.4:  Start the Health and Safety (HS) and Test Applications.   "
 write ";***********************************************************************"
-s scx_cpu1_hs_start_apps("1.4")
-wait 5
+write "; Skipped this step "
+;s scx_cpu1_hs_start_apps("1.4")
+;wait 5
 
 write ";***********************************************************************"
 write ";  Step 1.5: Enable DEBUG Event Messages "
@@ -300,12 +363,6 @@ write ";***********************************************************************"
 ;; CPU1 is the default
 local hkPktId = "p0AD"
 
-if ("CPU1" = "CPU2") then
-  hkPktId = "p1AD"
-elseif ("CPU1" = "CPU3") then
-  hkPktId = "p2AD"
-endif
-
 ;; Verify the HK Packet is getting generated by waiting for the
 ;; sequencecount to increment twice
 local seqTlmItem = hkPktId & "scnt"
@@ -328,7 +385,7 @@ if (SCX_CPU1_HS_CMDPC = 0) AND (SCX_CPU1_HS_CMDEC = 0) AND ;;
    (SCX_CPU1_HS_InvalidEVTAppCnt = 0) AND ;;
    (SCX_CPU1_HS_AppMonState = HS_APPMON_DEFAULT_STATE) AND ;;
    (SCX_CPU1_HS_EvtMonState = HS_EVENTMON_DEFAULT_STATE) AND ;;
-   (p@SCX_CPU1_TST_HS_WatchdogFlag = "TRUE") AND ;;
+;;   (p@SCX_CPU1_TST_HS_WatchdogFlag = "TRUE") AND ;;
    (SCX_CPU1_HS_CPUAliveState = HS_ALIVENESS_DEFAULT_STATE) then
   write "<*> Passed (8000) - Housekeeping telemetry initialized properly."
   ut_setrequirements HS_8000, "P"
@@ -396,12 +453,6 @@ local errcnt = SCX_CPU1_HS_CMDEC + 1
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000200B0"
 
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000200B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000200B0"
-endif
-
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
 ut_tlmwait SCX_CPU1_HS_CMDEC, {errcnt}
@@ -425,6 +476,7 @@ endif
 
 wait 5
 
+goto step2_4
 write ";***********************************************************************"
 write ";  Step 2.3: Utilizing the TST_HS application, send the command that  "
 write ";  will set all the counters that get reset to zero (0) by the Reset  "
@@ -444,6 +496,7 @@ endif
 
 wait 5
 
+step2_4:
 write ";***********************************************************************"
 write ";  Step 2.4: Verify that all the counters are non-zero and send the   "
 write ";  Reset command if so.                                               "
@@ -500,12 +553,6 @@ local errcnt = SCX_CPU1_HS_CMDEC + 1
   
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000201B0"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000201B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000201B0"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
@@ -583,12 +630,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
   
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000207B0"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000207B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000207B0"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
@@ -669,12 +710,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000206B0"
 
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000206B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000206B0"
-endif
-
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
 ut_tlmwait SCX_CPU1_HS_CMDEC, {errcnt}
@@ -698,6 +733,7 @@ endif
 
 wait 5
 
+goto step2_11
 write ";***********************************************************************"
 write ";  Step 2.10: Send the TST_HS command to increment the HS Resets "
 write ";  Performed counter. "
@@ -716,6 +752,7 @@ endif
 
 wait 5
 
+step2_11:
 write ";***********************************************************************"
 write ";  Step 2.11: Send the Reset Processor Resets command."
 write ";***********************************************************************"
@@ -769,12 +806,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
  
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000208B0"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000208B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000208B0"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
@@ -844,12 +875,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc000000209B0"
 
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc000000209B0"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc000000209B0"
-endif
-
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
 ut_tlmwait SCX_CPU1_HS_CMDEC, {errcnt}
@@ -917,12 +942,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
   
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc00000020B83"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc00000020B83"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc00000020B83"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
@@ -992,12 +1011,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc00000020A82"
 
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc00000020A82"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc00000020A82"
-endif
-
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
 ut_tlmwait SCX_CPU1_HS_CMDEC, {errcnt}
@@ -1030,12 +1043,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
   
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEc0000001AA00"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEc0000001AA"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEc0000001AA"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
@@ -1108,12 +1115,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEC000000E0D62000009C40000C54900000001"
 
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEC000000E0D63000009C40000C54900000001"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEC000000E0DCB000009C40000C54900000001"
-endif
-
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 
 ut_tlmwait SCX_CPU1_HS_CMDEC, {errcnt}
@@ -1171,12 +1172,6 @@ errcnt = SCX_CPU1_HS_CMDEC + 1
   
 ;; Set the CPU1 raw command as the default
 rawcmd = "18AEC00000060E82FFFFFFFF"
-
-if ("CPU1" = "CPU2") then
-  rawcmd = "19AEC00000060E83FFFFFFFF"
-elseif ("CPU1" = "CPU3") then
-  rawcmd = "1AAEC00000060E80FFFFFFFF"
-endif
 
 ut_sendrawcmd "SCX_CPU1_HS", (rawcmd)
 

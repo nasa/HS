@@ -1,29 +1,29 @@
 /*************************************************************************
-** File: hs_platform_cfg.h 
+** File: hs_platform_cfg.h
 **
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System 
+** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
 ** (cFS) Health and Safety (HS) Application version 2.3.2"
 **
-** Copyright © 2020 United States Government as represented by the 
-** Administrator of the National Aeronautics and Space Administration.  
-** All Rights Reserved. 
-** 
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-** http://www.apache.org/licenses/LICENSE-2.0 
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License. 
+** Copyright © 2020 United States Government as represented by the
+** Administrator of the National Aeronautics and Space Administration.
+** All Rights Reserved.
 **
-** Purpose: 
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+** http://www.apache.org/licenses/LICENSE-2.0
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+**
+** Purpose:
 **   CFS Health and Safety (HS) Application Platform Configuration Header File
 **
 ** Notes:
 **
-** 
+**
 *************************************************************************/
 #ifndef _hs_platform_cfg_h_
 #define _hs_platform_cfg_h_
@@ -42,7 +42,7 @@
 **       no limits on the definition.  Refer to CFE Executive Services
 **       for specific information on limits related to application names.
 */
-#define HS_APP_NAME                    "HS"
+#define HS_APP_NAME "HS"
 
 /**\hscfg Idle Task Configuration Parameters (custom)
 **
@@ -54,7 +54,7 @@
 **  \par Limits:
 **       These limits will vary by platform and available resources.
 */
-#define HS_IDLE_TASK_NAME  "HS_IDLE_TASK"
+#define HS_IDLE_TASK_NAME       "HS_IDLE_TASK"
 #define HS_IDLE_TASK_STACK_PTR  0
 #define HS_IDLE_TASK_STACK_SIZE 4096
 #define HS_IDLE_TASK_FLAGS      0
@@ -71,7 +71,7 @@
 **  \par Limits:
 **       This parameter can't be larger than 255.
 */
-#define HS_IDLE_TASK_PRIORITY   252
+#define HS_IDLE_TASK_PRIORITY 252
 
 /** \hscfg Maximum reported execution counters
 **
@@ -92,7 +92,7 @@
 **       cFE size limit for a single buffered table set by the
 **       #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter
 */
-#define HS_MAX_EXEC_CNT_SLOTS             32
+#define HS_MAX_EXEC_CNT_SLOTS 32
 
 /** \hscfg Maximum message action types
 **
@@ -114,7 +114,7 @@
 **       cFE size limit for a single buffered table set by the
 **       #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter
 */
-#define HS_MAX_MSG_ACT_TYPES             8
+#define HS_MAX_MSG_ACT_TYPES 8
 
 /** \hscfg Maximum message action size (in bytes)
 **
@@ -136,7 +136,7 @@
 **       cFE size limit for a single buffered table set by the
 **       #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter
 */
-#define HS_MAX_MSG_ACT_SIZE             16
+#define HS_MAX_MSG_ACT_SIZE 16
 
 /** \hscfg Maximum number of monitored applications
 **
@@ -159,7 +159,7 @@
 **       cFE size limit for a single buffered table set by the
 **       #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter
 */
-#define HS_MAX_MONITORED_APPS             32
+#define HS_MAX_MONITORED_APPS 32
 
 /** \hscfg Maximum number of monitored events
 **
@@ -182,7 +182,7 @@
 **       cFE size limit for a single buffered table set by the
 **       #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter
 */
-#define HS_MAX_MONITORED_EVENTS          16
+#define HS_MAX_MONITORED_EVENTS 16
 
 /** \hscfg Watchdog Timeout Value
 **
@@ -195,7 +195,7 @@
 **
 **       This parameter must be greater than 0.
 */
-#define HS_WATCHDOG_TIMEOUT_VALUE       10000
+#define HS_WATCHDOG_TIMEOUT_VALUE 10000
 
 /**
 **  \hscfg Time to wait after performing processing (in milliseconds)
@@ -240,7 +240,7 @@
 **       None.
 **
 */
-#define HS_CPU_ALIVE_STRING        "."
+#define HS_CPU_ALIVE_STRING "."
 
 /** \hscfg CPU aliveness output period
 **
@@ -253,7 +253,7 @@
 **       integer (4294967295).
 **
 */
-#define HS_CPU_ALIVE_PERIOD         5
+#define HS_CPU_ALIVE_PERIOD 5
 
 /** \hscfg Max Number of Processor Resets that may be performed by HS
 **
@@ -272,7 +272,7 @@
 **       actions to the value set here.
 **
 */
-#define HS_MAX_RESTART_ACTIONS      3
+#define HS_MAX_RESTART_ACTIONS 3
 
 /** \hscfg Software bus command pipe depth
 **
@@ -285,7 +285,7 @@
 **
 **       This parameter must be greater than 0.
 */
-#define HS_CMD_PIPE_DEPTH       12
+#define HS_CMD_PIPE_DEPTH 12
 
 /** \hscfg Software bus event pipe depth
 **
@@ -300,7 +300,7 @@
 **
 **       This parameter must be greater than 0.
 */
-#define HS_EVENT_PIPE_DEPTH       32
+#define HS_EVENT_PIPE_DEPTH 32
 
 /** \hscfg Software bus wakeup pipe depth
 **
@@ -313,7 +313,7 @@
 **
 **       This parameter must be greater than 0.
 */
-#define HS_WAKEUP_PIPE_DEPTH       1
+#define HS_WAKEUP_PIPE_DEPTH 1
 
 /**
 **  \hscfg Time to wait before a processor reset (in milliseconds)
@@ -326,7 +326,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_RESET_TASK_DELAY   50
+#define HS_RESET_TASK_DELAY 50
 
 /**
 **  \hscfg Time to wait for all apps to be started (in milliseconds)
@@ -345,7 +345,7 @@
 **       This should be greater than or equal to the Startup Sync timeout for
 **       any application in the Application Monitor Table.
 */
-#define HS_STARTUP_SYNC_TIMEOUT   65000
+#define HS_STARTUP_SYNC_TIMEOUT 65000
 
 /** \hscfg Default State of the Application Monitor
 **
@@ -356,7 +356,7 @@
 **  \par Limits:
 **       Must be HS_STATE_ENABLED or HS_STATE_DISABLED
 */
-#define HS_APPMON_DEFAULT_STATE   HS_STATE_ENABLED
+#define HS_APPMON_DEFAULT_STATE HS_STATE_ENABLED
 
 /** \hscfg Default State of the Event Monitor
 **
@@ -367,7 +367,7 @@
 **  \par Limits:
 **       Must be HS_STATE_ENABLED or HS_STATE_DISABLED
 */
-#define HS_EVENTMON_DEFAULT_STATE   HS_STATE_ENABLED
+#define HS_EVENTMON_DEFAULT_STATE HS_STATE_ENABLED
 
 /** \hscfg Default State of the Aliveness Indicator
 **
@@ -378,7 +378,7 @@
 **  \par Limits:
 **       Must be HS_STATE_ENABLED or HS_STATE_DISABLED
 */
-#define HS_ALIVENESS_DEFAULT_STATE   HS_STATE_ENABLED
+#define HS_ALIVENESS_DEFAULT_STATE HS_STATE_ENABLED
 
 /** \hscfg Default State of the CPU Hogging Indicator
 **
@@ -389,7 +389,7 @@
 **  \par Limits:
 **       Must be HS_STATE_ENABLED or HS_STATE_DISABLED
 */
-#define HS_CPUHOG_DEFAULT_STATE   HS_STATE_ENABLED
+#define HS_CPUHOG_DEFAULT_STATE HS_STATE_ENABLED
 
 /** \hscfg Application Monitor Table (AMT) filename
 **
@@ -401,7 +401,7 @@
 **       This string shouldn't be longer than #OS_MAX_PATH_LEN for the
 **       target platform in question
 */
-#define HS_AMT_FILENAME                "/cf/hs_amt.tbl"
+#define HS_AMT_FILENAME "/cf/hs_amt.tbl"
 
 /** \hscfg Event Monitor Table (EMT) filename
 **
@@ -413,7 +413,7 @@
 **       This string shouldn't be longer than #OS_MAX_PATH_LEN for the
 **       target platform in question
 */
-#define HS_EMT_FILENAME                "/cf/hs_emt.tbl"
+#define HS_EMT_FILENAME "/cf/hs_emt.tbl"
 
 /** \hscfg Execution Counter Table (XCT) filename
 **
@@ -425,7 +425,7 @@
 **       This string shouldn't be longer than #OS_MAX_PATH_LEN for the
 **       target platform in question
 */
-#define HS_XCT_FILENAME                "/cf/hs_xct.tbl"
+#define HS_XCT_FILENAME "/cf/hs_xct.tbl"
 
 /** \hscfg Message Actions Table (MAT) filename
 **
@@ -437,16 +437,16 @@
 **       This string shouldn't be longer than #OS_MAX_PATH_LEN for the
 **       target platform in question
 */
-#define HS_MAT_FILENAME                "/cf/hs_mat.tbl"
+#define HS_MAT_FILENAME "/cf/hs_mat.tbl"
 
 /** \hscfg CPU Utilization Calls per Mark (custom)
 **
 **  \par Description:
 **       Number of times the Mark function must be called before it actually
-**       marks the time. This influences the interval size. The function 
+**       marks the time. This influences the interval size. The function
 **       calling the Mark function may not run at the same rate as the HS cycle
 **       (or HS may not want to monitor utilization every cycle) so this the
-**       interval to be at least as long as an HS cycle. 
+**       interval to be at least as long as an HS cycle.
 **       Note that these values are only necessarily relevant in the
 **       default hs_custom.c.
 **
@@ -454,7 +454,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_UTIL_CALLS_PER_MARK                         1
+#define HS_UTIL_CALLS_PER_MARK 1
 
 /** \hscfg CPU Utilization Cycles per Interval (custom)
 **
@@ -468,7 +468,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_UTIL_CYCLES_PER_INTERVAL                    1
+#define HS_UTIL_CYCLES_PER_INTERVAL 1
 
 /** \hscfg CPU Utilization Total Utils Per Interval
 **
@@ -480,7 +480,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_UTIL_PER_INTERVAL_TOTAL             10000
+#define HS_UTIL_PER_INTERVAL_TOTAL 10000
 
 /** \hscfg CPU Utilization Hogging Utils Per Interval
 **
@@ -491,12 +491,12 @@
 **  \par Limits:
 **       This parameter can't be larger than #HS_UTIL_PER_INTERVAL_TOTAL.
 */
-#define HS_UTIL_PER_INTERVAL_HOGGING            9900
+#define HS_UTIL_PER_INTERVAL_HOGGING 9900
 
 /** \hscfg CPU Utilization Conversion Factor Multiplication 1 (custom)
 **
 **  \par Description:
-**       First multiplication conversion factor. Number of idle ticks is multiplied 
+**       First multiplication conversion factor. Number of idle ticks is multiplied
 **       this value first when converting to utils.
 **       Note that these values are only necessarily relevant in the
 **       default hs_custom.c.
@@ -506,10 +506,10 @@
 **       is done using "uint32" values; it is important that the number
 **       of loop iterations in HS_IDLE, times this value, not overflow.
 **
-**       The result of the conversion must be a 32 bit signed integer 
+**       The result of the conversion must be a 32 bit signed integer
 **       (between -2147483648 and 2147483647).
 */
-#define HS_UTIL_CONV_MULT1                      1
+#define HS_UTIL_CONV_MULT1 1
 
 /** \hscfg CPU Utilization Conversion Factor Division (custom)
 **
@@ -522,15 +522,15 @@
 **  \par Limits:
 **       There may be processor dependent limits on value.
 **
-**       The result of the conversion must be a 32 bit signed integer 
+**       The result of the conversion must be a 32 bit signed integer
 **       (between -2147483648 and 2147483647).
 */
-#define HS_UTIL_CONV_DIV                       10000
+#define HS_UTIL_CONV_DIV 10000
 
 /** \hscfg CPU Utilization Conversion Factor Multiplication 2 (custom)
 **
 **  \par Description:
-**       Second multiplication conversion factor. Number of idle ticks is multiplied 
+**       Second multiplication conversion factor. Number of idle ticks is multiplied
 **       this value after being divided by #HS_UTIL_CONV_DIV after being multiplied by
 **       #HS_UTIL_CONV_MULT1 when converting to utils.
 **       Note that these values are only necessarily relevant in the
@@ -539,10 +539,10 @@
 **  \par Limits:
 **       There may be processor dependent limits on value.
 **
-**       The result of the conversion must be a 32 bit signed integer 
+**       The result of the conversion must be a 32 bit signed integer
 **       (between -2147483648 and 2147483647).
 */
-#define HS_UTIL_CONV_MULT2                       1
+#define HS_UTIL_CONV_MULT2 1
 
 /** \hscfg CPU Utilization Hogging Timeout
 **
@@ -554,7 +554,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_UTIL_HOGGING_TIMEOUT                  5
+#define HS_UTIL_HOGGING_TIMEOUT 5
 
 /** \hscfg CPU Peak Utilization Number of Intervals
 **
@@ -568,7 +568,7 @@
 **       This parameter controls the size of the array which stores
 **       previously measured utilization values.
 */
-#define HS_UTIL_PEAK_NUM_INTERVAL                    64
+#define HS_UTIL_PEAK_NUM_INTERVAL 64
 
 /** \hscfg CPU Average Utilization Number of Intervals
 **
@@ -578,7 +578,7 @@
 **  \par Limits:
 **       This parameter can't be larger than #HS_UTIL_PEAK_NUM_INTERVAL .
 */
-#define HS_UTIL_AVERAGE_NUM_INTERVAL                  4
+#define HS_UTIL_AVERAGE_NUM_INTERVAL 4
 
 /** \hscfg CPU Utilization Diagnostics Mask (custom)
 **
@@ -592,7 +592,7 @@
 **       This parameter can't be larger than an unsigned 32 bit
 **       integer (4294967295).
 */
-#define HS_UTIL_DIAG_MASK               0xFFFFFFFF
+#define HS_UTIL_DIAG_MASK 0xFFFFFFFF
 
 /** \hscfg CPU Utilization Diagnostics Array Configuration (custom)
 **
@@ -606,13 +606,12 @@
 **  \par Limits:
 **       This parameter must be less than 32 and may not be negative.
 */
-#define HS_UTIL_TIME_DIAG_ARRAY_POWER          4
-#define HS_UTIL_TIME_DIAG_ARRAY_LENGTH         (1<<(HS_UTIL_TIME_DIAG_ARRAY_POWER))
-#define HS_UTIL_TIME_DIAG_ARRAY_MASK           (HS_UTIL_TIME_DIAG_ARRAY_LENGTH - 1)
-
+#define HS_UTIL_TIME_DIAG_ARRAY_POWER  4
+#define HS_UTIL_TIME_DIAG_ARRAY_LENGTH (1 << (HS_UTIL_TIME_DIAG_ARRAY_POWER))
+#define HS_UTIL_TIME_DIAG_ARRAY_MASK   (HS_UTIL_TIME_DIAG_ARRAY_LENGTH - 1)
 
 /** \hscfg Mission specific version number for HS application
-**  
+**
 **  \par Description:
 **       An application version number consists of four parts:
 **       major version number, minor version number, revision
@@ -624,7 +623,7 @@
 **       Must be defined as a numeric value that is greater than
 **       or equal to zero.
 */
-#define HS_MISSION_REV            0
+#define HS_MISSION_REV 0
 
 #endif /*_hs_platform_cfg_h_*/
 

@@ -4,10 +4,10 @@ core Flight System (cFS) Health and Safety Application (HS)
 Open Source Release Readme
 ==========================
 
-HS Release 2.3.2
+HS Release 2.4.0
 
 Date: 
-10/5/2020
+8/27/2021
 
 Introduction
 -------------
@@ -20,30 +20,26 @@ Introduction
   (optional), and CPU Aliveness Indication (via UART). 
 
   The HS application is written in C and depends on the cFS Operating System 
-  Abstraction Layer (OSAL) and cFE components. There is additional HS 
-  application specific configuration information contained in the application 
-  user's guide available in: 
-  https://github.com/nasa/HS/tree/master/docs/users_guide
-  
+  Abstraction Layer (OSAL) and cFE components.  
+  There is additional HS application-specific configuration information
+  contained in the application user's guide.
+
+  Developer's guide information can be generated using Doxygen: 
+  doxygen hs_doxygen_config.txt
+
   This software is licensed under the Apache 2.0 license.  
  
  
 Software Included
 ------------------
-  Health and Safety application (HS) 2.3.2
+  Health and Safety application (HS) 2.4.0
   
  
 Software Required
 ------------------
 
- Operating System Abstraction Layer 5.0 or higher can be 
- obtained at https://github.com/nasa/osal
-
- core Flight Executive 6.8.0 or higher can be obtained at
- https://github.com/nasa/cfe
-
- Note: An integrated bundle including the cFE, OSAL, and PSP can 
- be obtained at https://github.com/nasa/cfs
+ HS v2.4.0 requires cFS Caelum, which can be be obtained 
+ at https://github.com/nasa/cfs
   
 About cFS
 -----------

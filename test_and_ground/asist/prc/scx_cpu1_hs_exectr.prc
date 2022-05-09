@@ -170,7 +170,7 @@ write ";  Step 1.2: Display the Housekeeping pages "
 write ";***********************************************************************"
 page SCX_CPU1_HS_HK
 page SCX_CPU1_HS_EXECNT_TABLE
-page SCX_CPU1_TST_HS_HK
+;page SCX_CPU1_TST_HS_HK
 
 write ";***********************************************************************"
 write ";  Step 1.3: Create & load the default definition tables. "
@@ -254,8 +254,8 @@ wait 10
 write ";***********************************************************************"
 write ";  Step 1.4:  Start the Health and Safety (HS) and Test Applications.   "
 write ";***********************************************************************"
-s scx_cpu1_hs_start_apps("1.4")
-wait 5
+;s scx_cpu1_hs_start_apps("1.4")
+;wait 5
 
 write ";***********************************************************************"
 write ";  Step 1.5: Enable DEBUG Event Messages "
@@ -311,8 +311,8 @@ if (SCX_CPU1_HS_CMDPC = 0) AND (SCX_CPU1_HS_CMDEC = 0) AND ;;
    (SCX_CPU1_HS_MaxResetCnt = HS_MAX_RESTART_ACTIONS) AND ;;
    (SCX_CPU1_HS_InvalidEVTAppCnt = 0) AND ;;
    (SCX_CPU1_HS_AppMonState = HS_APPMON_DEFAULT_STATE) AND ;;
+ ;;  (p@SCX_CPU1_TST_HS_WatchdogFlag = "TRUE") AND ;;
    (SCX_CPU1_HS_EvtMonState = HS_EVENTMON_DEFAULT_STATE) AND ;;
-   (p@SCX_CPU1_TST_HS_WatchdogFlag = "TRUE") AND ;;
    (SCX_CPU1_HS_CPUAliveState = HS_ALIVENESS_DEFAULT_STATE) then
   write "<*> Passed (8000) - Housekeeping telemetry initialized properly."
   ut_setrequirements HS_8000, "P"
@@ -458,7 +458,7 @@ s ftp_file (defTblDir,"na",xctFileName,hostCPU,"R")
 wait 5
 
 write ";*********************************************************************"
-write ";  Step 2.6: Stop the HS and TST_HS applications by performing a cFE "
+write ";  Step 2.6: Stop the applications by performing a cFE "
 write ";  Processor Reset. "
 write ";*********************************************************************"
 /SCX_CPU1_ES_PROCESSORRESET
@@ -470,6 +470,8 @@ wait 60
 cfe_startup {hostCPU}
 wait 5
 
+write "; Skipping Step 2.7: since the HS app is contained in the startup script"
+goto step2_8
 write ";*********************************************************************"
 write ";  Step 2.7: Start the HS and TST_HS applications."
 write ";*********************************************************************"
@@ -479,7 +481,7 @@ ut_setupevents "SCX", "CPU1", {HSAppName}, HS_EMT_LD_ERR_EID, "ERROR", 4
 ut_setupevents "SCX", "CPU1", {HSAppName}, HS_XCT_LD_ERR_EID, "ERROR", 5
 ut_setupevents "SCX", "CPU1", {HSAppName}, HS_MAT_LD_ERR_EID, "ERROR", 6
 
-s scx_cpu1_hs_start_apps("2.7")
+;s scx_cpu1_hs_start_apps("2.7")
 wait 5
 
 ;; Verify that the Load Error message for the AMT was rcv'd 
@@ -531,6 +533,7 @@ else
   ut_setrequirements HS_30001, "F"
 endif
 
+step2_8:
 write ";***********************************************************************"
 write ";  Step 2.8: Enable DEBUG Event Messages "
 write ";***********************************************************************"
