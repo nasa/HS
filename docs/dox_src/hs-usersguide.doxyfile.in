@@ -16,4 +16,4 @@
 INPUT                 += @MISSION_SOURCE_DIR@/cfe/cmake/sample_defs
 
 PROJECT_NAME           = "HS User's Guide"
-WARN_LOGFILE           = hs_usersguide_warnings.log
+WARN_LOGFILE           = hs-usersguide-warnings.log
