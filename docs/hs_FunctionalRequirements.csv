@@ -1,0 +1,123 @@
+Summary,Custom field (Requirement ID),Description,Custom field (Requirement Rationale)
+HS1000,HS1000,"Upon receipt of a No-Op command, HS shall increment the HS Valid Command Counter and generate an event message.",Debug command to verify application is alive.
+HS1001,HS1001,"Upon receipt of a Reset command, HS shall reset the following housekeeping variables to a value of zero:  
+a)       Valid Ground Command Counter    
+b)       Ground Command Rejected Counter.",Important for testing and on-orbit flight operations in order to start with a “clean slate”.
+HS1002,HS1002,"For all HS commands, if the length contained in the message header is not equal to the expected length, HS shall reject the command and issue an event message.",Basic command verification in the event of SEU or memory corruption
+HS1003,HS1003,"If HS accepts any command as valid, HS shall execute the command, increment the HS Valid Command Counter and issue an event message.",Operators require feedback on command execution.
+HS1004,HS1004,"If HS rejects any command, HS shall abort the command execution, increment the HS Command Rejected Counter and issue an error event message.",Operators require feedback on command execution.
+HS2000,HS2000,The HS Application shall verify that each application defined in the Critical Application Table is executing.,HS uses a table to define the critical application. Tables are used so that the list can be configured for a mission and can be easily changed.
+HS2000.1,HS2000.1,"If the entry indicates that the application is a cFE Core Application and it has not executed for the corresponding table-defined number of HS execution cycles, HS shall perform one of the table-defined actions
+a) cFE Processor Reset
+b) Send an Event message
+c) Send a Software Bus Message
+d) Perform No Action","Not able to individually start a cFE core application, therefore, need to perform a cFE Processor Reset. Note that the Software Bus message can be any message, however, the intent it to allow the starting of an RTS (without tying HS to SC)."
+HS2000.1.1,HS2000.1.1,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is less than the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall
+a)       Increment the Number of cFE Processor Resets
+b)       Set the Watchdog servicing flag to False
+c)       Command the cFE Processor Reset.",Note that the watchdog flag is set to false in the event that the cFE Processor reset can’t be performed.
+HS2000.1.2,HS2000.1.2,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is greater-than-or-equal-to the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall send an event message.",No cFE Processor Reset will be performed. Need to prevent an infinite reset loop.
+HS2000.2,HS2000.2,"If the entry indicates that the application is not a cFE Core Application and it has not executed for the corresponding table-defined number of HS execution cycles, HS shall execute one of the table-defined actions: 
+a) Restart the Application (that failed to check-in) 
+b) cFE Processor Reset 
+c) Send an Event Message 
+d) Send a Software Bus Message 
+e)  Perform No Action","Note that each entry has a corresponding HS execution counter. This represents the number of HS execution cycles before the Application is  declared “not there”. Note also that an application can have more than one entry (could have one entry to restart the app and a second entry to perform a cFE) Processor reset. More than one application restart can be performed in one HS cycle. Note that the Software Bus message can be any message, however, the intent is to allow the starting of an RTS (without tying HS to SC)."
+HS2000.2.1,HS2000.2.1,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is less than the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall
+a)       Increment the Number of cFE Processor Resets
+b)       Set the Watchdog servicing flag to False
+c)       Command the cFE Processor Reset.",Note that the watchdog flag is set to false in the event that the cFE Processor reset can’t be performed.
+HS2000.2.2,HS2000.2.2,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is greater-than-or-equal-to the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall send an event message.",No cFE Processor Reset will be performed. Need to prevent an infinite reset loop.
+HS2000.2.3,HS2000.2.3,"If the action is to perform an Application Restart, HS shall disable the entry in the Critical Application Table","If an application restart does not fix the problem, disable the monitoring in order to prevent an infinite loop."
+HS2000.3,HS2000.3,"If the entry in the table references an unresolvable application (i.e. not registered with cFE), HS shall issue an event message",This is the case where an application is unknown to the cFE – maybe because of a misspelled application.
+HS2001,HS2001,"Upon receipt of an Enable Critical Application Monitoring Command, HS shall
+a)       Enable all entries in the Critical Application Table
+b)       Execute the Critical Application Table.","Enables maintenance to be done on a critical app (eg. Disable Critical Application Monitoring, modify/load critical app, Enable Critical App  Monitoring. Note that nothing is preserved between a Disable command and an Enable command."
+HS2002,HS2002,"Upon receipt of a Disable Critical Application Monitoring Command, HS shall stop processing the Critical Application Table.",Enables maintenance to be done on a critical app.
+HS2003,HS2003,HS shall support up to <PLATFORM_DEFINED> critical applications.,Bounds the Critical Application Table size.
+HS2004,HS2004,"Upon receipt of a Critical Application Table update indication, HS shall validate the Critical Application Table by validating the action",Validate the table for gross errors. Only able to valid the action field (all others are runtime checks)
+HS2004.1,HS2004.1,"If the Critical Application Table fails validation, HS shall issue an event message.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just not critical application monitoring)."
+HS3000,HS3000,The HS Application shall maintain the Execution Counters defined in the Execution Counter Table for  up to <PLATFORM_DEFINED> number of Items.,Users define the Items that HS shall maintain counters for. Items can be Application (main task) and child tasks Note that the items must use the appropriate cFE APIs. Note that a value of zero can be used if a mission does not want to include Execution counters.
+HS3000.1,HS3000.1,"If the Item contained in the Execution Counter Table is unknown, HS shall set the Execution Counter value for that entry to 0xFFFFFFFF.","Either that application didn’t initialize properly and just exited its run loop or  the table contained an invalid item reference (eg. invalid application, invalid task). Reporting ‘FFFFFFFF’ gives the ground an indication that something isn’t correct."
+HS3001,HS3001,"Upon receipt of a Execution Counter Table update indication, HS shall validate the Execution Counter Table.",Validate the table for gross errors.
+HS3001.1,HS3001.1,"If the Execution Counter Table fails validation, HS shall issue an event message.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring."
+HS4000,HS4000,"During each HS execution cycle, HS shall check the status of the Update Watchdog Timer Flag.",The Watchdog Timer Flag is the mechanism used by all of the HS functions to indicate whether to service the watchdog timer or not.
+HS4000.1,HS4000.1,"If it is set to TRUE, HS shall service the Watchdog Timer.",Flag set to TRUE on initialization.
+HS4000.2,HS4000.2,"If it is set to FALSE, HS shall not service the Watchdog Timer.",Other applications can still service the watchdog.
+HS5000,HS5000,The HS Application shall compare each received event message with the events defined in the Critical Event Table for up to <PLATFORM_DEFINED> critical events.,"HS subscribes to all events. HS uses a table to define the critical events. Note that in order to make an event unique, the application and the event ID are required."
+HS5000.1,HS5000.1,"If the event received is defined in the Critical Event Table, HS shall execute one of the following table-defined actions:
+a) Restart Application that generated the Event
+b) Perform cFE Processor Reset
+c) Delete the Application that generated the Event
+d) Send a Software Bus Message e) Perform No Action","The user defines the action that is appropriate if the critical event is received.  Note that the delete is included in the case where an application might want  to “get fancy” and stop running an application based on some event. Note that LRO allowed for RTSs to be started as one of the actions. CFS does not include this – can be done by LC using tlm and RTSs. Note that the Software  Bus message can be any message, however, the intent it to allow the starting  of an RTS (without tying HS to SC)."
+HS5000.1.1,HS5000.1.1,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is less than the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall
+a)       Increment the Number of cFE Processor Resets
+b)       Set the Watchdog servicing flag to False
+c)       Command the cFE Processor Reset.",Note that the watchdog flag is set to false in the event that the cFE Processor  reset can’t be performed
+HS5000.1.2,HS5000.1.2,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is greater-than-or-equal-to the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall send an event message.",Need to present an infinite reset loop.
+HS5000.2,HS5000.2,"If the Application defined in the Critical Event Counter Table is unknown, HS shall increment Critical Event Table Invalid/Unknown Apps counter",Informs ground that there is an entry in the table with an unknown application.
+HS5001,HS5001,"Upon receipt of an Enable Critical Event Monitor Command, HS shall
+a)       Set the Enable Critical Event Monitoring to Enabled
+b)       Begin processing the Critical Event Table.",Useful for making table updates.
+HS5002,HS5002,"Upon receipt of a Disable Critical Event Monitor Command, HS shall
+a)       Set the Enable Critical Event Monitoring to Disabled
+b)       Stop executing the Critical Event Table.",Useful for making table updates.
+HS5003,HS5003,HS shall support up to <PLATFORM_DEFINED> critical events.,
+HS5004,HS5004,"Upon receipt of a Critical Event Table update indication, HS shall validate the Critical Event Table by validating the action",Validate the table for gross errors. Only able to valid the action field (all others are runtime checks)
+HS5004.1,HS5004.1,"If the Critical Event Table fails validation, HS shall issue an event message.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just not critical event monitoring)."
+HS6005,HS6005,"During each HS execution cycle, HS shall send a <PLATFORM_DEFINED> character(s)  to the UART port every <PLATFORM_DEFINED> second(s).",Heartbeat reported to the UART gives an indication that the system is running.
+HS6006,HS6006,"Upon receipt of an Enable CPU Aliveness Indicator Command, HS shall begin sending the <PLATFORM_DEFINED> heartbeat character(s) to the UART port.",Enable the heartbeat indicator.
+HS6007,HS6007,"Upon receipt of a Disable Aliveness Indicator Command, HS shall stop sending the <PLATFORM_DEFINED> heartbeat character(s) to the UART port.",Useful in flight since mission may not want messages being sent to the UART.
+HS6008,HS6008,HS shall report peak CPU utilization during an interval of <PLATFORM_DEFINED> HS execution cycles over the last <PLATFORM_DEFINED> intervals.,Allows a mission to track CPU performance. Peak is the highest average number over the given time period
+HS6009,HS6009,HS shall report average CPU utilization over the last <PLATFORM_DEFINED> intervals of <PLATFORM_DEFINED> HS execution cycles each.,Allows a mission to track CPU performance.
+HS6010,HS6010,If the CPU utilization exceeds <PLATFORM_DEFINED> % for <PLATFORM_DEFINED> intervals and CPU Utilization Monitoring is enabled then HS shall issue an event message,Alerts the ground to CPU hogging. This event can be turned on or off.
+HS6011,HS6011,"Upon receipt of an Enable CPU utilization monitoring, HS shall begin monitoring CPU utilization.",Allows mission to turn CPU utilization on or off
+HS6012,HS6012,"Upon receipt of an Disable CPU utilization monitoring, HS shall stop monitoring CPU utilization",Allows mission to turn CPU utilization on or off
+HS7000,HS7000,"Upon receipt of a Reset Processor Resets Command, HS shall set the number of cFE Processor Resets commanded by HS to zero.",HS keeps track of the number of cFE Processor Resets it performs in order to  avoid an infinite reset loop. Resetting this count allows HS to continue to perform resets up to the internally set Max.
+HS7001,HS7001,"Upon receipt of a Set Max Processor Resets Command, HS shall set the Maximum number of cFE Processor Resets commanded by HS to the Command-specified value.  ",Allows the ground to modify the default value specified in a configuration file without having to recompile. Primarily used in order to be consistent with cFE. This limit is different than the limit that the cFE maintains.
+HS7100,HS7100,"HS shall generate a housekeeping message containing the following:
+a)       Valid Ground Command Counter
+b)       Ground Command Rejected Counter
+c)       Critical Application Monitoring status  (enable/disable)
+d)       Critical Application Monitoring status per table entry (enable/disable)
+e)       Number of CFE Processor resets (commanded by HS)
+f)        Maximum number of CFE Processor resets
+g)       Critical Event Monitoring status (enabled/disabled)
+h)       Count of Monitored Event Messages
+i)        CPU Aliveness Indicator (enabled/disabled)
+j)        Execution Counter, for each table entry
+k)       Number of Invalid/Unknown Apps contained in Critical Event Table.
+l)        Peak CPU Utilization
+m)      Average CPU utilization
+n)       CPU Utilization Monitoring Enabled/Disabled",Housekeeping telemetry to indicate basic HS status.
+HS8000,HS8000,"Upon cFE Power On Reset,  HS shall initialize the following data to Zero (or the value specified for the item below) :
+a)       Valid Ground Command Counter
+b)       Ground Command Rejected Counter
+c)       Monitor Critical Applications to <PLATFORM_DEFINED>
+d)       Critical Application Monitoring status per Application Enabled
+e)       Monitor Critical Events to <PLATFORM_DEFINED>
+f)        CPU Aliveness Indicator to <PLATFORM_DEFINED>
+g)       Watchdog Timer Flag set to TRUE
+h)       Set the Watchdog Timer to <PLATFORM_DEFINED> value
+i)        Maximum number of CFE Processor resets to <PLATFORM_DEFINED> value
+j)        Number of cFE Processor Resets (commanded by HS)
+k)       Number of Invalid/Unknown Apps contained in Critical Event Table
+l)        Peak CPU Utilization
+m)      Average CPU utilization
+n)       CPU Utilization Monitoring Enabled/Disabled to <PLATFORM_DEFINED",
+HS8001,HS8001,"Upon cFE Processor Reset or HS Application Restart,  HS preserves the following:
+a)       Number of cFE Processor Resets (commanded by HS)
+b)       Maximum number of cFE Processor Resets.",Need to preserve the cFE Processor reset default and current number across a reset.
+HS8002,HS8002,"Upon any Initialization, HS shall subscribe to all event messages",HS needs to subscribe to all event messages in support of Critical Event Processing.
+HS8003,HS8003,"Upon any Initialization, HS shall load the Critical Application Table.",Need default values.
+HS8003.1,HS8003.1,"If the Critical Application Table fails validation, HS shall issue an event message and disable Critical Application Monitoring.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just not critical application monitoring)."
+HS8004,HS8004,"Upon any Initialization, HS shall load the Critical Event Table.",Need default values.
+HS8004.1,HS8004.1,"If the Critical Event Table fails validation, HS shall issue an event message and disable Critical Event Monitoring.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just not critical event monitoring)."
+HS8005,HS8005,"Upon any Initialization, HS shall load the Execution Counter Table.",Need default values.
+HS8005.1,HS8005.1,"If the Execution Counter Table fails validation, HS shall:
+a)       Issue an event message
+b)       Report 0xFFFFFFFF for all <PLATFORM_DEFINED> items in the table","If the file does not exist to populate the Execution Counter Table (or fails validation), HS should continue to execute other functions and report an identifiable number (i.e. x’ffffffff’) for entries using the configuration parameter."
+HS8006,HS8006,"Upon any initialization, HS shall wait until the cFE startup synch has been received indicating all Applications have started.",The cFE provides indication that all applications that it was told to start have started. Having HS wait on that signal avoids HS reporting things like critical app check-in failure when in reality the app just has not been started yet.
+HS8006.1,HS8006.1,"If the startup-synch is not received in <PLATFORM_DEFINED> seconds, HS shall begin processing.","If HS doesn’t get the startup synch within some timeout value, HS should start executing."
+HS8007,HS8007,"Upon any Initialization, HS shall load the Message Actions Table. ",Provides default values
+HS8007.1,HS8007.1,"If the Message Actions Table fails validation, HS shall issue an event message and disable the use of the Message Actions Table. ","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just cannot use message actions). "

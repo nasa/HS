@@ -1,3 +1,21 @@
+/************************************************************************
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
 
 /*
  * Includes
@@ -13,19 +31,11 @@
 #include "utassert.h"
 #include "utstubs.h"
 
-#include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 /* hs_custom_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
-
-/* a buffer large enough for any command message */
-union
-{
-    CFE_SB_Buffer_t SBBuf;
-    HS_NoArgsCmd_t  Cmd;
-} CmdPacket;
 
 /*
  * Function Definitions
@@ -141,9 +151,6 @@ void HS_CustomInit_Test_CreateChildTaskError(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error Creating Child Task for CPU Utilization Monitoring,RC=0x%%08X");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     /* Causes event message to be generated */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_CreateChildTask), 1, -1);
 
@@ -153,12 +160,13 @@ void HS_CustomInit_Test_CreateChildTaskError(void)
     /* Verify results */
     UtAssert_True(Result == -1, "Result == -1");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_CR_CHILD_TASK_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_ERROR);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_CHILD_TASK_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -173,9 +181,6 @@ void HS_CustomInit_Test_RegisterSynchCallbackError(void)
     char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error Registering Sync Callback for CPU Utilization Monitoring,RC=0x%%08X");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     /* Causes event message to be generated */
     UT_SetDeferredRetcode(UT_KEY(CFE_TIME_RegisterSynchCallback), 1, -1);
@@ -198,12 +203,13 @@ void HS_CustomInit_Test_RegisterSynchCallbackError(void)
     UtAssert_True(HS_CustomData.LastIdleTaskExec == 0, "HS_CustomData.LastIdleTaskExec == 0");
     UtAssert_True(HS_CustomData.LastIdleTaskInterval == 0, "HS_CustomData.LastIdleTaskInterval == 0");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_CR_SYNC_CALLBACK_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_ERROR);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_SYNC_CALLBACK_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -312,11 +318,9 @@ void HS_CustomCommands_Test_UtilDiagReport(void)
     size_t            MsgSize;
     int32             Result;
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_REPORT_DIAG_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -325,7 +329,7 @@ void HS_CustomCommands_Test_UtilDiagReport(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands((CFE_SB_Buffer_t *)&CmdPacket);
+    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -344,11 +348,9 @@ void HS_CustomCommands_Test_SetUtilParamsCmd(void)
     size_t            MsgSize;
     int32             Result;
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -357,7 +359,7 @@ void HS_CustomCommands_Test_SetUtilParamsCmd(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands((CFE_SB_Buffer_t *)&CmdPacket);
+    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -376,11 +378,9 @@ void HS_CustomCommands_Test_SetUtilDiagCmd(void)
     size_t            MsgSize;
     int32             Result;
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -389,7 +389,7 @@ void HS_CustomCommands_Test_SetUtilDiagCmd(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands((CFE_SB_Buffer_t *)&CmdPacket);
+    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -408,17 +408,15 @@ void HS_CustomCommands_Test_InvalidCommandCode(void)
     size_t            MsgSize;
     int32             Result;
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = 99;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands((CFE_SB_Buffer_t *)&CmdPacket);
+    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == !CFE_SUCCESS, "Result == !CFE_SUCCESS");
@@ -437,9 +435,6 @@ void HS_UtilDiagReport_Test(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Mask 0x%%08X Base Time Ticks per Idle Ticks (frequency): %%i(%%i), %%i(%%i), %%i(%%i), %%i(%%i)");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_CustomData.UtilArray[0] = 0xFFFFFFFF;
     HS_CustomData.UtilArray[1] = 0x00000111;
 
@@ -455,12 +450,13 @@ void HS_UtilDiagReport_Test(void)
     HS_UtilDiagReport();
 
     /* Verify results */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_UTIL_DIAG_REPORT_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_INFORMATION);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_UTIL_DIAG_REPORT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -470,8 +466,6 @@ void HS_UtilDiagReport_Test(void)
 
 void HS_UtilDiagReport_Test_Loops(void)
 {
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     /* ensure all values produce unique time jumps */
     HS_CustomData.UtilArray[0]  = 0xFFFFFFFE;
@@ -497,8 +491,8 @@ void HS_UtilDiagReport_Test_Loops(void)
     HS_UtilDiagReport();
 
     /* Verify results */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_UTIL_DIAG_REPORT_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_INFORMATION);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_UTIL_DIAG_REPORT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -560,15 +554,9 @@ void HS_SetUtilParamsCmd_Test_Nominal(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Utilization Parms set: Mult1: %%d Div: %%d Mult2: %%d");
 
-    union
-    {
-        CFE_SB_Buffer_t       SBBuf;
-        HS_SetUtilParamsCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -576,17 +564,12 @@ void HS_SetUtilParamsCmd_Test_Nominal(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CmdPacket.Cmd.Mult1 = 1;
-    CmdPacket.Cmd.Mult2 = 2;
-    CmdPacket.Cmd.Div   = 3;
+    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd((CFE_SB_Buffer_t *)&CmdPacket.Cmd);
+    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
@@ -594,12 +577,13 @@ void HS_SetUtilParamsCmd_Test_Nominal(void)
     UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_SET_UTIL_PARAMS_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_DBG_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -617,15 +601,9 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Utilization Parms Error: No parameter may be 0: Mult1: %%d Div: %%d Mult2: %%d");
 
-    union
-    {
-        CFE_SB_Buffer_t       SBBuf;
-        HS_SetUtilParamsCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -633,17 +611,12 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CmdPacket.Cmd.Mult1 = 1;
-    CmdPacket.Cmd.Mult2 = 0;
-    CmdPacket.Cmd.Div   = 3;
+    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 0;
+    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd((CFE_SB_Buffer_t *)&CmdPacket.Cmd);
+    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
@@ -651,12 +624,13 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
     UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_SET_UTIL_PARAMS_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_ERROR);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -674,15 +648,9 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Utilization Parms Error: No parameter may be 0: Mult1: %%d Div: %%d Mult2: %%d");
 
-    union
-    {
-        CFE_SB_Buffer_t       SBBuf;
-        HS_SetUtilParamsCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -690,17 +658,12 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CmdPacket.Cmd.Mult1 = 1;
-    CmdPacket.Cmd.Mult2 = 2;
-    CmdPacket.Cmd.Div   = 0;
+    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CmdBuf.SetUtilParamsCmd.Div   = 0;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd((CFE_SB_Buffer_t *)&CmdPacket.Cmd);
+    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
@@ -708,12 +671,13 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
     UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_SET_UTIL_PARAMS_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_ERROR);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -731,15 +695,9 @@ void HS_SetUtilParamsCmd_Test_Error(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Utilization Parms Error: No parameter may be 0: Mult1: %%d Div: %%d Mult2: %%d");
 
-    union
-    {
-        CFE_SB_Buffer_t       SBBuf;
-        HS_SetUtilParamsCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -747,27 +705,23 @@ void HS_SetUtilParamsCmd_Test_Error(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CmdPacket.Cmd.Mult1 = 0;
-    CmdPacket.Cmd.Mult2 = 2;
-    CmdPacket.Cmd.Div   = 3;
+    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 0;
+    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd((CFE_SB_Buffer_t *)&CmdPacket);
+    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_SET_UTIL_PARAMS_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_ERROR);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -781,15 +735,9 @@ void HS_SetUtilParamsCmd_Test_MsgLengthError(void)
     CFE_MSG_FcnCode_t FcnCode;
     size_t            MsgSize;
 
-    union
-    {
-        CFE_SB_Buffer_t       SBBuf;
-        HS_SetUtilParamsCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -797,17 +745,12 @@ void HS_SetUtilParamsCmd_Test_MsgLengthError(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CmdPacket.Cmd.Mult1 = 1;
-    CmdPacket.Cmd.Mult2 = 2;
-    CmdPacket.Cmd.Div   = 3;
+    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd((CFE_SB_Buffer_t *)&CmdPacket.Cmd);
+    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
@@ -831,42 +774,32 @@ void HS_SetUtilDiagCmd_Test(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Utilization Diagnostics Mask has been set to %%08X");
 
-    union
-    {
-        CFE_SB_Buffer_t     SBBuf;
-        HS_SetUtilDiagCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CmdPacket.Cmd.Mask = 2;
+    UT_CmdBuf.SetUtilDiagCmd.Mask = 2;
 
     /* Execute the function being tested */
-    HS_SetUtilDiagCmd((CFE_SB_Buffer_t *)&CmdPacket);
+    HS_SetUtilDiagCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
     UtAssert_True(HS_CustomData.UtilMask == 2, "HS_AppData.CmdCount == 2");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventID, HS_SET_UTIL_DIAG_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent.EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_DIAG_DBG_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
 
-    strCmpResult = strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent.Spec);
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -880,31 +813,20 @@ void HS_SetUtilDiagCmd_Test_MsgLengthError(void)
     CFE_MSG_FcnCode_t FcnCode;
     size_t            MsgSize;
 
-    union
-    {
-        CFE_SB_Buffer_t     SBBuf;
-        HS_SetUtilDiagCmd_t Cmd;
-    } CmdPacket;
-
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(CmdPacket.Cmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent;
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     /* set message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
 
-    memset(&CmdPacket, 0, sizeof(CmdPacket));
-
-    CmdPacket.Cmd.Mask = 2;
+    UT_CmdBuf.SetUtilDiagCmd.Mask = 2;
 
     /* Execute the function being tested */
-    HS_SetUtilDiagCmd((CFE_SB_Buffer_t *)&CmdPacket);
+    HS_SetUtilDiagCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");

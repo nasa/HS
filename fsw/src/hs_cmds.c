@@ -1,27 +1,26 @@
 /************************************************************************
-** File: hs_cmds.c
-**
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
-** (cFS) Health and Safety (HS) Application version 2.3.2"
-**
-** Copyright � 2020 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration.
-** All Rights Reserved.
-**
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-** http://www.apache.org/licenses/LICENSE-2.0
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
-**
-** Purpose:
-**   CFS Health and Safety (HS) command handling routines
-**
-*************************************************************************/
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
+
+/**
+ * @file
+ *   CFS Health and Safety (HS) command handling routines
+ */
 
 /************************************************************************
 ** Includes
@@ -47,7 +46,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
 
     CFE_MSG_GetMsgId(&BufPtr->Msg, &MessageID);
 
-    switch (MessageID)
+    switch (CFE_SB_MsgIdToValue(MessageID))
     {
 
         /*
@@ -118,7 +117,8 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     if (HS_CustomCommands(BufPtr) != CFE_SUCCESS)
                     {
                         CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
-                                          "Invalid command code: ID = 0x%08X, CC = %d", MessageID, CommandCode);
+                                          "Invalid command code: ID = 0x%08lX, CC = %d",
+                                          (unsigned long)CFE_SB_MsgIdToValue(MessageID), CommandCode);
 
                         HS_AppData.CmdErrCount++;
                     }
@@ -132,8 +132,8 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
         */
         default:
             HS_AppData.CmdErrCount++;
-            CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR, "Invalid command pipe message ID: 0x%08X",
-                              MessageID);
+            CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR, "Invalid command pipe message ID: 0x%08lX",
+                              (unsigned long)CFE_SB_MsgIdToValue(MessageID));
             break;
 
     } /* end MessageID switch */
@@ -432,8 +432,8 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
         if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
         {
 
-            Status = CFE_SB_SubscribeEx(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
-                                        HS_EVENT_PIPE_DEPTH);
+            Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
+                                        CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
 
             if (Status != CFE_SUCCESS)
             {
@@ -444,8 +444,8 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 
             if (Status == CFE_SUCCESS)
             {
-                Status = CFE_SB_SubscribeEx(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
-                                            HS_EVENT_PIPE_DEPTH);
+                Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe,
+                                            CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
 
                 if (Status != CFE_SUCCESS)
                 {
@@ -494,7 +494,7 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
         if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
         {
 
-            Status = CFE_SB_Unsubscribe(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe);
+            Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
 
             if (Status != CFE_SUCCESS)
             {
@@ -505,7 +505,7 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 
             if (Status == CFE_SUCCESS)
             {
-                Status = CFE_SB_Unsubscribe(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe);
+                Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe);
 
                 if (Status != CFE_SUCCESS)
                 {
@@ -764,7 +764,7 @@ void HS_AcquirePointers(void)
 
             if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
             {
-                Status = CFE_SB_Unsubscribe(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe);
+                Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
 
                 if (Status != CFE_SUCCESS)
                 {
@@ -772,7 +772,7 @@ void HS_AcquirePointers(void)
                                       "Error Unsubscribing from long-format Events,RC=0x%08X", (unsigned int)Status);
                 }
 
-                Status = CFE_SB_Unsubscribe(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe);
+                Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe);
 
                 if (Status != CFE_SUCCESS)
                 {

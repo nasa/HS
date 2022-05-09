@@ -1,29 +1,27 @@
-/*************************************************************************
-** File: hs_monitors.c
-**
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
-** (cFS) Health and Safety (HS) Application version 2.3.2"
-**
-** Copyright � 2020 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration.
-** All Rights Reserved.
-**
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-** http://www.apache.org/licenses/LICENSE-2.0
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
-**
-** Purpose:
-**   Functions used for CFS Health and Safety Monitors for Applications
-**   and Events
-**
-**
-*************************************************************************/
+/************************************************************************
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
+
+/**
+ * @file
+ *   Functions used for CFS Health and Safety Monitors for Applications
+ *   and Events
+ */
 
 /*************************************************************************
 ** Includes
@@ -230,17 +228,14 @@ void HS_MonitorApplications(void)
 /* Monitor Events                                                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_MonitorEvent(const CFE_SB_Buffer_t *BufPtr)
+void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
 {
-    CFE_EVS_LongEventTlm_t *EventPtr     = NULL;
-    uint32                  TableIndex   = 0;
-    int32                   Status       = CFE_SUCCESS;
-    CFE_ES_AppId_t          AppId        = CFE_ES_APPID_UNDEFINED;
-    uint16                  ActionType   = 0;
-    uint32                  MsgActsIndex = 0;
-    CFE_SB_Buffer_t *       SendPtr      = NULL;
-
-    EventPtr = ((CFE_EVS_LongEventTlm_t *)BufPtr);
+    uint32           TableIndex   = 0;
+    int32            Status       = CFE_SUCCESS;
+    CFE_ES_AppId_t   AppId        = CFE_ES_APPID_UNDEFINED;
+    uint16           ActionType   = 0;
+    uint32           MsgActsIndex = 0;
+    CFE_SB_Buffer_t *SendPtr      = NULL;
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
     {
@@ -801,10 +796,10 @@ int32 HS_ValidateMATable(void *TableData)
             EntryResult = HS_MATVAL_ERR_ENA;
             BadCount++;
         }
-        else if (MessageID > CFE_PLATFORM_SB_HIGHEST_VALID_MSGID)
+        else if (!CFE_SB_IsValidMsgId(MessageID))
         {
             /*
-            ** Message ID is too high
+            ** Message ID isn't valid
             */
             EntryResult = HS_MATVAL_ERR_ID;
             BadCount++;
@@ -830,8 +825,8 @@ int32 HS_ValidateMATable(void *TableData)
         if ((EntryResult != HS_MATVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
         {
             CFE_EVS_SendEvent(HS_MATVAL_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "MsgActs verify err: Entry = %d, Err = %d, Length = %d, ID = 0x%08X", (int)TableIndex,
-                              (int)EntryResult, (int)Length, MessageID);
+                              "MsgActs verify err: Entry = %d, Err = %d, Length = %d, ID = 0x%08lX", (int)TableIndex,
+                              (int)EntryResult, (int)Length, (unsigned long)CFE_SB_MsgIdToValue(MessageID));
             TableResult = EntryResult;
         }
     }

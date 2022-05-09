@@ -1,38 +1,37 @@
-/*************************************************************************
-** File: hs_verify.h
-**
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
-** (cFS) Health and Safety (HS) Application version 2.3.2"
-**
-** Copyright � 2020 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration.
-** All Rights Reserved.
-**
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-** http://www.apache.org/licenses/LICENSE-2.0
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
-**
-** Purpose:
-**   Contains CFS Health and Safety (HS) macros that run preprocessor checks
-**   on mission and platform configurable parameters
-**
-*************************************************************************/
-#ifndef _hs_verify_h_
-#define _hs_verify_h_
+/************************************************************************
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
+
+/**
+ * @file
+ *   Contains CFS Health and Safety (HS) macros that run preprocessor checks
+ *   on mission and platform configurable parameters
+ */
+#ifndef HS_VERIFY_H
+#define HS_VERIFY_H
 
 /*************************************************************************
-** Macro Definitions
-*************************************************************************/
+ * Macro Definitions
+ *************************************************************************/
 
 /*
-** Idle Task Priority
-*/
+ * Idle Task Priority
+ */
 #if HS_IDLE_TASK_PRIORITY < 0
 #error HS_IDLE_TASK_PRIORITY cannot be less than 0
 #elif HS_IDLE_TASK_PRIORITY > 255
@@ -40,8 +39,8 @@
 #endif
 
 /*
-** Maximum number execution counters
-*/
+ * Maximum number execution counters
+ */
 #if HS_MAX_EXEC_CNT_SLOTS < 0
 #error HS_MAX_MSG_ACT_TYPES cannot be less than 0
 #elif HS_MAX_EXEC_CNT_SLOTS > 4294967295
@@ -49,8 +48,8 @@
 #endif
 
 /*
-** Maximum number of message actions
-*/
+ * Maximum number of message actions
+ */
 #if HS_MAX_MSG_ACT_TYPES < 1
 #error HS_MAX_MSG_ACT_TYPES cannot be less than 1
 #elif HS_MAX_MSG_ACT_TYPES > 65531
@@ -58,8 +57,8 @@
 #endif
 
 /*
-** Maximum length of message actions
-*/
+ * Maximum length of message actions
+ */
 #ifdef MESSAGE_FORMAT_IS_CCSDS
 #if HS_MAX_MSG_ACT_SIZE < 7
 #error HS_MAX_MSG_ACT_SIZE cannot be less than 7
@@ -75,8 +74,8 @@
 #endif
 
 /*
-** Maximum number of monitored applications
-*/
+ * Maximum number of monitored applications
+ */
 #if HS_MAX_MONITORED_APPS < 1
 #error HS_MAX_MONITORED_APPS cannot be less than 1
 #elif HS_MAX_MONITORED_APPS > 4294967295
@@ -84,8 +83,8 @@
 #endif
 
 /*
-** Maximum number of critical events
-*/
+ * Maximum number of critical events
+ */
 #if HS_MAX_MONITORED_EVENTS < 1
 #error HS_MAX_MONITORED_EVENTS cannot be less than 1
 #elif HS_MAX_MONITORED_EVENTS > 4294967295
@@ -100,8 +99,8 @@
  */
 
 /*
-** Post Processing Delay
-*/
+ * Post Processing Delay
+ */
 #if HS_POST_PROCESSING_DELAY < 0
 #error HS_POST_PROCESSING_DELAY can not be less than 0
 #elif HS_POST_PROCESSING_DELAY > 4294967295
@@ -109,15 +108,15 @@
 #endif
 
 /*
-** Wakeup Timeout
-*/
+ * Wakeup Timeout
+ */
 #if (HS_WAKEUP_TIMEOUT < -1) || (HS_WAKEUP_TIMEOUT > 2147483647)
 #error HS_WAKEUP_TIMEOUT not defined as a proper SB Timeout value
 #endif
 
 /*
-** CPU Aliveness Period
-*/
+ * CPU Aliveness Period
+ */
 #if HS_CPU_ALIVE_PERIOD < 1
 #error HS_CPU_ALIVE_PERIOD cannot be less than 1
 #elif HS_CPU_ALIVE_PERIOD > 4294967295
@@ -125,8 +124,8 @@
 #endif
 
 /*
-** Maximum processor restart actions
-*/
+ * Maximum processor restart actions
+ */
 #if HS_MAX_RESTART_ACTIONS < 0
 #error HS_MAX_RESTART_ACTIONS can not be less than 0
 #elif HS_MAX_RESTART_ACTIONS > 65535
@@ -134,11 +133,12 @@
 #endif
 
 /*
-** Pipe depths
-*/
+ * Pipe depths
+ */
 #if HS_CMD_PIPE_DEPTH < 1
 #error HS_CMD_PIPE_DEPTH cannot be less than 1
 #endif
+
 /*
  * JPH 2015-06-29 - Removed check of:
  *  HS_CMD_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
@@ -151,6 +151,7 @@
 #if HS_EVENT_PIPE_DEPTH < 1
 #error HS_EVENT_PIPE_DEPTH cannot be less than 1
 #endif
+
 /*
  * JPH 2015-06-29 - Removed check of:
  *  HS_EVENT_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
@@ -163,6 +164,7 @@
 #if HS_WAKEUP_PIPE_DEPTH < 1
 #error HS_WAKEUP_PIPE_DEPTH cannot be less than 1
 #endif
+
 /*
  * JPH 2015-06-29 - Removed check of:
  *  HS_WAKEUP_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
@@ -173,8 +175,8 @@
  */
 
 /*
-** Reset Task Delay
-*/
+ * Reset Task Delay
+ */
 #if HS_RESET_TASK_DELAY < 0
 #error HS_RESET_TASK_DELAY can not be less than 0
 #elif HS_RESET_TASK_DELAY > 4294967295
@@ -182,8 +184,8 @@
 #endif
 
 /*
-** Startup Sync Timeout
-*/
+ * Startup Sync Timeout
+ */
 #if HS_STARTUP_SYNC_TIMEOUT < 0
 #error HS_STARTUP_SYNC_TIMEOUT can not be less than 0
 #elif HS_STARTUP_SYNC_TIMEOUT > 4294967295
@@ -191,50 +193,50 @@
 #endif
 
 /*
-** Default Application Monitor State
-*/
+ * Default Application Monitor State
+ */
 #if (HS_APPMON_DEFAULT_STATE != HS_STATE_DISABLED) && (HS_APPMON_DEFAULT_STATE != HS_STATE_ENABLED)
 #error HS_APPMON_DEFAULT_STATE not defined as a supported enumerated type
 #endif
 
 /*
-** Default Event Monitor State
-*/
+ * Default Event Monitor State
+ */
 #if (HS_EVENTMON_DEFAULT_STATE != HS_STATE_DISABLED) && (HS_EVENTMON_DEFAULT_STATE != HS_STATE_ENABLED)
 #error HS_EVENTMON_DEFAULT_STATE not defined as a supported enumerated type
 #endif
 
 /*
-** Default Aliveness Indicator State
-*/
+ * Default Aliveness Indicator State
+ */
 #if (HS_ALIVENESS_DEFAULT_STATE != HS_STATE_DISABLED) && (HS_ALIVENESS_DEFAULT_STATE != HS_STATE_ENABLED)
 #error HS_ALIVENESS_DEFAULT_STATE not defined as a supported enumerated type
 #endif
 
 /*
-** Default CPU Hogging Indicator State
-*/
+ * Default CPU Hogging Indicator State
+ */
 #if (HS_CPUHOG_DEFAULT_STATE != HS_STATE_DISABLED) && (HS_CPUHOG_DEFAULT_STATE != HS_STATE_ENABLED)
 #error HS_CPUHOG_DEFAULT_STATE not defined as a supported enumerated type
 #endif
 
 /*
-** Utilization Calls Per Mark
-*/
+ * Utilization Calls Per Mark
+ */
 #if HS_UTIL_CALLS_PER_MARK > 4294967295
 #error HS_UTIL_CALLS_PER_MARK can not exceed 4294967295
 #endif
 
 /*
-** Utilization Cycles per Interval
-*/
+ * Utilization Cycles per Interval
+ */
 #if HS_UTIL_CALLS_PER_MARK > 4294967295
 #error HS_UTIL_CYCLES_PER_INTERVAL can not exceed 4294967295
 #endif
 
 /*
-** Total number of Utils per Interval
-*/
+ * Total number of Utils per Interval
+ */
 #if HS_UTIL_PER_INTERVAL_TOTAL < 1
 #error HS_UTIL_PER_INTERVAL_TOTAL cannot be less than 1
 #elif HS_UTIL_PER_INTERVAL_TOTAL > 4294967295
@@ -242,8 +244,8 @@
 #endif
 
 /*
-** Hogging number of Utils per Interval
-*/
+ * Hogging number of Utils per Interval
+ */
 #if HS_UTIL_PER_INTERVAL_HOGGING < 1
 #error HS_UTIL_PER_INTERVAL_HOGGING cannot be less than 1
 #elif HS_UTIL_PER_INTERVAL_HOGGING > HS_UTIL_PER_INTERVAL_TOTAL
@@ -251,8 +253,8 @@
 #endif
 
 /*
-** Hogging Timeout in Intervals
-*/
+ * Hogging Timeout in Intervals
+ */
 #if HS_UTIL_HOGGING_TIMEOUT < 1
 #error HS_UTIL_HOGGING_TIMEOUT cannot be less than 1
 #elif HS_UTIL_HOGGING_TIMEOUT > 4294967295
@@ -260,8 +262,8 @@
 #endif
 
 /*
-** Utilization Peak Number of Intervals
-*/
+ * Utilization Peak Number of Intervals
+ */
 #if HS_UTIL_PEAK_NUM_INTERVAL < 1
 #error HS_UTIL_PEAK_NUM_INTERVAL cannot be less than 1
 #elif HS_UTIL_PEAK_NUM_INTERVAL > 4294967295
@@ -269,8 +271,8 @@
 #endif
 
 /*
-** Utilization Average Number of Intervals
-*/
+ * Utilization Average Number of Intervals
+ */
 #if HS_UTIL_AVERAGE_NUM_INTERVAL < 1
 #error HS_UTIL_AVERAGE_NUM_INTERVAL cannot be less than 1
 #elif HS_UTIL_AVERAGE_NUM_INTERVAL > HS_UTIL_PEAK_NUM_INTERVAL
@@ -278,8 +280,8 @@
 #endif
 
 /*
-** Utilization Average Number of Intervals
-*/
+ * Utilization Average Number of Intervals
+ */
 #if HS_UTIL_TIME_DIAG_ARRAY_POWER < 0
 #error HS_UTIL_TIME_DIAG_ARRAY_POWER cannot be less than 0
 #elif HS_UTIL_TIME_DIAG_ARRAY_POWER > 31
@@ -292,8 +294,4 @@
 #error HS_MISSION_REV must be greater than or equal to zero!
 #endif
 
-#endif /*_hs_verify_h_*/
-
-/************************/
-/*  End of File Comment */
-/************************/
+#endif

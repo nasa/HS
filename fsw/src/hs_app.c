@@ -1,30 +1,28 @@
 /************************************************************************
-** File: hs_app.c
-**
-** NASA Docket No. GSC-18,476-1, and identified as "Core Flight System
-** (cFS) Health and Safety (HS) Application version 2.3.2”
-**
-** Copyright © 2020 United States Government as represented by the
-** Administrator of the National Aeronautics and Space Administration.
-** All Rights Reserved.
-**
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-** http://www.apache.org/licenses/LICENSE-2.0
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
-**
-** Purpose:
-**   The CFS Health and Safety (HS) provides several utilities including
-**   application monitoring, event monitoring, cpu utilization monitoring,
-**   aliveness indication, and watchdog servicing.
-**
-**
-*************************************************************************/
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
+
+/**
+ * @file
+ *   The CFS Health and Safety (HS) provides several utilities including
+ *   application monitoring, event monitoring, cpu utilization monitoring,
+ *   aliveness indication, and watchdog servicing.
+ */
 
 /************************************************************************
 ** Includes
@@ -89,8 +87,8 @@ void HS_AppMain(void)
         */
         if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
         {
-            Status = CFE_SB_SubscribeEx(CFE_EVS_LONG_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
-                                        HS_EVENT_PIPE_DEPTH);
+            Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
+                                        CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
             if (Status != CFE_SUCCESS)
             {
                 CFE_EVS_SendEvent(HS_SUB_LONG_EVS_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -102,8 +100,8 @@ void HS_AppMain(void)
 
             if (Status == CFE_SUCCESS)
             {
-                Status = CFE_SB_SubscribeEx(CFE_EVS_SHORT_EVENT_MSG_MID, HS_AppData.EventPipe, CFE_SB_DEFAULT_QOS,
-                                            HS_EVENT_PIPE_DEPTH);
+                Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe,
+                                            CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
                 if (Status != CFE_SUCCESS)
                 {
                     CFE_EVS_SendEvent(HS_SUB_SHORT_EVS_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -355,7 +353,7 @@ int32 HS_SbInit(void)
     int32 Status = CFE_SUCCESS;
 
     /* Initialize housekeeping packet  */
-    CFE_MSG_Init(&HS_AppData.HkPacket.TlmHeader.Msg, HS_HK_TLM_MID, sizeof(HS_HkPacket_t));
+    CFE_MSG_Init(&HS_AppData.HkPacket.TlmHeader.Msg, CFE_SB_ValueToMsgId(HS_HK_TLM_MID), sizeof(HS_HkPacket_t));
 
     /* Create Command Pipe */
     Status = CFE_SB_CreatePipe(&HS_AppData.CmdPipe, HS_CMD_PIPE_DEPTH, HS_CMD_PIPE_NAME);
@@ -385,7 +383,7 @@ int32 HS_SbInit(void)
     }
 
     /* Subscribe to Housekeeping Request */
-    Status = CFE_SB_Subscribe(HS_SEND_HK_MID, HS_AppData.CmdPipe);
+    Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_SEND_HK_MID), HS_AppData.CmdPipe);
     if (Status != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(HS_SUB_REQ_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to HK Request,RC=0x%08X",
@@ -394,7 +392,7 @@ int32 HS_SbInit(void)
     }
 
     /* Subscribe to HS ground commands */
-    Status = CFE_SB_Subscribe(HS_CMD_MID, HS_AppData.CmdPipe);
+    Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_AppData.CmdPipe);
     if (Status != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(HS_SUB_CMD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Gnd Cmds,RC=0x%08X",
@@ -403,7 +401,7 @@ int32 HS_SbInit(void)
     }
 
     /* Subscribe to HS Wakeup Message */
-    Status = CFE_SB_Subscribe(HS_WAKEUP_MID, HS_AppData.WakeupPipe);
+    Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_WAKEUP_MID), HS_AppData.WakeupPipe);
     if (Status != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(HS_SUB_WAKEUP_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Wakeup,RC=0x%08X",
@@ -632,7 +630,7 @@ int32 HS_ProcessCommands(void)
                 ** Pass Events to Event Monitor
                 */
                 HS_AppData.EventsMonitoredCount++;
-                HS_MonitorEvent(BufPtr);
+                HS_MonitorEvent((CFE_EVS_LongEventTlm_t *)BufPtr);
             }
         }
     }

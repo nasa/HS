@@ -1,3 +1,21 @@
+/************************************************************************
+ * NASA Docket No. GSC-18,920-1, and identified as “Core Flight
+ * System (cFS) Health & Safety (HS) Application version 2.4.0”
+ *
+ * Copyright (c) 2021 United States Government as represented by the
+ * Administrator of the National Aeronautics and Space Administration.
+ * All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ************************************************************************/
 
 /*
  * Includes
@@ -12,10 +30,9 @@
 #include "utassert.h"
 #include "utstubs.h"
 
-#include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <cfe.h>
+#include "cfe.h"
 #include "cfe_msgids.h"
 #include "cfe_evs_msg.h"
 
@@ -43,8 +60,7 @@ void HS_MonitorApplications_Test_AppNameNotFound(void)
     char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "App Monitor App Name not found: APP:(%%s)");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -79,8 +95,7 @@ void HS_MonitorApplications_Test_AppNameNotFoundDebugEvent(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -110,6 +125,8 @@ void HS_MonitorApplications_Test_GetExeCountFailure(void)
 {
     HS_AMTEntry_t    AMTable[HS_MAX_MONITORED_APPS];
     CFE_ES_AppInfo_t AppInfo;
+
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -146,17 +163,14 @@ void HS_MonitorApplications_Test_ProcessorResetError(void)
     CFE_ES_AppInfo_t AppInfo;
     int32            strCmpResult;
     char             ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    char             ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s): Action: Processor Reset");
-    char ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedSysLogString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "HS App: App Monitor Failure: APP:(%%s): Action: Processor Reset\n");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    CFE_ES_WriteToSysLog_context_t context_CFE_ES_WriteToSysLog;
-    UT_SetHookFunction(UT_KEY(CFE_ES_WriteToSysLog), UT_Utils_stub_reporter_hook, &context_CFE_ES_WriteToSysLog);
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -210,13 +224,13 @@ void HS_MonitorApplications_Test_ProcessorResetActionLimitError(void)
     CFE_ES_AppInfo_t AppInfo;
     int32            strCmpResult;
     char             ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s): Action: Processor Reset");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Processor Reset Action Limit Reached: No Reset Performed");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -271,13 +285,13 @@ void HS_MonitorApplications_Test_RestartAppErrorsGetAppInfoSuccess(void)
     CFE_ES_AppInfo_t AppInfo;
     int32            strCmpResult;
     char             ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s) Action: Restart Application");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Restart App Failed: APP:(%%s) ERR: 0x%%08X");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -332,13 +346,13 @@ void HS_MonitorApplications_Test_RestartAppErrorsGetAppInfoNotSuccess(void)
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
     int32         strCmpResult;
     char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s) Action: Restart Application");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Restart App Failed: APP:(%%s) ERR: 0x%%08X");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -389,8 +403,7 @@ void HS_MonitorApplications_Test_RestartAppRestartSuccess(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -430,11 +443,11 @@ void HS_MonitorApplications_Test_FailError(void)
     CFE_ES_AppInfo_t AppInfo;
     int32            strCmpResult;
     char             ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s): Action: Event Only");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -478,9 +491,13 @@ void HS_MonitorApplications_Test_MsgActsNOACT(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -522,9 +539,13 @@ void HS_MonitorApplications_Test_MsgActsNOACTDisabled(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -567,15 +588,17 @@ void HS_MonitorApplications_Test_MsgActsErrorDefault(void)
     CFE_ES_AppInfo_t AppInfo;
     int32            strCmpResult;
     char             ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "App Monitor Failure: APP:(%%s): Action: Message Action Index: %%d");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -629,9 +652,13 @@ void HS_MonitorApplications_Test_MsgActsErrorDisabled(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -677,12 +704,13 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultCoolDown(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -728,12 +756,13 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultDisabled(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -779,12 +808,13 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultNoEvent(void)
     HS_MATEntry_t    MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_ES_AppInfo_t AppInfo;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_CMD_MID, sizeof(HS_NoArgsCmd_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
+                 sizeof(HS_NoArgsCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -829,8 +859,7 @@ void HS_MonitorApplications_CheckInCountdownNotZero(void)
     HS_AMTEntry_t    AMTable[HS_MAX_MONITORED_APPS];
     CFE_ES_AppInfo_t AppInfo;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -866,12 +895,13 @@ void HS_MonitorEvent_Test_AppName(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+    memset(&Packet, 0, sizeof(Packet));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -886,7 +916,7 @@ void HS_MonitorEvent_Test_AppName(void)
     strncpy(HS_AppData.EMTablePtr[0].AppName, "AppName", 10);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -902,21 +932,19 @@ void HS_MonitorEvent_Test_ProcErrorReset(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    char                   ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Processor Reset");
-    char ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedSysLogString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "HS App: Event Monitor: APP:(%%s) EID:(%%d): Action: Processor Reset\n");
 
-    CFE_ES_WriteToSysLog_context_t context_CFE_ES_WriteToSysLog;
-    UT_SetHookFunction(UT_KEY(CFE_ES_WriteToSysLog), UT_Utils_stub_reporter_hook, &context_CFE_ES_WriteToSysLog);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -932,7 +960,7 @@ void HS_MonitorEvent_Test_ProcErrorReset(void)
     strncpy(Packet.Payload.PacketID.AppName, "AppName", 10);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_PROC_ERR_EID);
@@ -963,17 +991,18 @@ void HS_MonitorEvent_Test_ProcErrorNoReset(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Processor Reset");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Processor Reset Action Limit Reached: No Reset Performed");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -989,7 +1018,7 @@ void HS_MonitorEvent_Test_ProcErrorNoReset(void)
     strncpy(Packet.Payload.PacketID.AppName, "AppName", 10);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_PROC_ERR_EID);
@@ -1021,17 +1050,18 @@ void HS_MonitorEvent_Test_AppRestartErrors(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Restart Application");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Restart App Failed: APP:(%%s) ERR: 0x%%08X");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1048,7 +1078,7 @@ void HS_MonitorEvent_Test_AppRestartErrors(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_RestartApp), 1, -1);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_RESTART_ERR_EID);
@@ -1080,15 +1110,16 @@ void HS_MonitorEvent_Test_OnlySecondAppRestartError(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Restart App Failed: APP:(%%s) ERR: 0x%%08X");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1105,7 +1136,7 @@ void HS_MonitorEvent_Test_OnlySecondAppRestartError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_NOT_RESTARTED_ERR_EID);
@@ -1129,15 +1160,16 @@ void HS_MonitorEvent_Test_NoSecondAppRestartError(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Restart Application");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1154,7 +1186,7 @@ void HS_MonitorEvent_Test_NoSecondAppRestartError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, CFE_SUCCESS);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_RESTART_ERR_EID);
@@ -1178,17 +1210,18 @@ void HS_MonitorEvent_Test_DeleteErrors(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Delete Application");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Delete App Failed: APP:(%%s) ERR: 0x%%08X");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1205,7 +1238,7 @@ void HS_MonitorEvent_Test_DeleteErrors(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_DeleteApp), 1, -1);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_DELETE_ERR_EID);
@@ -1237,15 +1270,16 @@ void HS_MonitorEvent_Test_OnlySecondDeleteError(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Call to Delete App Failed: APP:(%%s) ERR: 0x%%08X");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1262,7 +1296,7 @@ void HS_MonitorEvent_Test_OnlySecondDeleteError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_NOT_DELETED_ERR_EID);
@@ -1286,15 +1320,16 @@ void HS_MonitorEvent_Test_NoSecondDeleteError(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Delete Application");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1311,7 +1346,7 @@ void HS_MonitorEvent_Test_NoSecondDeleteError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, CFE_SUCCESS);
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_DELETE_ERR_EID);
@@ -1335,15 +1370,16 @@ void HS_MonitorEvent_Test_MsgActsError(void)
     CFE_EVS_LongEventTlm_t Packet;
     int32                  strCmpResult;
     char                   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor: APP:(%%s) EID:(%%d): Action: Message Action Index: %%d");
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1365,7 +1401,7 @@ void HS_MonitorEvent_Test_MsgActsError(void)
     HS_AppData.MATablePtr[0].Cooldown    = 5;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_EVENTMON_MSGACTS_ERR_EID);
@@ -1391,12 +1427,12 @@ void HS_MonitorEvent_Test_MsgActsErrorNoEvent(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1421,7 +1457,7 @@ void HS_MonitorEvent_Test_MsgActsErrorNoEvent(void)
     HS_AppData.MATablePtr[0].Cooldown = 5;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     UtAssert_True(HS_AppData.MsgActExec == 1, "HS_AppData.MsgActExec == 1");
@@ -1435,12 +1471,12 @@ void HS_MonitorEvent_Test_MsgActsDefaultDisabled(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1460,7 +1496,7 @@ void HS_MonitorEvent_Test_MsgActsDefaultDisabled(void)
     HS_AppData.MsgActCooldown[0] = 0;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1475,12 +1511,12 @@ void HS_MonitorEvent_Test_MsgActsDefaultGreaterLastNonMsg(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1500,7 +1536,7 @@ void HS_MonitorEvent_Test_MsgActsDefaultGreaterLastNonMsg(void)
     HS_AppData.MsgActCooldown[0] = 0;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1515,12 +1551,12 @@ void HS_MonitorEvent_Test_MsgActsDefaultLessMaxActTypes(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1537,7 +1573,7 @@ void HS_MonitorEvent_Test_MsgActsDefaultLessMaxActTypes(void)
     HS_AppData.MsgActCooldown[0] = 1;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1551,30 +1587,31 @@ void HS_MonitorEvent_Test_MsgActsDefaultMaxActTypes(void)
     HS_EMTEntry_t          EMTable[HS_MAX_MONITORED_APPS];
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
+    uint32                 MsgActIndex;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
-    HS_AppData.MATablePtr = &MATable[0];
-
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.MATablePtr = MATable;
 
-    HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES;
-    HS_AppData.EMTablePtr[0].EventID    = Packet.Payload.PacketID.EventID;
+    HS_AppData.EMTablePtr[0].ActionType            = HS_EMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES;
+    HS_AppData.EMTablePtr[0].EventID               = Packet.Payload.PacketID.EventID;
+    MsgActIndex                                    = HS_AppData.EMTablePtr[0].ActionType - HS_EMT_ACT_LAST_NONMSG - 1;
+    HS_AppData.MATablePtr[MsgActIndex].EnableState = HS_MAT_STATE_ENABLED;
 
     strncpy(HS_AppData.EMTablePtr[0].AppName, "AppName", 10);
     strncpy(Packet.Payload.PacketID.AppName, "AppName", 10);
 
-    HS_AppData.MsgActsState      = HS_STATE_ENABLED;
-    HS_AppData.MsgActCooldown[0] = 0;
+    HS_AppData.MsgActsState                = HS_STATE_ENABLED;
+    HS_AppData.MsgActCooldown[MsgActIndex] = 0;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     /* 1 event message that we don't care about in this test */
@@ -1590,12 +1627,12 @@ void HS_MonitorEvent_Test_MsgActsCoolDown(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1617,7 +1654,7 @@ void HS_MonitorEvent_Test_MsgActsCoolDown(void)
     HS_AppData.MATablePtr[0].Cooldown = 5;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1632,12 +1669,12 @@ void HS_MonitorEvent_Test_MsgActsMATDisabled(void)
     HS_MATEntry_t          MATable[HS_MAX_MSG_ACT_TYPES];
     CFE_EVS_LongEventTlm_t Packet;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
+    memset(EMTable, 0, sizeof(EMTable));
+    memset(MATable, 0, sizeof(MATable));
 
     HS_AppData.MATablePtr = &MATable[0];
 
-    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, HS_CMD_MID, sizeof(CFE_EVS_LongEventTlm_t));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
 
     Packet.Payload.PacketID.EventID = 3;
 
@@ -1659,7 +1696,7 @@ void HS_MonitorEvent_Test_MsgActsMATDisabled(void)
     HS_AppData.MATablePtr[0].Cooldown = 5;
 
     /* Execute the function being tested */
-    HS_MonitorEvent((CFE_SB_Buffer_t *)&Packet);
+    HS_MonitorEvent(&Packet);
 
     /* Verify results */
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1722,15 +1759,10 @@ void HS_MonitorUtilization_Test_CPUHogging(void)
 {
     int32 strCmpResult;
     char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    char  ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CPU Hogging Detected");
-    char ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedSysLogString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "HS App: CPU Hogging Detected\n");
-
-    CFE_ES_WriteToSysLog_context_t context_CFE_ES_WriteToSysLog;
-    UT_SetHookFunction(UT_KEY(CFE_ES_WriteToSysLog), UT_Utils_stub_reporter_hook, &context_CFE_ES_WriteToSysLog);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_CustomData.LastIdleTaskInterval = 0;
     HS_CustomData.UtilMult1            = 1;
@@ -1772,8 +1804,6 @@ void HS_MonitorUtilization_Test_CPUHogging(void)
 
 void HS_MonitorUtilization_Test_CPUHoggingNotMax(void)
 {
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     HS_CustomData.LastIdleTaskInterval = 0;
     HS_CustomData.UtilMult1            = 1;
@@ -1891,17 +1921,16 @@ void HS_MonitorUtilization_Test_LowUtilIndex(void)
 
 void HS_ValidateAMTable_Test_UnusedTableEntryCycleCountZero(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -1934,17 +1963,16 @@ void HS_ValidateAMTable_Test_UnusedTableEntryCycleCountZero(void)
 
 void HS_ValidateAMTable_Test_UnusedTableEntryActionTypeNOACT(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -1977,19 +2005,18 @@ void HS_ValidateAMTable_Test_UnusedTableEntryActionTypeNOACT(void)
 
 void HS_ValidateAMTable_Test_BufferNotNull(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify err: Entry = %%d, Err = %%d, Action = %%d, App = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -2032,19 +2059,18 @@ void HS_ValidateAMTable_Test_BufferNotNull(void)
 
 void HS_ValidateAMTable_Test_ActionTypeNotValid(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify err: Entry = %%d, Err = %%d, Action = %%d, App = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -2087,17 +2113,16 @@ void HS_ValidateAMTable_Test_ActionTypeNotValid(void)
 
 void HS_ValidateAMTable_Test_EntryGood(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
+
+    memset(AMTable, 0, sizeof(AMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "AppMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
 
     HS_AppData.AMTablePtr = AMTable;
 
@@ -2136,9 +2161,6 @@ void HS_ValidateAMTable_Test_Null(void)
 {
     int32 Result;
 
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
     /* Execute the function being tested */
     Result = HS_ValidateAMTable(NULL);
 
@@ -2155,17 +2177,16 @@ void HS_ValidateAMTable_Test_Null(void)
 
 void HS_ValidateEMTable_Test_UnusedTableEntryEventIDZero(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+
+    memset(EMTable, 0, sizeof(EMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
 
     HS_AppData.EMTablePtr = EMTable;
 
@@ -2198,17 +2219,16 @@ void HS_ValidateEMTable_Test_UnusedTableEntryEventIDZero(void)
 
 void HS_ValidateEMTable_Test_UnusedTableEntryActionTypeNOACT(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+
+    memset(EMTable, 0, sizeof(EMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
 
     HS_AppData.EMTablePtr = EMTable;
 
@@ -2241,19 +2261,18 @@ void HS_ValidateEMTable_Test_UnusedTableEntryActionTypeNOACT(void)
 
 void HS_ValidateEMTable_Test_BufferNotNull(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+
+    memset(EMTable, 0, sizeof(EMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify err: Entry = %%d, Err = %%d, Action = %%d, ID = %%d App = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
 
     HS_AppData.EMTablePtr = EMTable;
 
@@ -2296,19 +2315,18 @@ void HS_ValidateEMTable_Test_BufferNotNull(void)
 
 void HS_ValidateEMTable_Test_ActionTypeNotValid(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+
+    memset(EMTable, 0, sizeof(EMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify err: Entry = %%d, Err = %%d, Action = %%d, ID = %%d App = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
 
     HS_AppData.EMTablePtr = EMTable;
 
@@ -2351,17 +2369,16 @@ void HS_ValidateEMTable_Test_ActionTypeNotValid(void)
 
 void HS_ValidateEMTable_Test_EntryGood(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+
+    memset(EMTable, 0, sizeof(EMTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "EventMon verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
 
     HS_AppData.EMTablePtr = EMTable;
 
@@ -2401,11 +2418,9 @@ void HS_ValidateEMTable_Test_Null(void)
     int32 Result;
     int32 strCmpResult;
     char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error in EM Table Validation. Table is null.");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     /* Execute the function being tested */
     Result = HS_ValidateEMTable(NULL);
@@ -2429,17 +2444,16 @@ void HS_ValidateEMTable_Test_Null(void)
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_UnusedTableEntry(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
+
+    memset(XCTable, 0, sizeof(XCTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
 
     HS_AppData.XCTablePtr = XCTable;
 
@@ -2473,19 +2487,18 @@ void HS_ValidateXCTable_Test_UnusedTableEntry(void)
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_BufferNotNull(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
+
+    memset(XCTable, 0, sizeof(XCTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify err: Entry = %%d, Err = %%d, Type = %%d, Name = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
 
     HS_AppData.XCTablePtr = XCTable;
 
@@ -2529,19 +2542,18 @@ void HS_ValidateXCTable_Test_BufferNotNull(void)
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_ResourceTypeNotValid(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
+
+    memset(XCTable, 0, sizeof(XCTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify err: Entry = %%d, Err = %%d, Type = %%d, Name = %%s");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
 
     HS_AppData.XCTablePtr = XCTable;
 
@@ -2591,17 +2603,16 @@ void HS_ValidateXCTable_Test_ResourceTypeNotValid(void)
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_EntryGood(void)
 {
-    int32  Result;
-    uint32 i;
-    int32  strCmpResult;
-    char   ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    int32         Result;
+    uint32        i;
+    int32         strCmpResult;
+    char          ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
+
+    memset(XCTable, 0, sizeof(XCTable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "ExeCount verify results: good = %%d, bad = %%d, unused = %%d");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_XCTEntry_t XCTable[HS_MAX_EXEC_CNT_SLOTS];
 
     HS_AppData.XCTablePtr = XCTable;
 
@@ -2638,11 +2649,9 @@ void HS_ValidateXCTable_Test_Null(void)
     int32 Result;
     int32 strCmpResult;
     char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error in XC Table Validation. Table is null.");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     /* Execute the function being tested */
     Result = HS_ValidateXCTable(NULL);
@@ -2672,16 +2681,15 @@ void HS_ValidateMATable_Test_UnusedTableEntry(void)
     size_t         MsgSize;
     int32          strCmpResult;
     char           ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_MATEntry_t  MATable[HS_MAX_MSG_ACT_TYPES];
+
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     MsgSize   = sizeof(HS_NoArgsCmd_t);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_MATEntry_t MATable[HS_MAX_MSG_ACT_TYPES];
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2724,18 +2732,17 @@ void HS_ValidateMATable_Test_InvalidEnableState(void)
     size_t         MsgSize;
     int32          strCmpResult;
     char           ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_MATEntry_t  MATable[HS_MAX_MSG_ACT_TYPES];
+
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
-             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08X");
+             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08lX");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     MsgSize   = sizeof(HS_NoArgsCmd_t);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_MATEntry_t MATable[HS_MAX_MSG_ACT_TYPES];
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2783,18 +2790,17 @@ void HS_ValidateMATable_Test_MessageIDTooHigh(void)
     size_t         MsgSize;
     int32          strCmpResult;
     char           ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_MATEntry_t  MATable[HS_MAX_MSG_ACT_TYPES];
+
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
-             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08X");
+             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08lX");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
-    TestMsgId = CFE_PLATFORM_SB_HIGHEST_VALID_MSGID + 1;
+    TestMsgId = CFE_SB_INVALID_MSG_ID;
     MsgSize   = sizeof(HS_NoArgsCmd_t);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_MATEntry_t MATable[HS_MAX_MSG_ACT_TYPES];
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2842,18 +2848,17 @@ void HS_ValidateMATable_Test_LengthTooHigh(void)
     size_t         MsgSize;
     int32          strCmpResult;
     char           ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_MATEntry_t  MATable[HS_MAX_MSG_ACT_TYPES];
+
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
-             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08X");
+             "MsgActs verify err: Entry = %%d, Err = %%d, Length = %%d, ID = 0x%%08lX");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     MsgSize   = CFE_MISSION_SB_MAX_SB_MSG_SIZE + 1;
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_MATEntry_t MATable[HS_MAX_MSG_ACT_TYPES];
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2901,16 +2906,15 @@ void HS_ValidateMATable_Test_EntryGood(void)
     size_t         MsgSize;
     int32          strCmpResult;
     char           ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_MATEntry_t  MATable[HS_MAX_MSG_ACT_TYPES];
+
+    memset(MATable, 0, sizeof(MATable));
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
-    TestMsgId = HS_CMD_MID;
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     MsgSize   = sizeof(HS_NoArgsCmd_t);
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
-
-    HS_MATEntry_t MATable[HS_MAX_MSG_ACT_TYPES];
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2947,11 +2951,9 @@ void HS_ValidateMATable_Test_Null(void)
     int32 Result;
     int32 strCmpResult;
     char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error in MA Table Validation. Table is null.");
-
-    CFE_EVS_SendEvent_context_t context_CFE_EVS_SendEvent[2];
-    UT_SetHookFunction(UT_KEY(CFE_EVS_SendEvent), UT_Utils_stub_reporter_hook, &context_CFE_EVS_SendEvent);
 
     /* Execute the function being tested */
     Result = HS_ValidateMATable(NULL);
