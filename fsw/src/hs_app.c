@@ -202,7 +202,7 @@ void HS_AppMain(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int32 HS_AppInit(void)
 {
-    int32 Status = CFE_SUCCESS;
+    int32 Status;
 
     /*
     ** Initialize operating data to default states...
@@ -350,7 +350,7 @@ int32 HS_AppInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int32 HS_SbInit(void)
 {
-    int32 Status = CFE_SUCCESS;
+    int32 Status;
 
     /* Initialize housekeeping packet  */
     CFE_MSG_Init(&HS_AppData.HkPacket.TlmHeader.Msg, CFE_SB_ValueToMsgId(HS_HK_TLM_MID), sizeof(HS_HkPacket_t));
