@@ -6,23 +6,13 @@ b)       Ground Command Rejected Counter.",Important for testing and on-orbit fl
 HS1002,HS1002,"For all HS commands, if the length contained in the message header is not equal to the expected length, HS shall reject the command and issue an event message.",Basic command verification in the event of SEU or memory corruption
 HS1003,HS1003,"If HS accepts any command as valid, HS shall execute the command, increment the HS Valid Command Counter and issue an event message.",Operators require feedback on command execution.
 HS1004,HS1004,"If HS rejects any command, HS shall abort the command execution, increment the HS Command Rejected Counter and issue an error event message.",Operators require feedback on command execution.
-HS2000,HS2000,The HS Application shall verify that each application defined in the Critical Application Table is executing.,HS uses a table to define the critical application. Tables are used so that the list can be configured for a mission and can be easily changed.
-HS2000.1,HS2000.1,"If the entry indicates that the application is a cFE Core Application and it has not executed for the corresponding table-defined number of HS execution cycles, HS shall perform one of the table-defined actions
-a) cFE Processor Reset
-b) Send an Event message
-c) Send a Software Bus Message
-d) Perform No Action","Not able to individually start a cFE core application, therefore, need to perform a cFE Processor Reset. Note that the Software Bus message can be any message, however, the intent it to allow the starting of an RTS (without tying HS to SC)."
-HS2000.1.1,HS2000.1.1,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is less than the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall
-a)       Increment the Number of cFE Processor Resets
-b)       Set the Watchdog servicing flag to False
-c)       Command the cFE Processor Reset.",Note that the watchdog flag is set to false in the event that the cFE Processor reset can’t be performed.
-HS2000.1.2,HS2000.1.2,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is greater-than-or-equal-to the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall send an event message.",No cFE Processor Reset will be performed. Need to prevent an infinite reset loop.
-HS2000.2,HS2000.2,"If the entry indicates that the application is not a cFE Core Application and it has not executed for the corresponding table-defined number of HS execution cycles, HS shall execute one of the table-defined actions: 
-a) Restart the Application (that failed to check-in) 
-b) cFE Processor Reset 
-c) Send an Event Message 
-d) Send a Software Bus Message 
-e)  Perform No Action","Note that each entry has a corresponding HS execution counter. This represents the number of HS execution cycles before the Application is  declared “not there”. Note also that an application can have more than one entry (could have one entry to restart the app and a second entry to perform a cFE) Processor reset. More than one application restart can be performed in one HS cycle. Note that the Software Bus message can be any message, however, the intent is to allow the starting of an RTS (without tying HS to SC)."
+HS2000,HS2000,The HS Application shall verify that each application defined in the Application Table is executing.,HS uses a table to define monitored applications. Tables are used so that the list can be configured for a mission and can be easily changed.
+HS2000.2,HS2000.2,"If the Application has not executed for the corresponding table-defined number of HS execution cycles, HS shall execute one of the table-defined actions:
+a) Restart the Failed Application (This action will fail for cFE Core Apps)
+b) cFE Processor Reset
+c) Send an Event Message
+d) Send a Software Bus Message
+e)  Perform No Action","Note that each entry has a corresponding HS execution counter which represents the number of HS execution cycles before the Application is  considered failed. An application can have more than one entry (could have one entry to restart the app and a second entry to perform a cFE Processor reset). More than one application restart can be performed in one HS cycle. The Software Bus message can be any message, however, the intent is to allow the starting of an RTS (without tying HS to SC).  cFE ES will reject any attempt to restart a core application, so this combination should not be used."
 HS2000.2.1,HS2000.2.1,"If the action is to perform a cFE Processor Reset and the Number of cFE Processor Resets is less than the <PLATFORM_DEFINED> Max Number of cFE Processor Resets , HS shall
 a)       Increment the Number of cFE Processor Resets
 b)       Set the Watchdog servicing flag to False
