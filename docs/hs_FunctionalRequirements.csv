@@ -62,7 +62,7 @@ b)       Begin processing the Critical Event Table.",Useful for making table upd
 HS5002,HS5002,"Upon receipt of a Disable Critical Event Monitor Command, HS shall
 a)       Set the Enable Critical Event Monitoring to Disabled
 b)       Stop executing the Critical Event Table.",Useful for making table updates.
-HS5003,HS5003,HS shall support up to <PLATFORM_DEFINED> critical events.,
+HS5003,HS5003,HS shall support up to <PLATFORM_DEFINED> critical events.,Configurable limit on critical events for platform resource management.
 HS5004,HS5004,"Upon receipt of a Critical Event Table update indication, HS shall validate the Critical Event Table by validating the action",Validate the table for gross errors. Only able to valid the action field (all others are runtime checks)
 HS5004.1,HS5004.1,"If the Critical Event Table fails validation, HS shall issue an event message.","Can verify gross errors in table. If errors exist, HS can still perform other monitoring (just not critical event monitoring)."
 HS6005,HS6005,"During each HS execution cycle, HS shall send a <PLATFORM_DEFINED> character(s)  to the UART port every <PLATFORM_DEFINED> second(s).",Heartbeat reported to the UART gives an indication that the system is running.
@@ -104,7 +104,7 @@ j)        Number of cFE Processor Resets (commanded by HS)
 k)       Number of Invalid/Unknown Apps contained in Critical Event Table
 l)        Peak CPU Utilization
 m)      Average CPU utilization
-n)       CPU Utilization Monitoring Enabled/Disabled to <PLATFORM_DEFINED",
+n)       CPU Utilization Monitoring Enabled/Disabled to <PLATFORM_DEFINED",Reset behavior for states and data.
 HS8001,HS8001,"Upon cFE Processor Reset or HS Application Restart,  HS preserves the following:
 a)       Number of cFE Processor Resets (commanded by HS)
 b)       Maximum number of cFE Processor Resets.",Need to preserve the cFE Processor reset default and current number across a reset.
