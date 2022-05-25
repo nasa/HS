@@ -52,28 +52,30 @@ void HS_IdleTask(void)
 {
     OS_time_t PSPTime = {0};
 
-    HS_CustomData.IdleTaskRunStatus = CFE_SUCCESS;
-
-    /* Check to see if we are to mark the time. */
-    if (((HS_CustomData.ThisIdleTaskExec & HS_CustomData.UtilMask) == HS_CustomData.UtilMask) &&
-        (HS_CustomData.ThisIdleTaskExec > HS_CustomData.UtilMask))
+    while (HS_CustomData.IdleTaskRunStatus == CFE_SUCCESS)
     {
-        /* Entry and Exit markers are for easy time marking only; not performance */
-        CFE_ES_PerfLogEntry(HS_IDLETASK_PERF_ID);
 
-        /* Increment the child task Execution Counter */
-        CFE_ES_IncrementTaskCounter();
+        /* Check to see if we are to mark the time. */
+        if (((HS_CustomData.ThisIdleTaskExec & HS_CustomData.UtilMask) == HS_CustomData.UtilMask) &&
+            (HS_CustomData.ThisIdleTaskExec > HS_CustomData.UtilMask))
+        {
+            /* Entry and Exit markers are for easy time marking only; not performance */
+            CFE_ES_PerfLogEntry(HS_IDLETASK_PERF_ID);
 
-        /* update stamp and array */
-        CFE_PSP_GetTime(&PSPTime);
-        HS_CustomData.UtilArray[HS_CustomData.UtilArrayIndex & HS_CustomData.UtilArrayMask] = (uint32)PSPTime.ticks;
-        HS_CustomData.UtilArrayIndex++;
+            /* Increment the child task Execution Counter */
+            CFE_ES_IncrementTaskCounter();
 
-        CFE_ES_PerfLogExit(HS_IDLETASK_PERF_ID);
+            /* update stamp and array */
+            CFE_PSP_GetTime(&PSPTime);
+            HS_CustomData.UtilArray[HS_CustomData.UtilArrayIndex & HS_CustomData.UtilArrayMask] = (uint32)PSPTime.ticks;
+            HS_CustomData.UtilArrayIndex++;
+
+            CFE_ES_PerfLogExit(HS_IDLETASK_PERF_ID);
+        }
+
+        /* Call the Utilization Tracking function */
+        HS_UtilizationIncrement();
     }
-
-    /* Call the Utilization Tracking function */
-    HS_UtilizationIncrement();
 
     return;
 
@@ -92,11 +94,14 @@ int32 HS_CustomInit(void)
     /*
     ** Spawn the Idle Task
     */
+    HS_CustomData.IdleTaskRunStatus = CFE_SUCCESS;
+
     Status = CFE_ES_CreateChildTask(&HS_CustomData.IdleTaskID, HS_IDLE_TASK_NAME, HS_IdleTask, HS_IDLE_TASK_STACK_PTR,
                                     HS_IDLE_TASK_STACK_SIZE, HS_IDLE_TASK_PRIORITY, HS_IDLE_TASK_FLAGS);
 
     if (Status != CFE_SUCCESS)
     {
+        HS_CustomData.IdleTaskRunStatus = !CFE_SUCCESS;
         CFE_EVS_SendEvent(HS_CR_CHILD_TASK_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Error Creating Child Task for CPU Utilization Monitoring,RC=0x%08X", (unsigned int)Status);
         return (Status);
