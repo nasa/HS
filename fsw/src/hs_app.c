@@ -207,7 +207,7 @@ int32 HS_AppInit(void)
     /*
     ** Initialize operating data to default states...
     */
-    CFE_PSP_MemSet(&HS_AppData, 0, sizeof(HS_AppData_t));
+    memset(&HS_AppData, 0, sizeof(HS_AppData));
     HS_AppData.ServiceWatchdogFlag = HS_STATE_ENABLED;
     HS_AppData.RunStatus           = CFE_ES_RunStatus_APP_RUN;
 

@@ -119,7 +119,7 @@ int32 HS_APP_TEST_CFE_ES_RestoreFromCDSHook(void *UserObj, int32 StubRetcode, ui
 {
     /* Restore the HS_AppData.CDSData that was memset in HS_AppInit */
 
-    memcpy(&HS_AppData.CDSData, UserObj, sizeof(HS_CDSData_t));
+    memcpy(&HS_AppData.CDSData, UserObj, sizeof(HS_AppData.CDSData));
 
     return CFE_SUCCESS;
 }
