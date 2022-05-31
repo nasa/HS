@@ -47,6 +47,7 @@ typedef struct
 uint8 call_count_CFE_EVS_SendEvent;
 
 uint16 HS_APP_TEST_CFE_SB_RcvMsgHookCount;
+uint32 UT_WaitForStartupSyncTimeout;
 
 void UT_UpdatedDefaultHandler_CFE_SB_ReceiveBuffer(void *UserObj, UT_EntryKey_t FuncKey,
                                                    const UT_StubContext_t *Context)
@@ -126,6 +127,9 @@ int32 HS_APP_TEST_CFE_ES_RestoreFromCDSHook(void *UserObj, int32 StubRetcode, ui
 int32 HS_APP_TEST_CFE_ES_WaitForStartupSyncHook1(void *UserObj, int32 StubRetcode, uint32 CallCount,
                                                  const UT_StubContext_t *Context)
 {
+
+    UT_WaitForStartupSyncTimeout = UT_Hook_GetArgValueByName(Context, "TimeOutMilliseconds", uint32);
+
     /* This functionality is not directly related to WaitForStartupSync, but WaitForStartupSync is in a place where
        it's necessary to do this for the test case HS_AppMain_Test_Nominal */
 
@@ -175,6 +179,10 @@ void HS_AppMain_Test_NominalWaitForStartupSync(void)
 
     /* Verify results */
     UtAssert_UINT8_EQ(HS_AppData.CurrentEventMonState, HS_STATE_ENABLED);
+
+    /* This verifies HS8006 and HS8006.1 to wait for startup sync with platform defined timeout */
+    UtAssert_STUB_COUNT(CFE_ES_WaitForStartupSync, 1);
+    UtAssert_UINT32_EQ(UT_WaitForStartupSyncTimeout, HS_STARTUP_SYNC_TIMEOUT);
 
     /* 1 event message that we don't care about in this test */
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
