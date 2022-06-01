@@ -156,7 +156,7 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
     CFE_ES_TaskId_t    TaskId    = CFE_ES_TASKID_UNDEFINED;
     CFE_ES_CounterId_t CounterId = CFE_ES_COUNTERID_UNDEFINED;
     CFE_ES_TaskInfo_t  TaskInfo;
-    CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+    memset(&TaskInfo, 0, sizeof(TaskInfo));
 #endif
     int32  Status     = CFE_SUCCESS;
     uint32 TableIndex = 0;

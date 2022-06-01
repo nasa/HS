@@ -51,7 +51,7 @@ void HS_MonitorApplications(void)
     uint32           MsgActsIndex = 0;
     CFE_SB_Buffer_t *BufPtr       = NULL;
 
-    CFE_PSP_MemSet(&AppInfo, 0, sizeof(CFE_ES_AppInfo_t));
+    memset(&AppInfo, 0, sizeof(AppInfo));
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
