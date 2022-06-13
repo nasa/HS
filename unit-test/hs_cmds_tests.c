@@ -551,9 +551,11 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
+    /* 2 entries that are not HS_EMT_ACT_NOACT for branch coverage */
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT + 1;
+    HS_AppData.EMTablePtr[1].ActionType = HS_EMT_ACT_NOACT + 1;
 
-    /* Satisfies condition "if (Status == CFE_ES_ERR_APPNAME)" */
+    /* Fail first, succeed on second */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
     /* ignore dummy message length check */
@@ -3119,6 +3121,8 @@ void HS_AppMonStatusRefresh_Test_CycleCountZero(void)
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
     uint32        i;
 
+    memset(AMTable, 0, sizeof(AMTable));
+
     HS_AppData.AMTablePtr = AMTable;
 
     for (i = 0; i <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); i++)
@@ -3176,6 +3180,7 @@ void HS_AppMonStatusRefresh_Test_ActionTypeNOACT(void)
 
     for (i = 0; i < HS_MAX_MONITORED_APPS; i++)
     {
+        HS_AppData.AMTablePtr[i].CycleCount = 1;
         HS_AppData.AMTablePtr[i].ActionType = HS_AMT_ACT_NOACT;
     }
 
@@ -3212,6 +3217,8 @@ void HS_AppMonStatusRefresh_Test_ElseCase(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
     uint32        i;
+
+    memset(AMTable, 0, sizeof(AMTable));
 
     HS_AppData.AMTablePtr = AMTable;
 

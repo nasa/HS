@@ -52,94 +52,55 @@ int32 HS_CUSTOM_TEST_CFE_ES_IncrementTaskCounterHook(void *UserObj, int32 StubRe
 void HS_IdleTask_Test(void)
 {
     HS_CustomData.UtilMask         = 1;
-    HS_CustomData.ThisIdleTaskExec = 3;
+    HS_CustomData.ThisIdleTaskExec = 0;
     HS_CustomData.UtilArrayIndex   = 0;
 
-    /* Set to make the while loop exit after the first run */
+    /* Set to make the while loop exit after the first call to CFE_ES_IncrementTaskCounter */
     UT_SetHookFunction(UT_KEY(CFE_ES_IncrementTaskCounter), HS_CUSTOM_TEST_CFE_ES_IncrementTaskCounterHook, NULL);
 
     /* Execute the function being tested */
     HS_IdleTask();
 
-    /* Verify results */
-    UtAssert_True(HS_CustomData.UtilArray[0] != 0, "HS_CustomData.UtilArray[0] != 0");
-    UtAssert_True(HS_CustomData.UtilArrayIndex == 1, "HS_CustomData.UtilArrayIndex == 1");
+    /* Will loop incrementing ThisIdleTaskExec until update/stamp, covering all branches */
+    UtAssert_UINT32_NEQ(HS_CustomData.UtilArray[0], 0);
+    UtAssert_UINT32_EQ(HS_CustomData.UtilArrayIndex, 1);
+    UtAssert_UINT32_EQ(HS_CustomData.ThisIdleTaskExec, 4);
 
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 
 } /* end HS_IdleTask_Test */
 
-void HS_IdleTask_Test_IdleTaskExecEqualsUtilMask(void)
-{
-    HS_CustomData.UtilMask         = 1;
-    HS_CustomData.ThisIdleTaskExec = 1;
-    HS_CustomData.UtilArrayIndex   = 0;
-
-    /* Set to make the while loop exit after the first run */
-    UT_SetHookFunction(UT_KEY(CFE_ES_IncrementTaskCounter), HS_CUSTOM_TEST_CFE_ES_IncrementTaskCounterHook, NULL);
-
-    /* Execute the function being tested */
-    HS_IdleTask();
-
-    /* Verify results */
-    UtAssert_True(HS_CustomData.UtilArrayIndex == 0, "HS_CustomData.UtilArrayIndex == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-
-} /* end HS_IdleTask_Test_IdleTaskExecEqualsUtilMask */
-
-void HS_IdleTask_Test_IdleTaskExecAndFail(void)
-{
-    HS_CustomData.UtilMask         = 1;
-    HS_CustomData.ThisIdleTaskExec = 2;
-    HS_CustomData.UtilArrayIndex   = 0;
-
-    /* Set to make the while loop exit after the first run */
-    UT_SetHookFunction(UT_KEY(CFE_ES_IncrementTaskCounter), HS_CUSTOM_TEST_CFE_ES_IncrementTaskCounterHook, NULL);
-
-    /* Execute the function being tested */
-    HS_IdleTask();
-
-    /* Verify results */
-    UtAssert_True(HS_CustomData.UtilArrayIndex == 0, "HS_CustomData.UtilArrayIndex == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-
-} /* end HS_IdleTask_Test_IdleTaskExecEqualsUtilMask */
-
 void HS_CustomInit_Test_Nominal(void)
 {
-    int32 Result;
+    uint32 i;
 
-    /* No setup required for this test */
+    /* Fill to confirm init */
+    memset(&HS_CustomData, 0xFF, sizeof(HS_CustomData));
 
     /* Execute the function being tested */
-    Result = HS_CustomInit();
+    UtAssert_INT32_EQ(HS_CustomInit(), CFE_SUCCESS);
 
-    /* Verify results */
-    UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult1, HS_UTIL_CONV_MULT1);
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult2, HS_UTIL_CONV_MULT2);
+    UtAssert_INT32_EQ(HS_CustomData.UtilDiv, HS_UTIL_CONV_DIV);
 
-    UtAssert_True(HS_CustomData.UtilMult1 == HS_UTIL_CONV_MULT1, "HS_CustomData.UtilMult1 == HS_UTIL_CONV_MULT1");
-    UtAssert_True(HS_CustomData.UtilMult2 == HS_UTIL_CONV_MULT2, "HS_CustomData.UtilMult2 == HS_UTIL_CONV_MULT2");
-    UtAssert_True(HS_CustomData.UtilDiv == HS_UTIL_CONV_DIV, "HS_CustomData.UtilDiv == HS_UTIL_CONV_DIV");
-    UtAssert_True(HS_CustomData.UtilCycleCounter == 0, "HS_CustomData.UtilCycleCounter == 0");
-    UtAssert_True(HS_CustomData.UtilMask == HS_UTIL_DIAG_MASK, "HS_CustomData.UtilMask == HS_UTIL_DIAG_MASK");
-    UtAssert_True(HS_CustomData.UtilArrayIndex == 0, "HS_CustomData.UtilArrayIndex == 0");
-    UtAssert_True(HS_CustomData.UtilArrayMask == HS_UTIL_TIME_DIAG_ARRAY_MASK,
-                  "HS_CustomData.UtilArrayMask == HS_UTIL_TIME_DIAG_ARRAY_MASK");
-    UtAssert_True(HS_CustomData.ThisIdleTaskExec == 0, "HS_CustomData.ThisIdleTaskExec == 0");
-    UtAssert_True(HS_CustomData.LastIdleTaskExec == 0, "HS_CustomData.LastIdleTaskExec == 0");
-    UtAssert_True(HS_CustomData.LastIdleTaskInterval == 0, "HS_CustomData.LastIdleTaskInterval == 0");
+    UtAssert_UINT32_EQ(HS_CustomData.UtilMask, HS_UTIL_DIAG_MASK);
+    UtAssert_UINT32_EQ(HS_CustomData.UtilArrayIndex, 0);
+    UtAssert_UINT32_EQ(HS_CustomData.UtilArrayMask, HS_UTIL_TIME_DIAG_ARRAY_MASK);
 
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT32_EQ(HS_CustomData.ThisIdleTaskExec, 0);
+    UtAssert_UINT32_EQ(HS_CustomData.LastIdleTaskExec, 0);
+    UtAssert_UINT32_EQ(HS_CustomData.LastIdleTaskInterval, 0);
+    UtAssert_UINT32_EQ(HS_CustomData.UtilCycleCounter, 0);
+
+    for (i = 0; i < sizeof(HS_CustomData.UtilArray) / sizeof(HS_CustomData.UtilArray[0]); i++)
+    {
+        UtAssert_UINT32_EQ(HS_CustomData.UtilArray[i], 0);
+    }
+
+    UtAssert_UINT32_EQ(HS_CustomData.UtilCallsPerMark, HS_UTIL_CALLS_PER_MARK);
+
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 
 } /* end HS_CustomInit_Test_Nominal */
 
@@ -254,14 +215,16 @@ void HS_UtilizationMark_Test(void)
     HS_CustomData.ThisIdleTaskExec = 3;
     HS_CustomData.LastIdleTaskExec = 1;
 
-    /* HS_UtilizationMark cannot bypass the setting of
-     * HS_CustomData.LastIdleTaskInterval or
-     * HS_CustomData.LastIdleTaskExec when HS_UTIL_CALLS_PER_MARK
-     * is defined to 0 or 1 (default value). Update this
-     * constant in hs_platform_cfg.h to modify this behavior
-     * and achieve full coverage of the function body. */
+    /* Force calls per mark to be able to get branch coverage */
+    HS_CustomData.UtilCallsPerMark = 2;
 
-    /* Execute the function being tested */
+    /* First call will bypass */
+    HS_UtilizationMark();
+
+    UtAssert_UINT32_EQ(HS_CustomData.LastIdleTaskInterval, 0);
+    UtAssert_UINT32_EQ(HS_CustomData.LastIdleTaskExec, 1);
+
+    /* Next call will update variables */
     HS_UtilizationMark();
 
     /* Verify results */
@@ -290,24 +253,21 @@ void HS_MarkIdleCallback_Test(void)
 
 void HS_CustomMonitorUtilization_Test(void)
 {
-    HS_CustomData.UtilCycleCounter = 0;
+    /* Setting to max will cause rollover for coverage */
+    HS_CustomData.UtilCycleCounter = UINT32_MAX;
 
-    /* HS_CustomMonitorUtilization cannot bypass the execution of
-     * HS_MonitorUtilization or the clearing of
-     * HS_CustomData.UtilCycleCounter when HS_UTIL_CYCLES_PER_INTERVAL
-     * is defined to 0 or 1 (default value). Update this constant
-     * in hs_platform_cfg.h to modify this behavior and achieve full
-     * coverage of the function body. */
-
-    /* Execute the function being tested */
+    /* First call should skip stub call */
     HS_CustomMonitorUtilization();
 
-    /* Verify results */
-    UtAssert_True(HS_CustomData.UtilCycleCounter == 0, "HS_CustomData.UtilCycleCounter == 0");
+    UtAssert_STUB_COUNT(HS_MonitorUtilization, 0);
 
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    /* Next call exercises logic */
+    HS_CustomMonitorUtilization();
+
+    UtAssert_STUB_COUNT(HS_MonitorUtilization, 1);
+    UtAssert_UINT32_EQ(HS_CustomData.UtilCycleCounter, 0);
+
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 
 } /* end HS_CustomMonitorUtilization_Test */
 
@@ -619,10 +579,10 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
     HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
-    UtAssert_True(HS_CustomData.UtilMult2 == 2, "HS_CustomData.UtilMult2 == 2");
-    UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult2, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilDiv, 0);
+    UtAssert_INT32_EQ(HS_AppData.CmdCount, 0);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
@@ -666,10 +626,10 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
     HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
-    UtAssert_True(HS_CustomData.UtilMult2 == 2, "HS_CustomData.UtilMult2 == 2");
-    UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult2, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilDiv, 0);
+    UtAssert_INT32_EQ(HS_AppData.CmdCount, 0);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_UTIL_PARAMS_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
@@ -753,10 +713,10 @@ void HS_SetUtilParamsCmd_Test_MsgLengthError(void)
     HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
-    UtAssert_True(HS_CustomData.UtilMult2 == 2, "HS_CustomData.UtilMult2 == 2");
-    UtAssert_True(HS_CustomData.UtilDiv == 3, "HS_CustomData.UtilDiv == 3");
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilMult2, 0);
+    UtAssert_INT32_EQ(HS_CustomData.UtilDiv, 0);
+    UtAssert_INT32_EQ(HS_AppData.CmdCount, 0);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -843,10 +803,6 @@ void HS_SetUtilDiagCmd_Test_MsgLengthError(void)
 void UtTest_Setup(void)
 {
     UtTest_Add(HS_IdleTask_Test, HS_Test_Setup, HS_Test_TearDown, "HS_IdleTask_Test");
-    UtTest_Add(HS_IdleTask_Test_IdleTaskExecEqualsUtilMask, HS_Test_Setup, HS_Test_TearDown,
-               "HS_IdleTask_Test_IdleTaskExecEqualsUtilMask");
-    UtTest_Add(HS_IdleTask_Test_IdleTaskExecAndFail, HS_Test_Setup, HS_Test_TearDown,
-               "HS_IdleTask_Test_IdleTaskExecAndFail");
 
     UtTest_Add(HS_CustomInit_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_CustomInit_Test_Nominal");
     UtTest_Add(HS_CustomInit_Test_CreateChildTaskError, HS_Test_Setup, HS_Test_TearDown,
