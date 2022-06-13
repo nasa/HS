@@ -172,20 +172,18 @@ void HS_MonitorApplications(void)
                             break;
 
                         /*
-                        ** Also the case for Message Action types
+                        ** Message Action types processing (invalid will be skipped)
                         */
-                        case HS_AMT_ACT_NOACT:
                         default:
-                            /*
-                            ** Check to see if this is a Message Action Type
-                            */
-                            if ((HS_AppData.MsgActsState == HS_STATE_ENABLED) &&
-                                (ActionType > HS_AMT_ACT_LAST_NONMSG) &&
-                                (ActionType <= (HS_AMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES)))
-                            {
-                                /* Calculate index in Message Action Table */
-                                MsgActsIndex = ActionType - HS_AMT_ACT_LAST_NONMSG - 1;
 
+                            /* Calculate the requested message action index */
+                            MsgActsIndex = ActionType - HS_AMT_ACT_LAST_NONMSG - 1;
+
+                            /*
+                            ** Check to see if this is a valid Message Action Type
+                            */
+                            if ((HS_AppData.MsgActsState == HS_STATE_ENABLED) && (MsgActsIndex < HS_MAX_MSG_ACT_TYPES))
+                            {
                                 /*
                                 ** Send the message if off cooldown and not disabled
                                 */
@@ -332,17 +330,18 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
                         break;
 
                     /*
-                    ** Also the case for Message Action types
+                    ** Message Action types processing (invalid will be skipped)
                     */
-                    case HS_EMT_ACT_NOACT:
                     default:
+
+                        /* Calculate the requested message action index */
+                        MsgActsIndex = ActionType - HS_AMT_ACT_LAST_NONMSG - 1;
+
                         /*
-                        ** Check to see if this is a Message Action Type
+                        ** Check to see if this is a valid Message Action Type
                         */
-                        if ((HS_AppData.MsgActsState == HS_STATE_ENABLED) && (ActionType > HS_EMT_ACT_LAST_NONMSG) &&
-                            (ActionType <= (HS_EMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES)))
+                        if ((HS_AppData.MsgActsState == HS_STATE_ENABLED) && (MsgActsIndex < HS_MAX_MSG_ACT_TYPES))
                         {
-                            MsgActsIndex = ActionType - HS_EMT_ACT_LAST_NONMSG - 1;
 
                             /*
                             ** Send the message if off cooldown and not disabled
