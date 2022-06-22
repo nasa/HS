@@ -64,9 +64,13 @@ void HS_MonitorApplications_Test_AppNameNotFound(void)
 
     HS_AppData.AMTablePtr = AMTable;
 
+    /* Element 0 will run through logic with action and not expired */
     HS_AppData.AMTablePtr[0].ActionType  = -1;
     HS_AppData.AppMonCheckInCountdown[0] = 1;
     HS_AppData.AMTablePtr[0].CycleCount  = 1;
+
+    /* Element 1 has action but expired */
+    HS_AppData.AMTablePtr[1].ActionType = -1;
 
     strncpy(HS_AppData.AMTablePtr[0].AppName, "AppName", 10);
 
@@ -908,12 +912,16 @@ void HS_MonitorEvent_Test_AppName(void)
     HS_AppData.EMTablePtr = EMTable;
     HS_AppData.MATablePtr = MATable;
 
+    /* Active table entry where AppName does not match event */
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_PROC_RESET;
     HS_AppData.EMTablePtr[0].EventID    = Packet.Payload.PacketID.EventID;
     HS_AppData.CDSData.MaxResets        = 10;
     HS_AppData.CDSData.ResetsPerformed  = 1;
 
     strncpy(HS_AppData.EMTablePtr[0].AppName, "AppName", 10);
+
+    /* Active table entry where event doesn't match */
+    HS_AppData.EMTablePtr[1].ActionType = HS_EMT_ACT_PROC_RESET;
 
     /* Execute the function being tested */
     HS_MonitorEvent(&Packet);

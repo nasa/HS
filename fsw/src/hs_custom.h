@@ -266,6 +266,8 @@ typedef struct
     uint32 LastIdleTaskInterval; /**< \brief Idle Task Increments during Previous Interval */
     uint32 UtilCycleCounter;     /**< \brief Counter to determine when to monitor utilization */
 
+    int32 UtilCallsPerMark; /**< \brief CPU Utilization Calls per mark */
+
     int32           IdleTaskRunStatus; /**< \brief HS Idle Task Run Status */
     CFE_ES_TaskId_t IdleTaskID;        /**< \brief HS Idle Task Task ID */
 

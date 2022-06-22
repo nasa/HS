@@ -91,6 +91,8 @@ int32 HS_CustomInit(void)
 {
     int32 Status;
 
+    memset(&HS_CustomData, 0, sizeof(HS_CustomData));
+
     /*
     ** Spawn the Idle Task
     */
@@ -118,16 +120,13 @@ int32 HS_CustomInit(void)
                           (unsigned int)Status);
     }
 
-    HS_CustomData.UtilMult1            = HS_UTIL_CONV_MULT1;
-    HS_CustomData.UtilMult2            = HS_UTIL_CONV_MULT2;
-    HS_CustomData.UtilDiv              = HS_UTIL_CONV_DIV;
-    HS_CustomData.UtilMask             = HS_UTIL_DIAG_MASK;
-    HS_CustomData.UtilCycleCounter     = 0;
-    HS_CustomData.UtilArrayIndex       = 0;
-    HS_CustomData.UtilArrayMask        = HS_UTIL_TIME_DIAG_ARRAY_MASK;
-    HS_CustomData.ThisIdleTaskExec     = 0;
-    HS_CustomData.LastIdleTaskExec     = 0;
-    HS_CustomData.LastIdleTaskInterval = 0;
+    /* Non-zero initialization */
+    HS_CustomData.UtilMult1        = HS_UTIL_CONV_MULT1;
+    HS_CustomData.UtilMult2        = HS_UTIL_CONV_MULT2;
+    HS_CustomData.UtilDiv          = HS_UTIL_CONV_DIV;
+    HS_CustomData.UtilMask         = HS_UTIL_DIAG_MASK;
+    HS_CustomData.UtilArrayMask    = HS_UTIL_TIME_DIAG_ARRAY_MASK;
+    HS_CustomData.UtilCallsPerMark = HS_UTIL_CALLS_PER_MARK;
 
     return (Status);
 
@@ -183,7 +182,7 @@ void HS_UtilizationMark(void)
 
     CycleCount++;
 
-    if (CycleCount >= HS_UTIL_CALLS_PER_MARK)
+    if (CycleCount >= HS_CustomData.UtilCallsPerMark)
     {
         HS_CustomData.LastIdleTaskInterval = HS_CustomData.ThisIdleTaskExec - HS_CustomData.LastIdleTaskExec;
         HS_CustomData.LastIdleTaskExec     = HS_CustomData.ThisIdleTaskExec;
@@ -278,10 +277,9 @@ void HS_UtilDiagReport(void)
 {
     uint32 DiagValue[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
     uint32 DiagCount[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
-    uint32 i          = 0;
-    uint32 j          = 0;
-    uint32 ThisValue  = 0;
-    bool   MatchFound = false;
+    uint32 i         = 0;
+    uint32 j         = 0;
+    uint32 ThisValue = 0;
 
     uint32 Ordinal         = 0;
     uint32 NewOrdinalIndex = 0;
@@ -314,24 +312,19 @@ void HS_UtilDiagReport(void)
             ThisValue = HS_CustomData.UtilArray[i] - HS_CustomData.UtilArray[i - 1];
         }
 
-        j          = 0;
-        MatchFound = false;
-        while ((MatchFound == false) && (j < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
+        for (j = 0; j < HS_UTIL_TIME_DIAG_ARRAY_LENGTH; j++)
         {
+            if (DiagValue[j] == 0xFFFFFFFF)
+            {
+                /* Acquire a slot if empty */
+                DiagValue[j] = ThisValue;
+            }
+
             if (ThisValue == DiagValue[j])
             {
+                /* Increment count and cause loop to exit on match */
                 DiagCount[j]++;
-                MatchFound = true;
-            }
-            else if (DiagValue[j] == 0xFFFFFFFF)
-            {
-                DiagValue[j] = ThisValue;
-                DiagCount[j]++;
-                MatchFound = true;
-            }
-            else
-            {
-                j++;
+                j = HS_UTIL_TIME_DIAG_ARRAY_LENGTH;
             }
         }
     }
