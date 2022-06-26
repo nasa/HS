@@ -127,7 +127,21 @@ void HS_MonitorApplications(void)
                             {
                                 HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
 
+                                /*
+                                ** Performance Log, Stop during delay
+                                */
+                                CFE_ES_PerfLogExit(HS_APPMAIN_PERF_ID);
+
+                                /*
+                                ** Task Delay for a configured timeout
+                                */
                                 OS_TaskDelay(HS_RESET_TASK_DELAY);
+
+                                /*
+                                ** Performance Log, (re)Start after delay
+                                */
+                                CFE_ES_PerfLogEntry(HS_APPMAIN_PERF_ID);
+
                                 CFE_ES_WriteToSysLog("HS App: App Monitor Failure: APP:(%s): Action: Processor Reset\n",
                                                      HS_AppData.AMTablePtr[TableIndex].AppName);
                                 HS_AppData.ServiceWatchdogFlag = HS_STATE_DISABLED;
@@ -268,7 +282,21 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
                         {
                             HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
 
+                            /*
+                            ** Performance Log, Stop during delay
+                            */
+                            CFE_ES_PerfLogExit(HS_APPMAIN_PERF_ID);
+
+                            /*
+                            ** Task Delay for a configured timeout
+                            */
                             OS_TaskDelay(HS_RESET_TASK_DELAY);
+
+                            /*
+                            ** Performance Log, (re)Start after delay
+                            */
+                            CFE_ES_PerfLogEntry(HS_APPMAIN_PERF_ID);
+
                             CFE_ES_WriteToSysLog("HS App: Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset\n",
                                                  HS_AppData.EMTablePtr[TableIndex].AppName,
                                                  (int)HS_AppData.EMTablePtr[TableIndex].EventID);
