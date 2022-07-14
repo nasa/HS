@@ -75,6 +75,9 @@ void HS_IdleTask(void)
 
         /* Call the Utilization Tracking function */
         HS_UtilizationIncrement();
+
+        /* Thread cancellation point/give up CPU */
+        OS_TaskDelay(0);
     }
 
     return;
