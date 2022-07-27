@@ -854,7 +854,6 @@ void HS_AppInit_Test_CorruptCDSNoEvent(void)
 
     HS_AppData.CDSData.MaxResets    = 0;
     HS_AppData.CDSData.MaxResetsNot = (~HS_AppData.CDSData.MaxResets);
-    ;
 
     HS_AppData.CDSData.ResetsPerformed    = 0;
     HS_AppData.CDSData.ResetsPerformedNot = (~HS_AppData.CDSData.ResetsPerformedNot);
