@@ -568,7 +568,6 @@ int32 HS_ValidateEMTable(void *TableData)
     uint16 ActionType = 0;
     uint16 EventID    = 0;
     uint16 NullTerm   = 0;
-    ;
 
     uint32 GoodCount                = 0;
     uint32 BadCount                 = 0;
