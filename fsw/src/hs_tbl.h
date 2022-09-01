@@ -23,10 +23,7 @@
  *
  * @note
  *   Constants and enumerated types related to these table structures
- *   are defined in hs_tbldefs.h. They are kept separate to allow easy
- *   integration with ASIST RDL files which can't handle typedef
- *   declarations (see the main comment block in hs_tbldefs.h for more
- *   info).
+ *   are defined in hs_tbldefs.h.
  */
 #ifndef HS_TBL_H
 #define HS_TBL_H

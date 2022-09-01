@@ -24,10 +24,8 @@
  *
  * @note
  *   These Macro definitions have been put in this file (instead of
- *   hs_msg.h) so this file can be included directly into ASIST build
- *   test scripts. ASIST RDL files can accept C language defines but
- *   can't handle type definitions. As a result: DO NOT PUT ANY
- *   TYPEDEFS OR STRUCTURE DEFINITIONS IN THIS FILE!
+ *   hs_msg.h). DO NOT PUT ANY TYPEDEFS OR
+ *   STRUCTURE DEFINITIONS IN THIS FILE!
  *   ADD THEM TO hs_msg.h IF NEEDED!
  */
 #ifndef HS_MSGDEFS_H
