@@ -548,7 +548,7 @@ int32 HS_ValidateAMTable(void *TableData)
                       "AppMon verify results: good = %d, bad = %d, unused = %d", (int)GoodCount, (int)BadCount,
                       (int)UnusedCount);
 
-    return (TableResult);
+    return TableResult;
 
 } /* end HS_ValidateAMTable */
 
@@ -641,7 +641,7 @@ int32 HS_ValidateEMTable(void *TableData)
                       "EventMon verify results: good = %d, bad = %d, unused = %d", (int)GoodCount, (int)BadCount,
                       (int)UnusedCount);
 
-    return (TableResult);
+    return TableResult;
 
 } /* end HS_ValidateEMTable */
 
@@ -735,7 +735,7 @@ int32 HS_ValidateXCTable(void *TableData)
                       "ExeCount verify results: good = %d, bad = %d, unused = %d", (int)GoodCount, (int)BadCount,
                       (int)UnusedCount);
 
-    return (TableResult);
+    return TableResult;
 
 } /* end HS_ValidateXCTable */
 #endif
@@ -836,7 +836,7 @@ int32 HS_ValidateMATable(void *TableData)
                       "MsgActs verify results: good = %d, bad = %d, unused = %d", (int)GoodCount, (int)BadCount,
                       (int)UnusedCount);
 
-    return (TableResult);
+    return TableResult;
 
 } /* end HS_ValidateMATable */
 

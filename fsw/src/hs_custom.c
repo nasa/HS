@@ -109,7 +109,7 @@ int32 HS_CustomInit(void)
         HS_CustomData.IdleTaskRunStatus = !CFE_SUCCESS;
         CFE_EVS_SendEvent(HS_CR_CHILD_TASK_ERR_EID, CFE_EVS_EventType_ERROR,
                           "Error Creating Child Task for CPU Utilization Monitoring,RC=0x%08X", (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /*
@@ -131,7 +131,7 @@ int32 HS_CustomInit(void)
     HS_CustomData.UtilArrayMask    = HS_UTIL_TIME_DIAG_ARRAY_MASK;
     HS_CustomData.UtilCallsPerMark = HS_UTIL_CALLS_PER_MARK;
 
-    return (Status);
+    return Status;
 
 } /* end HS_CustomInit */
 
