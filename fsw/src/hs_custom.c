@@ -79,9 +79,6 @@ void HS_IdleTask(void)
         /* Thread cancellation point/give up CPU */
         OS_TaskDelay(0);
     }
-
-    return;
-
 } /* End of HS_IdleTask() */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -169,9 +166,6 @@ void HS_CustomCleanup(void)
 void HS_UtilizationIncrement(void)
 {
     HS_CustomData.ThisIdleTaskExec++;
-
-    return;
-
 } /* end HS_UtilizationIncrement */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -191,9 +185,6 @@ void HS_UtilizationMark(void)
         HS_CustomData.LastIdleTaskExec     = HS_CustomData.ThisIdleTaskExec;
         CycleCount                         = 0;
     }
-
-    return;
-
 } /* end HS_UtilizationMark */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -207,9 +198,6 @@ void HS_MarkIdleCallback(void)
     ** Capture the CPU Utilization (at a consistant time)
     */
     HS_UtilizationMark();
-
-    return;
-
 } /* End of HS_MarkIdleCallback() */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -376,9 +364,6 @@ void HS_UtilDiagReport(void)
         (unsigned int)HS_CustomData.UtilMask, (int)OutputValue[OutputOrdinal[0]], (int)OutputCount[OutputOrdinal[0]],
         (int)OutputValue[OutputOrdinal[1]], (int)OutputCount[OutputOrdinal[1]], (int)OutputValue[OutputOrdinal[2]],
         (int)OutputCount[OutputOrdinal[2]], (int)OutputValue[OutputOrdinal[3]], (int)OutputCount[OutputOrdinal[3]]);
-
-    return;
-
 } /* end HS_UtilDiagReport */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -432,9 +417,6 @@ void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr)
                               (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
         }
     }
-
-    return;
-
 } /* end HS_SetUtilParamsCmd */
 
 void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr)
@@ -454,9 +436,6 @@ void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr)
         CFE_EVS_SendEvent(HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_EventType_DEBUG,
                           "Utilization Diagnostics Mask has been set to %08X", (unsigned int)HS_CustomData.UtilMask);
     }
-
-    return;
-
 } /* end HS_SetUtilDiagCmd */
 
 /************************/
