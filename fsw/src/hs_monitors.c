@@ -216,9 +216,6 @@ void HS_MonitorApplications(void)
         } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0) if */
 
     } /* end for loop */
-
-    return;
-
 } /* end HS_MonitorApplications */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -374,9 +371,6 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
         } /* end EventID comparison */
 
     } /* end for loop */
-
-    return;
-
 } /* end HS_MonitorEvent */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -454,9 +448,6 @@ void HS_MonitorUtilization(void)
 
     HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
     HS_AppData.UtilCpuPeak = PeakUtil;
-
-    return;
-
 } /* end HS_MonitorUtilization */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -861,8 +852,6 @@ void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets)
     {
         CFE_ES_CopyToCDS(HS_AppData.MyCDSHandle, &HS_AppData.CDSData);
     }
-    return;
-
 } /* end HS_SetCDSData */
 
 /************************/
