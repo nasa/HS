@@ -236,7 +236,7 @@ int32 HS_AppInit(void)
     if (Status != CFE_SUCCESS)
     {
         CFE_ES_WriteToSysLog("HS App: Error Registering For Event Services, RC = 0x%08X\n", (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /*
@@ -310,7 +310,7 @@ int32 HS_AppInit(void)
     Status = HS_SbInit();
     if (Status != CFE_SUCCESS)
     {
-        return (Status);
+        return Status;
     }
 
     /*
@@ -319,7 +319,7 @@ int32 HS_AppInit(void)
     Status = HS_TblInit();
     if (Status != CFE_SUCCESS)
     {
-        return (Status);
+        return Status;
     }
 
     /*
@@ -330,7 +330,7 @@ int32 HS_AppInit(void)
     {
         CFE_EVS_SendEvent(HS_CUSTOM_INIT_ERR_EID, CFE_EVS_EventType_ERROR, "Error in custom initialization, RC=0x%08X",
                           Status);
-        return (Status);
+        return Status;
     }
 
     /*
@@ -339,7 +339,7 @@ int32 HS_AppInit(void)
     CFE_EVS_SendEvent(HS_INIT_EID, CFE_EVS_EventType_INFORMATION, "HS Initialized.  Version %d.%d.%d.%d",
                       HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
 
-    return (Status);
+    return Status;
 
 } /* end HS_AppInit */
 
@@ -361,7 +361,7 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_CR_CMD_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Command Pipe,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Create Event Pipe */
@@ -370,7 +370,7 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_CR_EVENT_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Event Pipe,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Create Wakeup Pipe */
@@ -379,7 +379,7 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_CR_WAKEUP_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Wakeup Pipe,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Subscribe to Housekeeping Request */
@@ -388,7 +388,7 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_SUB_REQ_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to HK Request,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Subscribe to HS ground commands */
@@ -397,7 +397,7 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_SUB_CMD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Gnd Cmds,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Subscribe to HS Wakeup Message */
@@ -406,14 +406,14 @@ int32 HS_SbInit(void)
     {
         CFE_EVS_SendEvent(HS_SUB_WAKEUP_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Wakeup,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /*
     ** Event message subscription delayed until after startup synch
     */
 
-    return (Status);
+    return Status;
 
 } /* End of HS_SbInit() */
 
@@ -437,7 +437,7 @@ int32 HS_TblInit(void)
     {
         CFE_EVS_SendEvent(HS_AMT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering AppMon Table,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Register The HS Events Monitor Table */
@@ -449,7 +449,7 @@ int32 HS_TblInit(void)
     {
         CFE_EVS_SendEvent(HS_EMT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering EventMon Table,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Register The HS Message Actions Table */
@@ -461,7 +461,7 @@ int32 HS_TblInit(void)
     {
         CFE_EVS_SendEvent(HS_MAT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering MsgActs Table,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
@@ -474,7 +474,7 @@ int32 HS_TblInit(void)
     {
         CFE_EVS_SendEvent(HS_XCT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering ExeCount Table,RC=0x%08X",
                           (unsigned int)Status);
-        return (Status);
+        return Status;
     }
 
     /* Load the HS Execution Counters Table */
@@ -601,7 +601,7 @@ int32 HS_ProcessMain(void)
         CFE_PSP_WatchdogService();
     }
 
-    return (Status);
+    return Status;
 
 } /* End of HS_ProcessMain() */
 
@@ -669,7 +669,7 @@ int32 HS_ProcessCommands(void)
         Status = CFE_SUCCESS;
     }
 
-    return (Status);
+    return Status;
 
 } /* End of HS_ProcessCommands() */
 

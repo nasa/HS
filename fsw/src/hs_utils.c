@@ -82,7 +82,7 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
         result = false;
     }
 
-    return (result);
+    return result;
 
 } /* End of HS_VerifyMsgLength */
 
