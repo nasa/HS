@@ -127,7 +127,6 @@ int32 HS_APP_TEST_CFE_ES_RestoreFromCDSHook(void *UserObj, int32 StubRetcode, ui
 int32 HS_APP_TEST_CFE_ES_WaitForStartupSyncHook1(void *UserObj, int32 StubRetcode, uint32 CallCount,
                                                  const UT_StubContext_t *Context)
 {
-
     UT_WaitForStartupSyncTimeout = UT_Hook_GetArgValueByName(Context, "TimeOutMilliseconds", uint32);
 
     /* This functionality is not directly related to WaitForStartupSync, but WaitForStartupSync is in a place where
@@ -186,8 +185,7 @@ void HS_AppMain_Test_NominalWaitForStartupSync(void)
 
     /* 1 event message that we don't care about in this test */
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
-
-} /* end HS_AppMain_Test_NominalWaitForStartupSync */
+}
 
 void HS_AppMain_Test_NominalRcvMsgSuccess(void)
 {
@@ -215,8 +213,7 @@ void HS_AppMain_Test_NominalRcvMsgSuccess(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppMain_Test_NominalRcvMsgSuccess */
+}
 
 void HS_AppMain_Test_NominalRcvMsgNoMessage(void)
 {
@@ -248,8 +245,7 @@ void HS_AppMain_Test_NominalRcvMsgNoMessage(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppMain_Test_NominalRcvMsgNoMessage */
+}
 
 void HS_AppMain_Test_NominalRcvMsgTimeOut(void)
 {
@@ -281,12 +277,10 @@ void HS_AppMain_Test_NominalRcvMsgTimeOut(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppMain_Test_NominalRcvMsgTimeOut */
+}
 
 void HS_AppMain_Test_NominalRcvMsgError(void)
 {
-
     /* Set to make loop execute exactly once */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_RunLoop), 1, true);
 
@@ -316,8 +310,7 @@ void HS_AppMain_Test_NominalRcvMsgError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppMain_Test_NominalRcvMsgError */
+}
 
 void HS_AppMain_Test_AppInitNotSuccess(void)
 {
@@ -359,8 +352,7 @@ void HS_AppMain_Test_AppInitNotSuccess(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* end HS_AppMain_Test_AppInitNotSuccess */
+}
 
 void HS_AppMain_Test_ProcessMainNotSuccess(void)
 {
@@ -395,8 +387,7 @@ void HS_AppMain_Test_ProcessMainNotSuccess(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* end HS_AppMain_Test_ProcessMainNotSuccess */
+}
 
 void HS_AppMain_Test_SBSubscribeEVSLongError(void)
 {
@@ -452,8 +443,7 @@ void HS_AppMain_Test_SBSubscribeEVSLongError(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* HS_AppMain_Test_SBSubscribeEVSLongError */
+}
 
 void HS_AppMain_Test_SBSubscribeEVSShortError(void)
 {
@@ -509,8 +499,7 @@ void HS_AppMain_Test_SBSubscribeEVSShortError(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* HS_AppMain_Test_SBSubscribeEVSShortError */
+}
 
 void HS_AppMain_Test_RcvMsgError(void)
 {
@@ -551,12 +540,10 @@ void HS_AppMain_Test_RcvMsgError(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* HS_AppMain_Test_RcvMsgError */
+}
 
 void HS_AppMain_Test_StateDisabled(void)
 {
-
     /* Set so the loop will never be run */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_RunLoop), 1, false);
 
@@ -577,8 +564,7 @@ void HS_AppMain_Test_StateDisabled(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppMain_Test_StateDisabled */
+}
 
 void HS_AppInit_Test_Nominal(void)
 {
@@ -634,8 +620,7 @@ void HS_AppInit_Test_Nominal(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_Nominal */
+}
 
 void HS_AppInit_Test_EVSRegisterError(void)
 {
@@ -687,8 +672,7 @@ void HS_AppInit_Test_EVSRegisterError(void)
     strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
 
     UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-} /* end HS_AppInit_Test_EVSRegisterError */
+}
 
 void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
 {
@@ -762,8 +746,7 @@ void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_CorruptCDSResetsPerformed */
+}
 
 void HS_AppInit_Test_CorruptCDSMaxResets(void)
 {
@@ -834,8 +817,7 @@ void HS_AppInit_Test_CorruptCDSMaxResets(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_CorruptCDSMaxResets */
+}
 
 void HS_AppInit_Test_CorruptCDSNoEvent(void)
 {
@@ -891,8 +873,7 @@ void HS_AppInit_Test_CorruptCDSNoEvent(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_CorruptCDSNoEvent */
+}
 
 void HS_AppInit_Test_RestoreCDSError(void)
 {
@@ -945,8 +926,7 @@ void HS_AppInit_Test_RestoreCDSError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_RestoreCDSError */
+}
 
 void HS_AppInit_Test_DisableSavingToCDS(void)
 {
@@ -1001,8 +981,7 @@ void HS_AppInit_Test_DisableSavingToCDS(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_DisableSavingToCDS */
+}
 
 void HS_AppInit_Test_SBInitError(void)
 {
@@ -1059,8 +1038,7 @@ void HS_AppInit_Test_SBInitError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_SBInitError */
+}
 
 void HS_AppInit_Test_TblInitError(void)
 {
@@ -1117,8 +1095,7 @@ void HS_AppInit_Test_TblInitError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_TblInitError */
+}
 
 void HS_AppInit_Test_CustomInitError(void)
 {
@@ -1175,8 +1152,7 @@ void HS_AppInit_Test_CustomInitError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_AppInit_Test_TblInitError */
+}
 
 void HS_SbInit_Test_Nominal(void)
 {
@@ -1198,8 +1174,7 @@ void HS_SbInit_Test_Nominal(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_Nominal */
+}
 
 void HS_SbInit_Test_CreateSBCmdPipeError(void)
 {
@@ -1236,8 +1211,7 @@ void HS_SbInit_Test_CreateSBCmdPipeError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_CreateSBCmdPipeError */
+}
 
 void HS_SbInit_Test_CreateSBEventPipeError(void)
 {
@@ -1274,8 +1248,7 @@ void HS_SbInit_Test_CreateSBEventPipeError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_CreateSBEventPipeError */
+}
 
 void HS_SbInit_Test_CreateSBWakeupPipe(void)
 {
@@ -1312,8 +1285,7 @@ void HS_SbInit_Test_CreateSBWakeupPipe(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_CreateSBWakeupPipe */
+}
 
 void HS_SbInit_Test_SubscribeHKRequestError(void)
 {
@@ -1350,8 +1322,7 @@ void HS_SbInit_Test_SubscribeHKRequestError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_SubscribeHKRequestError */
+}
 
 void HS_SbInit_Test_SubscribeGndCmdsError(void)
 {
@@ -1388,8 +1359,7 @@ void HS_SbInit_Test_SubscribeGndCmdsError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_SubscribeGndCmdsError */
+}
 
 void HS_SbInit_Test_SubscribeWakeupError(void)
 {
@@ -1426,8 +1396,7 @@ void HS_SbInit_Test_SubscribeWakeupError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_SbInit_Test_SubscribeWakeupError */
+}
 
 void HS_TblInit_Test_Nominal(void)
 {
@@ -1446,8 +1415,7 @@ void HS_TblInit_Test_Nominal(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_Nominal */
+}
 
 void HS_TblInit_Test_RegisterAppMonTableError(void)
 {
@@ -1480,8 +1448,7 @@ void HS_TblInit_Test_RegisterAppMonTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_RegisterAppMonTableError */
+}
 
 void HS_TblInit_Test_RegisterEventMonTableError(void)
 {
@@ -1514,8 +1481,7 @@ void HS_TblInit_Test_RegisterEventMonTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_RegisterEventMonTableError */
+}
 
 void HS_TblInit_Test_RegisterMsgActsTableError(void)
 {
@@ -1548,8 +1514,7 @@ void HS_TblInit_Test_RegisterMsgActsTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_RegisterMsgActsTableError */
+}
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_TblInit_Test_RegisterExeCountTableError(void)
@@ -1583,8 +1548,7 @@ void HS_TblInit_Test_RegisterExeCountTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_RegisterExeCountTableError */
+}
 #endif
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
@@ -1618,8 +1582,7 @@ void HS_TblInit_Test_LoadExeCountTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 6, "CFE_EVS_SendEvent was called %u time(s), expected 6",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_LoadExeCountTableError */
+}
 #endif
 
 void HS_TblInit_Test_LoadAppMonTableError(void)
@@ -1665,8 +1628,7 @@ void HS_TblInit_Test_LoadAppMonTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_LoadAppMonTableError */
+}
 
 void HS_TblInit_Test_LoadEventMonTableError(void)
 {
@@ -1711,8 +1673,7 @@ void HS_TblInit_Test_LoadEventMonTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_LoadEventMonTableError */
+}
 
 void HS_TblInit_Test_LoadMsgActsTableError(void)
 {
@@ -1745,8 +1706,7 @@ void HS_TblInit_Test_LoadMsgActsTableError(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_TblInit_Test_LoadMsgActsTableError */
+}
 
 void HS_ProcessMain_Test(void)
 {
@@ -1792,8 +1752,7 @@ void HS_ProcessMain_Test(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_ProcessMain_Test */
+}
 
 void HS_ProcessMain_Test_MonStateDisabled(void)
 {
@@ -1839,8 +1798,7 @@ void HS_ProcessMain_Test_MonStateDisabled(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_ProcessMain_Test_MonStateDisabled */
+}
 
 void HS_ProcessMain_Test_AlivenessDisabled(void)
 {
@@ -1885,8 +1843,7 @@ void HS_ProcessMain_Test_AlivenessDisabled(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_ProcessMain_Test_AlivenessDisabled */
+}
 
 void HS_ProcessMain_Test_WatchdogDisabled(void)
 {
@@ -1934,8 +1891,7 @@ void HS_ProcessMain_Test_WatchdogDisabled(void)
 
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_ProcessMain_Test_WatchdogDisabled */
+}
 
 void HS_ProcessCommands_Test(void)
 {
@@ -1969,10 +1925,10 @@ void HS_ProcessCommands_Test(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SUCCESS);
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_ReceiveBuffer), 2, CFE_SB_NO_MESSAGE);
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_ReceiveBuffer), 2, CFE_SB_NO_MESSAGE);
-    // UT_SetHookFunction(UT_KEY(CFE_SB_ReceiveBuffer), HS_APP_TEST_CFE_SB_RcvMsgHook, NULL);
+    /* UT_SetHookFunction(UT_KEY(CFE_SB_ReceiveBuffer), HS_APP_TEST_CFE_SB_RcvMsgHook, NULL); */
 
     /* Causes check for non-null buffer pointer to succeed */
-    // UT_SetDataBuffer(UT_KEY(CFE_SB_ReceiveBuffer), &Packet, sizeof(Packet), false);
+    /* UT_SetDataBuffer(UT_KEY(CFE_SB_ReceiveBuffer), &Packet, sizeof(Packet), false); */
 
     /* Execute the function being tested */
     Result = HS_ProcessCommands();
@@ -1996,8 +1952,7 @@ void HS_ProcessCommands_Test(void)
                   call_count_HS_MonitorEvent);
 
     UtAssert_True(HS_AppData.CmdErrCount == 0, "HS_AppData.CmdErrCount == 0");
-
-} /* end HS_ProcessCommands_Test */
+}
 
 void HS_ProcessCommands_Test_NullMsgPtr(void)
 {
@@ -2041,8 +1996,7 @@ void HS_ProcessCommands_Test_NullMsgPtr(void)
     UtAssert_True(call_count_HS_AppPipe == 0, "HS_AppPipe was called %u time(s), expected 0", call_count_HS_AppPipe);
 
     UtAssert_True(HS_AppData.CmdErrCount == 0, "HS_AppData.CmdErrCount == 0");
-
-} /* end HS_ProcessCommands_Test_NullMsgPtr */
+}
 
 /*
  * Register the test cases to execute with the unit test tool
@@ -2131,9 +2085,4 @@ void UtTest_Setup(void)
     UtTest_Add(HS_ProcessCommands_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ProcessCommands_Test");
     UtTest_Add(HS_ProcessCommands_Test_NullMsgPtr, HS_Test_Setup, HS_Test_TearDown,
                "HS_ProcessCommands_Test_NullMsgPtr");
-
-} /* end UtTest_Setup */
-
-/************************/
-/*  End of File Comment */
-/************************/
+}

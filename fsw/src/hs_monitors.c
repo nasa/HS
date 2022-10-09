@@ -55,7 +55,6 @@ void HS_MonitorApplications(void)
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
-
         ActionType = HS_AppData.AMTablePtr[TableIndex].ActionType;
 
         /*
@@ -106,7 +105,6 @@ void HS_MonitorApplications(void)
                 */
                 if (HS_AppData.AppMonCheckInCountdown[TableIndex] == 0)
                 {
-
                     /*
                     ** Unset the enabled bit flag
                     */
@@ -114,7 +112,6 @@ void HS_MonitorApplications(void)
                             (TableIndex % HS_BITS_PER_APPMON_ENABLE));
                     switch (ActionType)
                     {
-
                         case HS_AMT_ACT_PROC_RESET:
                             CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID, CFE_EVS_EventType_ERROR,
                                               "App Monitor Failure: APP:(%s): Action: Processor Reset",
@@ -216,7 +213,7 @@ void HS_MonitorApplications(void)
         } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0) if */
 
     } /* end for loop */
-} /* end HS_MonitorApplications */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -245,13 +242,11 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
             if (strncmp(HS_AppData.EMTablePtr[TableIndex].AppName, EventPtr->Payload.PacketID.AppName,
                         OS_MAX_API_NAME) == 0)
             {
-
                 /*
                 ** Perform the action if the strings also match
                 */
                 switch (ActionType)
                 {
-
                     case HS_EMT_ACT_PROC_RESET:
                         CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID, CFE_EVS_EventType_ERROR,
                                           "Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset",
@@ -339,7 +334,6 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
                         */
                         if ((HS_AppData.MsgActsState == HS_STATE_ENABLED) && (MsgActsIndex < HS_MAX_MSG_ACT_TYPES))
                         {
-
                             /*
                             ** Send the message if off cooldown and not disabled
                             */
@@ -371,7 +365,7 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
         } /* end EventID comparison */
 
     } /* end for loop */
-} /* end HS_MonitorEvent */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -448,7 +442,7 @@ void HS_MonitorUtilization(void)
 
     HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
     HS_AppData.UtilCpuPeak = PeakUtil;
-} /* end HS_MonitorUtilization */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -482,7 +476,6 @@ int32 HS_ValidateAMTable(void *TableData)
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
-
         ActionType  = TableArray[TableIndex].ActionType;
         CycleCount  = TableArray[TableIndex].CycleCount;
         NullTerm    = TableArray[TableIndex].NullTerm;
@@ -540,8 +533,7 @@ int32 HS_ValidateAMTable(void *TableData)
                       (int)UnusedCount);
 
     return TableResult;
-
-} /* end HS_ValidateAMTable */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -575,7 +567,6 @@ int32 HS_ValidateEMTable(void *TableData)
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
     {
-
         ActionType  = TableArray[TableIndex].ActionType;
         EventID     = TableArray[TableIndex].EventID;
         NullTerm    = TableArray[TableIndex].NullTerm;
@@ -633,8 +624,7 @@ int32 HS_ValidateEMTable(void *TableData)
                       (int)UnusedCount);
 
     return TableResult;
-
-} /* end HS_ValidateEMTable */
+}
 
 #if HS_MAX_EXEC_CNT_SLOTS != 0
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -668,7 +658,6 @@ int32 HS_ValidateXCTable(void *TableData)
 
     for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
     {
-
         ResourceType = TableArray[TableIndex].ResourceType;
         NullTerm     = TableArray[TableIndex].NullTerm;
         EntryResult  = HS_XCTVAL_NO_ERR;
@@ -727,8 +716,7 @@ int32 HS_ValidateXCTable(void *TableData)
                       (int)UnusedCount);
 
     return TableResult;
-
-} /* end HS_ValidateXCTable */
+}
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -763,7 +751,6 @@ int32 HS_ValidateMATable(void *TableData)
 
     for (TableIndex = 0; TableIndex < HS_MAX_MSG_ACT_TYPES; TableIndex++)
     {
-
         EntryResult = HS_MATVAL_NO_ERR;
         BufPtr      = (CFE_SB_Buffer_t *)&TableArray[TableIndex].MsgBuf;
         CFE_MSG_GetSize(&BufPtr->Msg, &Length);
@@ -828,8 +815,7 @@ int32 HS_ValidateMATable(void *TableData)
                       (int)UnusedCount);
 
     return TableResult;
-
-} /* end HS_ValidateMATable */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -852,8 +838,4 @@ void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets)
     {
         CFE_ES_CopyToCDS(HS_AppData.MyCDSHandle, &HS_AppData.CDSData);
     }
-} /* end HS_SetCDSData */
-
-/************************/
-/*  End of File Comment */
-/************************/
+}

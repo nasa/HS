@@ -54,7 +54,6 @@ void HS_IdleTask(void)
 
     while (HS_CustomData.IdleTaskRunStatus == CFE_SUCCESS)
     {
-
         /* Check to see if we are to mark the time. */
         if (((HS_CustomData.ThisIdleTaskExec & HS_CustomData.UtilMask) == HS_CustomData.UtilMask) &&
             (HS_CustomData.ThisIdleTaskExec > HS_CustomData.UtilMask))
@@ -79,7 +78,7 @@ void HS_IdleTask(void)
         /* Thread cancellation point/give up CPU */
         OS_TaskDelay(0);
     }
-} /* End of HS_IdleTask() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -129,8 +128,7 @@ int32 HS_CustomInit(void)
     HS_CustomData.UtilCallsPerMark = HS_UTIL_CALLS_PER_MARK;
 
     return Status;
-
-} /* end HS_CustomInit */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -155,8 +153,7 @@ void HS_CustomCleanup(void)
     ** Delete the Idle Task
     */
     CFE_ES_DeleteChildTask(HS_CustomData.IdleTaskID);
-
-} /* end HS_CustomCleanup */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -166,7 +163,7 @@ void HS_CustomCleanup(void)
 void HS_UtilizationIncrement(void)
 {
     HS_CustomData.ThisIdleTaskExec++;
-} /* end HS_UtilizationIncrement */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -185,7 +182,7 @@ void HS_UtilizationMark(void)
         HS_CustomData.LastIdleTaskExec     = HS_CustomData.ThisIdleTaskExec;
         CycleCount                         = 0;
     }
-} /* end HS_UtilizationMark */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -198,7 +195,7 @@ void HS_MarkIdleCallback(void)
     ** Capture the CPU Utilization (at a consistant time)
     */
     HS_UtilizationMark();
-} /* End of HS_MarkIdleCallback() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -215,8 +212,7 @@ void HS_CustomMonitorUtilization(void)
         HS_MonitorUtilization();
         HS_CustomData.UtilCycleCounter = 0;
     }
-
-} /* End of HS_CustomMonitorUtilization() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -256,8 +252,7 @@ int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr)
     } /* end CommandCode switch */
 
     return Status;
-
-} /* End of HS_CustomCommands() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -364,7 +359,7 @@ void HS_UtilDiagReport(void)
         (unsigned int)HS_CustomData.UtilMask, (int)OutputValue[OutputOrdinal[0]], (int)OutputCount[OutputOrdinal[0]],
         (int)OutputValue[OutputOrdinal[1]], (int)OutputCount[OutputOrdinal[1]], (int)OutputValue[OutputOrdinal[2]],
         (int)OutputCount[OutputOrdinal[2]], (int)OutputValue[OutputOrdinal[3]], (int)OutputCount[OutputOrdinal[3]]);
-} /* end HS_UtilDiagReport */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -417,7 +412,7 @@ void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr)
                               (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
         }
     }
-} /* end HS_SetUtilParamsCmd */
+}
 
 void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr)
 {
@@ -436,8 +431,4 @@ void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr)
         CFE_EVS_SendEvent(HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_EventType_DEBUG,
                           "Utilization Diagnostics Mask has been set to %08X", (unsigned int)HS_CustomData.UtilMask);
     }
-} /* end HS_SetUtilDiagCmd */
-
-/************************/
-/*  End of File Comment */
-/************************/
+}

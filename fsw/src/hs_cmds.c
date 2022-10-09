@@ -48,7 +48,6 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
 
     switch (CFE_SB_MsgIdToValue(MessageID))
     {
-
         /*
         ** Housekeeping telemetry request
         */
@@ -137,7 +136,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
             break;
 
     } /* end MessageID switch */
-} /* End HS_AppPipe */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -239,7 +238,6 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         */
         for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
         {
-
             ExeCount = HS_INVALID_EXECOUNT;
 
             if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
@@ -293,7 +291,7 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         CFE_SB_TransmitMsg(&HS_AppData.HkPacket.TlmHeader.Msg, true);
 
     } /* end HS_VerifyMsgLength if */
-} /* end HS_HousekeepingCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -314,7 +312,7 @@ void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
         CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION, "No-op command: Version %d.%d.%d.%d",
                           HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
     }
-} /* end HS_NoopCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -334,7 +332,7 @@ void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
 
         CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
     }
-} /* end HS_ResetCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -347,7 +345,7 @@ void HS_ResetCounters(void)
     HS_AppData.CmdErrCount          = 0;
     HS_AppData.EventsMonitoredCount = 0;
     HS_AppData.MsgActExec           = 0;
-} /* end HS_ResetCounters */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -368,7 +366,7 @@ void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent(HS_ENABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Enabled");
     }
-} /* end HS_EnableAppMonCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -388,7 +386,7 @@ void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent(HS_DISABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Disabled");
     }
-} /* end HS_DisableAppMonCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -410,7 +408,6 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
         */
         if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
         {
-
             Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
                                         CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
 
@@ -446,7 +443,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
             HS_AppData.CmdErrCount++;
         }
     }
-} /* end HS_EnableEventMonCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -463,13 +460,11 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-
         /*
         ** Unsubscribe from Event Messages if currently enabled
         */
         if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
         {
-
             Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
 
             if (Status != CFE_SUCCESS)
@@ -503,7 +498,7 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
             HS_AppData.CmdErrCount++;
         }
     }
-} /* end HS_DisableEventMonCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -523,7 +518,7 @@ void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Enabled");
     }
-} /* end HS_EnableAlivenessCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -543,7 +538,7 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Disabled");
     }
-} /* end HS_DisableAlivenessCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -563,7 +558,7 @@ void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
         CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Enabled");
     }
-} /* end HS_EnableCPUHogCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -583,7 +578,7 @@ void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
         CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Disabled");
     }
-} /* end HS_DisableCPUHogCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -604,7 +599,7 @@ void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
         CFE_EVS_SendEvent(HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                           "Processor Resets Performed by HS Counter has been Reset");
     }
-} /* end HS_ResetResetsPerformedCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -629,7 +624,7 @@ void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
         CFE_EVS_SendEvent(HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                           "Max Resets Performable by HS has been set to %d", HS_AppData.CDSData.MaxResets);
     }
-} /* end HS_SetMaxResetsCmd */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -834,7 +829,7 @@ void HS_AcquirePointers(void)
     }
 
 #endif
-} /* End of HS_AcquirePointers */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -873,7 +868,7 @@ void HS_AppMonStatusRefresh(void)
                     (TableIndex % HS_BITS_PER_APPMON_ENABLE));
         }
     }
-} /* end HS_AppMonStatusRefresh */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -891,8 +886,4 @@ void HS_MsgActsStatusRefresh(void)
     {
         HS_AppData.MsgActCooldown[TableIndex] = 0;
     }
-} /* end HS_MsgActsStatusRefresh */
-
-/************************/
-/*  End of File Comment */
-/************************/
+}
