@@ -53,9 +53,4 @@ HS_EMTEntry_t HS_Default_EventMon_Tbl[HS_MAX_MONITORED_EVENTS] = {
     /*  13 */ {"", 0, 10, HS_EMT_ACT_NOACT},
     /*  14 */ {"", 0, 10, HS_EMT_ACT_NOACT},
     /*  15 */ {"", 0, 10, HS_EMT_ACT_NOACT},
-
 };
-
-/************************/
-/*  End of File Comment */
-/************************/

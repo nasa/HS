@@ -161,7 +161,6 @@ void HS_AppMain(void)
             */
             RunStatus = CFE_ES_RunStatus_APP_ERROR;
         }
-
     } /* end CFS_ES_RunLoop while */
 
     /*
@@ -192,8 +191,7 @@ void HS_AppMain(void)
     ** Exit the application
     */
     CFE_ES_ExitApp(RunStatus);
-
-} /* end HS_AppMain */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -340,8 +338,7 @@ int32 HS_AppInit(void)
                       HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
 
     return Status;
-
-} /* end HS_AppInit */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -414,8 +411,7 @@ int32 HS_SbInit(void)
     */
 
     return Status;
-
-} /* End of HS_SbInit() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -531,8 +527,7 @@ int32 HS_TblInit(void)
     HS_AcquirePointers();
 
     return CFE_SUCCESS;
-
-} /* End of HS_TblInit() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -602,8 +597,7 @@ int32 HS_ProcessMain(void)
     }
 
     return Status;
-
-} /* End of HS_ProcessMain() */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -670,9 +664,4 @@ int32 HS_ProcessCommands(void)
     }
 
     return Status;
-
-} /* End of HS_ProcessCommands() */
-
-/************************/
-/*  End of File Comment */
-/************************/
+}

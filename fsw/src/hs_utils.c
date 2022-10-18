@@ -52,7 +52,6 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
     CFE_MSG_GetSize(MsgPtr, &ActualLength);
     if (ExpectedLength != ActualLength)
     {
-
         CFE_MSG_GetMsgId(MsgPtr, &MessageID);
         CFE_MSG_GetFcnCode(MsgPtr, &CommandCode);
 
@@ -83,8 +82,7 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
     }
 
     return result;
-
-} /* End of HS_VerifyMsgLength */
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */

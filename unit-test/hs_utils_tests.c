@@ -68,8 +68,7 @@ void HS_VerifyMsgLength_Test_Nominal(void)
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_VerifyMsgLength_Test_Nominal */
+}
 
 void HS_VerifyMsgLength_Test_LengthErrorHK(void)
 {
@@ -110,8 +109,7 @@ void HS_VerifyMsgLength_Test_LengthErrorHK(void)
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_VerifyMsgLength_Test_LengthErrorHK */
+}
 
 void HS_VerifyMsgLength_Test_LengthErrorNonHK(void)
 {
@@ -154,8 +152,7 @@ void HS_VerifyMsgLength_Test_LengthErrorNonHK(void)
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
-
-} /* end HS_VerifyMsgLength_Test_LengthErrorNonHK */
+}
 
 void HS_AMTActionIsValid_Valid(void)
 {

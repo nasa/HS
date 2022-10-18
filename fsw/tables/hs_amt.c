@@ -69,9 +69,4 @@ HS_AMTEntry_t HS_Default_AppMon_Tbl[HS_MAX_MONITORED_APPS] = {
     /*  29 */ {"", 0, 10, HS_AMT_ACT_NOACT},
     /*  30 */ {"", 0, 10, HS_AMT_ACT_NOACT},
     /*  31 */ {"", 0, 10, HS_AMT_ACT_NOACT},
-
 };
-
-/************************/
-/*  End of File Comment */
-/************************/

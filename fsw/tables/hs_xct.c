@@ -69,9 +69,4 @@ HS_XCTEntry_t HS_Default_ExeCount_Tbl[HS_MAX_EXEC_CNT_SLOTS] = {
     /*  29 */ {"", 0, HS_XCT_TYPE_NOTYPE},
     /*  30 */ {"", 0, HS_XCT_TYPE_NOTYPE},
     /*  31 */ {"", 0, HS_XCT_TYPE_NOTYPE},
-
 };
-
-/************************/
-/*  End of File Comment */
-/************************/

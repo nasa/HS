@@ -270,7 +270,6 @@ typedef struct
 
     int32           IdleTaskRunStatus; /**< \brief HS Idle Task Run Status */
     CFE_ES_TaskId_t IdleTaskID;        /**< \brief HS Idle Task Task ID */
-
 } HS_CustomData_t;
 
 /**

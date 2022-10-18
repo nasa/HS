@@ -114,7 +114,6 @@ typedef struct
 #if HS_MAX_EXEC_CNT_SLOTS != 0
     uint32 ExeCounts[HS_MAX_EXEC_CNT_SLOTS]; /**< \brief Execution Counters */
 #endif
-
 } HS_HkPacket_t;
 
 /**\}*/
