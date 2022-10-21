@@ -302,7 +302,7 @@ void HS_AppMain_Test_NominalRcvMsgError(void)
     UtAssert_True(HS_AppData.EventsMonitoredCount == 1, "HS_AppData.EventsMonitoredCount == 1");
 
     /* Verify results */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_APP_EXIT_EID);
@@ -423,7 +423,7 @@ void HS_AppMain_Test_SBSubscribeEVSLongError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 3, "CFE_EVS_SendEvent was called %u time(s), expected 3",
                   call_count_CFE_EVS_SendEvent);
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_SUB_LONG_EVS_ERR_EID);
@@ -474,7 +474,7 @@ void HS_AppMain_Test_SBSubscribeEVSShortError(void)
     HS_AppMain();
 
     /* Verify results */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_SUB_SHORT_EVS_ERR_EID);
@@ -559,7 +559,7 @@ void HS_AppMain_Test_StateDisabled(void)
     HS_AppMain();
 
     /* Verify results */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -736,7 +736,7 @@ void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
 
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
@@ -868,7 +868,7 @@ void HS_AppInit_Test_CorruptCDSNoEvent(void)
     UtAssert_True(HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE,
                   "HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -916,7 +916,7 @@ void HS_AppInit_Test_RestoreCDSError(void)
 
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
@@ -972,7 +972,7 @@ void HS_AppInit_Test_DisableSavingToCDS(void)
     UtAssert_True(HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE,
                   "HS_AppData.CurrentCPUHogState == HS_CPUHOG_DEFAULT_STATE");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_INIT_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1029,7 +1029,7 @@ void HS_AppInit_Test_SBInitError(void)
 
     /* This event message is not generated directly by the function under test, but it's useful to check for it to
      * ensure that an SB init error occurred rather than a TBL init error */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_CMD_PIPE_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_PIPE_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1173,7 +1173,7 @@ void HS_SbInit_Test_CreateSBCmdPipeError(void)
     UT_SetDataBuffer(UT_KEY(CFE_SB_CreatePipe), &PipeId, sizeof(PipeId), false);
     UT_SetDataBuffer(UT_KEY(CFE_SB_CreatePipe), &PipeId, sizeof(PipeId), false);
 
-    /* Set CFE_SB_CreatePipe to return -1 on first call, to generate error HS_CR_CMD_PIPE_ERR_EID */
+    /* Set CFE_SB_CreatePipe to return -1 on first call, to generate error HS_CR_PIPE_ERR_EID */
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_CreatePipe), 1, -1);
 
     /* Execute the function being tested */
@@ -1184,7 +1184,7 @@ void HS_SbInit_Test_CreateSBCmdPipeError(void)
     UtAssert_BOOL_FALSE(CFE_RESOURCEID_TEST_DEFINED(HS_AppData.EventPipe));
     UtAssert_BOOL_FALSE(CFE_RESOURCEID_TEST_DEFINED(HS_AppData.WakeupPipe));
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_CMD_PIPE_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CR_PIPE_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
     strCmpResult =
