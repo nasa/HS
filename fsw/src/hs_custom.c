@@ -263,12 +263,12 @@ void HS_UtilDiagReport(void)
 {
     uint32 DiagValue[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
     uint32 DiagCount[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
-    uint32 i         = 0;
-    uint32 j         = 0;
-    uint32 ThisValue = 0;
+    uint32 i = 0;
+    uint32 j;
+    uint32 ThisValue;
 
-    uint32 Ordinal         = 0;
-    uint32 NewOrdinalIndex = 0;
+    uint32 Ordinal;
+    uint32 NewOrdinalIndex;
     uint32 OutputValue[HS_UTIL_DIAG_REPORTS];
     uint32 OutputCount[HS_UTIL_DIAG_REPORTS];
     uint32 OutputOrdinal[HS_UTIL_DIAG_REPORTS];

@@ -154,8 +154,8 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
     CFE_ES_TaskInfo_t  TaskInfo;
     memset(&TaskInfo, 0, sizeof(TaskInfo));
 #endif
-    int32  Status     = CFE_SUCCESS;
-    uint32 TableIndex = 0;
+    int32  Status;
+    uint32 TableIndex;
 
     /*
     ** Verify message packet length
