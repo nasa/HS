@@ -19,8 +19,10 @@ add_cfe_coverage_stubs("hs_internal"
 # Link with the cfe core stubs and unit test assert libs
 target_link_libraries(coverage-hs_internal-stubs ut_core_api_stubs ut_assert)
 
-# Include and expose unit test utilities includes
+# Include and expose unit test utilities, fsw/inc, and fsw/src includes
 target_include_directories(coverage-hs_internal-stubs PUBLIC utilities)
+target_include_directories(coverage-hs_internal-stubs PUBLIC ../fsw/inc)
+target_include_directories(coverage-hs_internal-stubs PUBLIC ../fsw/src)
 
 # Generate a dedicated "testrunner" executable for each test file
 # Accomplish this by cycling through all the app's source files, there must be

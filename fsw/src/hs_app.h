@@ -32,7 +32,7 @@
 #include "hs_tbl.h"
 #include "cfe.h"
 #include "cfe_msgids.h"
-#include "cfe_platform_cfg.h"
+#include "hs_extern_typedefs.h"
 
 /************************************************************************
  * Macro Definitions
