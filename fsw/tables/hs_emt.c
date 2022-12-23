@@ -26,7 +26,7 @@
 ** Includes
 *************************************************************************/
 #include "cfe.h"
-#include "hs_tbl.h"
+#include "hs_extern_typedefs.h"
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 

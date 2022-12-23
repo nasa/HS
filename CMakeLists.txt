@@ -1,9 +1,5 @@
 project(CFS_HS C)
 
-include_directories(fsw/src)
-include_directories(fsw/mission_inc)
-include_directories(fsw/platform_inc)
-
 set(APP_SRC_FILES
   fsw/src/hs_monitors.c
   fsw/src/hs_utils.c
@@ -14,6 +10,9 @@ set(APP_SRC_FILES
 
 # Create the app module
 add_cfe_app(hs ${APP_SRC_FILES})
+
+# This permits direct access to public headers in the fsw/inc directory
+target_include_directories(hs PUBLIC fsw/inc)
 
 set(APP_TABLE_FILES
   fsw/tables/hs_mat.c
