@@ -11,7 +11,8 @@ set(APP_SRC_FILES
 # Create the app module
 add_cfe_app(hs ${APP_SRC_FILES})
 
-# This permits direct access to public headers in the fsw/inc directory
+# This permits direct access to public headers in the fsw/src and fsw/inc directories
+target_include_directories(hs PUBLIC fsw/src)
 target_include_directories(hs PUBLIC fsw/inc)
 
 set(APP_TABLE_FILES
