@@ -32,7 +32,7 @@
 #include "hs_msgids.h"
 #include "hs_perfids.h"
 #include "hs_monitors.h"
-#include "hs_custom.h"
+#include "hs_custom_internal.h"
 #include "hs_version.h"
 #include "hs_cmds.h"
 #include "hs_verify.h"
