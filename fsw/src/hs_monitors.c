@@ -29,6 +29,7 @@
 #include "hs_app.h"
 #include "hs_monitors.h"
 #include "hs_custom.h"
+#include "hs_custom_internal.h"
 #include "hs_tbldefs.h"
 #include "hs_events.h"
 #include "hs_utils.h"
