@@ -26,8 +26,8 @@
 #ifndef HS_EXTERN_TYPEDEFS_H
 #define HS_EXTERN_TYPEDEFS_H
 
-#include "cfe.h"
-#include "hs_platform_cfg.h"
+#include <cfe.h>
+#include <hs_platform_cfg.h>
 
 /*************************************************************************
  * Type Definitions

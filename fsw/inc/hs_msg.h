@@ -32,9 +32,9 @@
 /************************************************************************
  * Includes
  ************************************************************************/
-#include "hs_msgdefs.h"
-#include "hs_platform_cfg.h"
-#include "cfe.h"
+#include <hs_msgdefs.h>
+#include <hs_platform_cfg.h>
+#include <cfe.h>
 
 /************************************************************************
  * Macro Definitions

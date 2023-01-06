@@ -31,9 +31,9 @@
 /*************************************************************************
  * Includes
  *************************************************************************/
-#include "cfe.h"
-#include "hs_tbldefs.h"
-#include "hs_platform_cfg.h"
+#include <cfe.h>
+#include <hs_tbldefs.h>
+#include <hs_platform_cfg.h>
 
 /************************************************************************
  * Macro Definitions
