@@ -45,10 +45,10 @@
 void HS_MonitorApplications(void)
 {
     CFE_ES_AppInfo_t AppInfo;
-    CFE_ES_AppId_t   AppId        = CFE_ES_APPID_UNDEFINED;
-    int32            Status       = CFE_SUCCESS;
-    uint32           TableIndex   = 0;
-    uint16           ActionType   = 0;
+    CFE_ES_AppId_t   AppId = CFE_ES_APPID_UNDEFINED;
+    int32            Status;
+    uint32           TableIndex = 0;
+    uint16           ActionType;
     uint32           MsgActsIndex = 0;
     CFE_SB_Buffer_t *BufPtr       = NULL;
 
@@ -223,10 +223,10 @@ void HS_MonitorApplications(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
 {
-    uint32           TableIndex   = 0;
-    int32            Status       = CFE_SUCCESS;
-    CFE_ES_AppId_t   AppId        = CFE_ES_APPID_UNDEFINED;
-    uint16           ActionType   = 0;
+    uint32           TableIndex = 0;
+    int32            Status     = CFE_SUCCESS;
+    CFE_ES_AppId_t   AppId      = CFE_ES_APPID_UNDEFINED;
+    uint16           ActionType;
     uint32           MsgActsIndex = 0;
     CFE_SB_Buffer_t *SendPtr      = NULL;
 
@@ -456,11 +456,11 @@ int32 HS_ValidateAMTable(void *TableData)
 
     int32  TableResult = CFE_SUCCESS;
     uint32 TableIndex  = 0;
-    int32  EntryResult = 0;
+    int32  EntryResult;
 
-    uint16 ActionType = 0;
-    uint16 CycleCount = 0;
-    uint16 NullTerm   = 0;
+    uint16 ActionType;
+    uint16 CycleCount;
+    uint16 NullTerm;
 
     uint32 GoodCount                = 0;
     uint32 BadCount                 = 0;
@@ -547,11 +547,11 @@ int32 HS_ValidateEMTable(void *TableData)
 
     int32  TableResult = CFE_SUCCESS;
     uint32 TableIndex  = 0;
-    int32  EntryResult = 0;
+    int32  EntryResult;
 
-    uint16 ActionType = 0;
-    uint16 EventID    = 0;
-    uint16 NullTerm   = 0;
+    uint16 ActionType;
+    uint16 EventID;
+    uint16 NullTerm;
 
     uint32 GoodCount                = 0;
     uint32 BadCount                 = 0;
@@ -732,8 +732,8 @@ int32 HS_ValidateMATable(void *TableData)
     int32  TableResult = CFE_SUCCESS;
     uint32 TableIndex  = 0;
     size_t Length      = 0;
-    uint16 EnableState = 0;
-    int32  EntryResult = 0;
+    uint16 EnableState;
+    int32  EntryResult;
 
     CFE_SB_MsgId_t   MessageID = CFE_SB_INVALID_MSG_ID;
     CFE_SB_Buffer_t *BufPtr    = (CFE_SB_Buffer_t *)NULL;
