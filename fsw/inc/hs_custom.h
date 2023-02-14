@@ -170,7 +170,7 @@
 #define HS_UTIL_DIAG_REPORT_EID 103
 
 /**
- * \brief HS Set Utilization Paramaters Command Event ID
+ * \brief HS Set Utilization Parameter Command Event ID
  *
  *  \par Type: Debug
  *

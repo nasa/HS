@@ -223,7 +223,7 @@ void HS_MarkIdleCallback(void);
 void HS_UtilDiagReport(void);
 
 /**
- * \brief Set Utilization Paramters
+ * \brief Set Utilization Parameters
  *
  *  \par Description
  *       This function sets the Utilization Parameters.
@@ -236,7 +236,7 @@ void HS_UtilDiagReport(void);
 void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
- * \brief Set Utilization Diagnostics Paramater
+ * \brief Set Utilization Diagnostics Parameter
  *
  *  \par Description
  *       This function sets the utilization diagnostics parameter.
