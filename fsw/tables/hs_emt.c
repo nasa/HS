@@ -30,11 +30,10 @@
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 
-static CFE_TBL_FileDef_t CFE_TBL_FileDef
-    __attribute__((__used__)) = {"HS_Default_EventMon_Tbl", HS_APP_NAME ".EventMon_Tbl", "HS EventMon Table",
-                                 "hs_emt.tbl", (sizeof(HS_EMTEntry_t) * HS_MAX_MONITORED_EVENTS)};
+CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_EventMon_Tbl", HS_APP_NAME ".EventMon_Tbl", "HS EventMon Table", "hs_emt.tbl",
+                                     (sizeof(HS_EMTEntry_t) * HS_MAX_MONITORED_EVENTS)};
 
-HS_EMTEntry_t HS_Default_EventMon_Tbl[HS_MAX_MONITORED_EVENTS] = {
+HS_EMTEntry_t HS_EventMon_Tbl[HS_MAX_MONITORED_EVENTS] = {
     /*          AppName                    NullTerm EventID        ActionType */
 
     /*   0 */ {"CFE_ES", 0, 10, HS_EMT_ACT_NOACT},
