@@ -214,12 +214,7 @@ int32 HS_AppInit(void)
     HS_AppData.CurrentAlivenessState = HS_ALIVENESS_DEFAULT_STATE;
     HS_AppData.CurrentCPUHogState    = HS_CPUHOG_DEFAULT_STATE;
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
-    HS_AppData.ExeCountState = HS_STATE_ENABLED;
-#else
-    HS_AppData.ExeCountState = HS_STATE_DISABLED;
-#endif
-
+    HS_AppData.ExeCountState  = HS_STATE_ENABLED;
     HS_AppData.MsgActsState   = HS_STATE_ENABLED;
     HS_AppData.AppMonLoaded   = HS_STATE_ENABLED;
     HS_AppData.EventMonLoaded = HS_STATE_ENABLED;
@@ -460,7 +455,6 @@ int32 HS_TblInit(void)
         return Status;
     }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     /* Register The HS Execution Counters Table */
     TableSize = HS_MAX_EXEC_CNT_SLOTS * sizeof(HS_XCTEntry_t);
     Status    = CFE_TBL_Register(&HS_AppData.XCTableHandle, HS_XCT_TABLENAME, TableSize, CFE_TBL_OPT_DEFAULT,
@@ -486,7 +480,6 @@ int32 HS_TblInit(void)
             HS_AppData.HkPacket.ExeCounts[TableIndex] = HS_INVALID_EXECOUNT;
         }
     }
-#endif
 
     /* Load the HS Applications Monitor Table */
     Status = CFE_TBL_Load(HS_AppData.AMTableHandle, CFE_TBL_SRC_FILE, (const void *)HS_AMT_FILENAME);

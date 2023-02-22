@@ -147,15 +147,15 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 {
     size_t         ExpectedLength = sizeof(HS_NoArgsCmd_t);
     CFE_ES_AppId_t AppId          = CFE_ES_APPID_UNDEFINED;
-#if HS_MAX_EXEC_CNT_SLOTS != 0
-    uint32             ExeCount  = 0;
-    CFE_ES_TaskId_t    TaskId    = CFE_ES_TASKID_UNDEFINED;
-    CFE_ES_CounterId_t CounterId = CFE_ES_COUNTERID_UNDEFINED;
+
+    uint32             ExeCount;
+    CFE_ES_TaskId_t    TaskId;
+    CFE_ES_CounterId_t CounterId;
     CFE_ES_TaskInfo_t  TaskInfo;
+    int32              Status;
+    uint32             TableIndex;
+
     memset(&TaskInfo, 0, sizeof(TaskInfo));
-#endif
-    int32  Status;
-    uint32 TableIndex;
 
     /*
     ** Verify message packet length
@@ -198,12 +198,10 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         ** Build the HK status flags byte
         */
         HS_AppData.HkPacket.StatusFlags = 0;
-#if HS_MAX_EXEC_CNT_SLOTS != 0
         if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
         {
             HS_AppData.HkPacket.StatusFlags |= HS_LOADED_XCT;
         }
-#endif
         if (HS_AppData.MsgActsState == HS_STATE_ENABLED)
         {
             HS_AppData.HkPacket.StatusFlags |= HS_LOADED_MAT;
@@ -232,7 +230,6 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         HS_AppData.HkPacket.UtilCpuAvg  = HS_AppData.UtilCpuAvg;
         HS_AppData.HkPacket.UtilCpuPeak = HS_AppData.UtilCpuPeak;
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
         /*
         ** Add the execution counters
         */
@@ -281,8 +278,6 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 
             HS_AppData.HkPacket.ExeCounts[TableIndex] = ExeCount;
         }
-
-#endif
 
         /*
         ** Timestamp and send housekeeping packet
@@ -789,7 +784,6 @@ void HS_AcquirePointers(void)
         HS_AppData.MsgActsState = HS_STATE_ENABLED;
     }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     /*
     ** Release the table (ExeCount)
     */
@@ -827,8 +821,6 @@ void HS_AcquirePointers(void)
     {
         HS_AppData.ExeCountState = HS_STATE_ENABLED;
     }
-
-#endif
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

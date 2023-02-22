@@ -627,7 +627,6 @@ int32 HS_ValidateEMTable(void *TableData)
     return TableResult;
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* Validate the Execution Counters Table                           */
@@ -718,7 +717,6 @@ int32 HS_ValidateXCTable(void *TableData)
 
     return TableResult;
 }
-#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */

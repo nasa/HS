@@ -127,10 +127,8 @@ typedef struct
     CFE_TBL_Handle_t EMTableHandle; /**< \brief Events Monitor table handle */
     CFE_TBL_Handle_t MATableHandle; /**< \brief Message Actions table handle */
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     CFE_TBL_Handle_t XCTableHandle; /**< \brief Execution Counters table handle */
     HS_XCTEntry_t *  XCTablePtr;    /**< \brief Ptr to Execution Counters table entry */
-#endif
 
     HS_AMTEntry_t *AMTablePtr; /**< \brief Ptr to Apps Monitor table entry */
     HS_EMTEntry_t *EMTablePtr; /**< \brief Ptr to Events Monitor table entry */
