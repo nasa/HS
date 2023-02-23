@@ -73,7 +73,7 @@
  *       Implements the Noop command that insures the HS task is alive
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_NoopCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -104,7 +104,7 @@
  *       Resets the HS housekeeping counters
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_ResetCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -135,7 +135,7 @@
  *       Enables the Applications Monitor
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_EnableAppMonCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -156,9 +156,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_DISABLE_APPMON_CC
+ *  \sa #HS_DISABLE_APP_MON_CC
  */
-#define HS_ENABLE_APPMON_CC 2
+#define HS_ENABLE_APP_MON_CC 2
 
 /**
  * \brief Disable Applications Monitor
@@ -167,7 +167,7 @@
  *       Disables the Applications Monitor
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_DisableAppMonCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -188,9 +188,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_ENABLE_APPMON_CC
+ *  \sa #HS_ENABLE_APP_MON_CC
  */
-#define HS_DISABLE_APPMON_CC 3
+#define HS_DISABLE_APP_MON_CC 3
 
 /**
  * \brief Enable Events Monitor
@@ -199,7 +199,7 @@
  *       Enables the Events Monitor
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_EnableEventMonCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -220,9 +220,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_DISABLE_EVENTMON_CC
+ *  \sa #HS_DISABLE_EVENT_MON_CC
  */
-#define HS_ENABLE_EVENTMON_CC 4
+#define HS_ENABLE_EVENT_MON_CC 4
 
 /**
  * \brief Disable Events Monitor
@@ -231,7 +231,7 @@
  *       Disables the Events Monitor
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_DisableEventMonCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -252,9 +252,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_ENABLE_EVENTMON_CC
+ *  \sa #HS_ENABLE_EVENT_MON_CC
  */
-#define HS_DISABLE_EVENTMON_CC 5
+#define HS_DISABLE_EVENT_MON_CC 5
 
 /**
  * \brief Enable Aliveness Indicator
@@ -263,7 +263,7 @@
  *       Enables the Aliveness Indicator UART output
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_EnableAlivenessCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -295,7 +295,7 @@
  *       Disables the Aliveness Indicator UART output
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_DisableAlivenessCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -327,7 +327,7 @@
  *       Resets the count of HS performed resets maintained by HS
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_ResetResetsPerformedCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -391,7 +391,7 @@
  *       Enables the CPU Hogging Indicator Event Message
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_EnableCpuHogCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -412,9 +412,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_DISABLE_CPUHOG_CC
+ *  \sa #HS_DISABLE_CPU_HOG_CC
  */
-#define HS_ENABLE_CPUHOG_CC 10
+#define HS_ENABLE_CPU_HOG_CC 10
 
 /**
  * \brief Disable CPU Hogging Indicator
@@ -423,7 +423,7 @@
  *       Disables the CPU Hogging Indicator Event Message
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_DisableCpuHogCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
@@ -444,9 +444,9 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_ENABLE_CPUHOG_CC
+ *  \sa #HS_ENABLE_CPU_HOG_CC
  */
-#define HS_DISABLE_CPUHOG_CC 11
+#define HS_DISABLE_CPU_HOG_CC 11
 
 /**\}*/
 

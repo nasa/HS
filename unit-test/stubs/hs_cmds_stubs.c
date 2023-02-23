@@ -101,16 +101,16 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
     UT_DEFAULT_IMPL(HS_DisableAlivenessCmd);
 }
 
-void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
+void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(HS_EnableCPUHogCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_EnableCPUHogCmd);
+    UT_Stub_RegisterContext(UT_KEY(HS_EnableCpuHogCmd), BufPtr);
+    UT_DEFAULT_IMPL(HS_EnableCpuHogCmd);
 }
 
-void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
+void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    UT_Stub_RegisterContext(UT_KEY(HS_DisableCPUHogCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_DisableCPUHogCmd);
+    UT_Stub_RegisterContext(UT_KEY(HS_DisableCpuHogCmd), BufPtr);
+    UT_DEFAULT_IMPL(HS_DisableCpuHogCmd);
 }
 
 void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)

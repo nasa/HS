@@ -37,6 +37,16 @@
 /* hs_custom_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
 
+/* Command buffer typedef for any handler */
+typedef union
+{
+    CFE_SB_Buffer_t       Buf;
+    HS_SetUtilParamsCmd_t SetUtilParamsCmd;
+    HS_SetUtilDiagCmd_t   SetUtilDiagCmd;
+} UT_CustomCmdBuf_t;
+
+UT_CustomCmdBuf_t UT_CustomCmdBuf;
+
 /*
  * Function Definitions
  */
@@ -271,7 +281,7 @@ void HS_CustomCommands_Test_UtilDiagReport(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_REPORT_DIAG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -280,7 +290,7 @@ void HS_CustomCommands_Test_UtilDiagReport(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
+    Result = HS_CustomCommands(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -300,7 +310,7 @@ void HS_CustomCommands_Test_SetUtilParamsCmd(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -309,7 +319,7 @@ void HS_CustomCommands_Test_SetUtilParamsCmd(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
+    Result = HS_CustomCommands(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -329,7 +339,7 @@ void HS_CustomCommands_Test_SetUtilDiagCmd(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -338,7 +348,7 @@ void HS_CustomCommands_Test_SetUtilDiagCmd(void)
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
+    Result = HS_CustomCommands(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
@@ -358,13 +368,13 @@ void HS_CustomCommands_Test_InvalidCommandCode(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = 99;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    Result = HS_CustomCommands(&UT_CmdBuf.Buf);
+    Result = HS_CustomCommands(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(Result == !CFE_SUCCESS, "Result == !CFE_SUCCESS");
@@ -498,7 +508,7 @@ void HS_SetUtilParamsCmd_Test_Nominal(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -506,12 +516,12 @@ void HS_SetUtilParamsCmd_Test_Nominal(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
-    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
-    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilParamsCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_CustomData.UtilMult1 == 1, "HS_CustomData.UtilMult1 == 1");
@@ -544,7 +554,7 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -552,12 +562,12 @@ void HS_SetUtilParamsCmd_Test_NominalMultZero(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
-    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 0;
-    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult2 = 0;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilParamsCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
@@ -590,7 +600,7 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -598,12 +608,12 @@ void HS_SetUtilParamsCmd_Test_NominalDivZero(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
-    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
-    UT_CmdBuf.SetUtilParamsCmd.Div   = 0;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Div   = 0;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilParamsCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
@@ -636,7 +646,7 @@ void HS_SetUtilParamsCmd_Test_Error(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -644,12 +654,12 @@ void HS_SetUtilParamsCmd_Test_Error(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 0;
-    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
-    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult1 = 0;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilParamsCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
@@ -675,7 +685,7 @@ void HS_SetUtilParamsCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_PARAMS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilParamsCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilParamsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -683,12 +693,12 @@ void HS_SetUtilParamsCmd_Test_MsgLengthError(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
 
-    UT_CmdBuf.SetUtilParamsCmd.Mult1 = 1;
-    UT_CmdBuf.SetUtilParamsCmd.Mult2 = 2;
-    UT_CmdBuf.SetUtilParamsCmd.Div   = 3;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult1 = 1;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Mult2 = 2;
+    UT_CustomCmdBuf.SetUtilParamsCmd.Div   = 3;
 
     /* Execute the function being tested */
-    HS_SetUtilParamsCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilParamsCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_INT32_EQ(HS_CustomData.UtilMult1, 0);
@@ -713,7 +723,7 @@ void HS_SetUtilDiagCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -721,10 +731,10 @@ void HS_SetUtilDiagCmd_Test(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetUtilDiagCmd.Mask = 2;
+    UT_CustomCmdBuf.SetUtilDiagCmd.Mask = 2;
 
     /* Execute the function being tested */
-    HS_SetUtilDiagCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilDiagCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -751,7 +761,7 @@ void HS_SetUtilDiagCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_UTIL_DIAG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetUtilDiagCmd);
+    MsgSize   = sizeof(UT_CustomCmdBuf.SetUtilDiagCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -759,10 +769,10 @@ void HS_SetUtilDiagCmd_Test_MsgLengthError(void)
     /* set message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
 
-    UT_CmdBuf.SetUtilDiagCmd.Mask = 2;
+    UT_CustomCmdBuf.SetUtilDiagCmd.Mask = 2;
 
     /* Execute the function being tested */
-    HS_SetUtilDiagCmd(&UT_CmdBuf.Buf);
+    HS_SetUtilDiagCmd(&UT_CustomCmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");

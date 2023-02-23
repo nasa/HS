@@ -135,7 +135,7 @@ void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_ENABLE_APPMON_CC
+ *  \sa #HS_ENABLE_APP_MON_CC
  */
 void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
@@ -150,7 +150,7 @@ void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_DISABLE_APPMON_CC
+ *  \sa #HS_DISABLE_APP_MON_CC
  */
 void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
@@ -165,7 +165,7 @@ void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_ENABLE_EVENTMON_CC
+ *  \sa #HS_ENABLE_EVENT_MON_CC
  */
 void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
@@ -180,7 +180,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_DISABLE_EVENTMON_CC
+ *  \sa #HS_DISABLE_EVENT_MON_CC
  */
 void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
 
@@ -225,9 +225,9 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_ENABLE_CPUHOG_CC
+ *  \sa #HS_ENABLE_CPU_HOG_CC
  */
-void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
+void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Process a disable CPU Hogging indicator command
@@ -240,9 +240,9 @@ void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_DISABLE_CPUHOG_CC
+ *  \sa #HS_DISABLE_CPU_HOG_CC
  */
-void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
+void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Process a reset resets performed command
