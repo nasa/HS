@@ -3040,12 +3040,12 @@ void HS_AppMonStatusRefresh_Test_CycleCountZero(void)
 
     /* Verify results */
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(HS_AppData.AppMonEnables[0] == 0, "HS_AppData.AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0,
+    UtAssert_True(HS_AppData.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] == 0,
+    UtAssert_True(HS_AppData.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] == 0,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == 0");
 
     UtAssert_True(HS_AppData.AppMonLastExeCount[0] == 0, "HS_AppData.AppMonLastExeCount[0] == 0");
@@ -3088,12 +3088,12 @@ void HS_AppMonStatusRefresh_Test_ActionTypeNOACT(void)
 
     /* Verify results */
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(HS_AppData.AppMonEnables[0] == 0, "HS_AppData.AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0,
+    UtAssert_True(HS_AppData.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] == 0,
+    UtAssert_True(HS_AppData.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] == 0,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == 0");
 
     UtAssert_True(HS_AppData.AppMonLastExeCount[0] == 0, "HS_AppData.AppMonLastExeCount[0] == 0");
