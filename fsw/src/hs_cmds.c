@@ -105,11 +105,11 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     break;
 
                 case HS_ENABLE_CPUHOG_CC:
-                    HS_EnableCPUHogCmd(BufPtr);
+                    HS_EnableCpuHogCmd(BufPtr);
                     break;
 
                 case HS_DISABLE_CPUHOG_CC:
-                    HS_DisableCPUHogCmd(BufPtr);
+                    HS_DisableCpuHogCmd(BufPtr);
                     break;
 
                 default:
@@ -145,7 +145,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t         ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t         ExpectedLength = sizeof(HS_SendHkCmd_t);
     CFE_ES_AppId_t AppId          = CFE_ES_APPID_UNDEFINED;
 #if HS_MAX_EXEC_CNT_SLOTS != 0
     uint32             ExeCount  = 0;
@@ -287,8 +287,8 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         /*
         ** Timestamp and send housekeeping packet
         */
-        CFE_SB_TimeStampMsg(&HS_AppData.HkPacket.TlmHeader.Msg);
-        CFE_SB_TransmitMsg(&HS_AppData.HkPacket.TlmHeader.Msg, true);
+        CFE_SB_TimeStampMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader));
+        CFE_SB_TransmitMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), true);
 
     } /* end HS_VerifyMsgLength if */
 }
@@ -300,7 +300,7 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_NoopCmd_t);
 
     /*
     ** Verify message packet length
@@ -321,7 +321,7 @@ void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_ResetCmd_t);
 
     /*
     ** Verify message packet length
@@ -354,7 +354,7 @@ void HS_ResetCounters(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_EnableAppMonCmd_t);
 
     /*
     ** Verify message packet length
@@ -375,7 +375,7 @@ void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_DisableAppMonCmd_t);
 
     /*
     ** Verify message packet length
@@ -395,7 +395,7 @@ void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_EnableEventMonCmd_t);
     int32  Status         = CFE_SUCCESS;
 
     /*
@@ -452,7 +452,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_DisableEventMonCmd_t);
     int32  Status         = CFE_SUCCESS;
 
     /*
@@ -507,7 +507,7 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_EnableAlivenessCmd_t);
 
     /*
     ** Verify message packet length
@@ -527,7 +527,7 @@ void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_DisableAlivenessCmd_t);
 
     /*
     ** Verify message packet length
@@ -545,9 +545,9 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Enable cpu hogging indicator command                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
+void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_EnableCpuHogCmd_t);
 
     /*
     ** Verify message packet length
@@ -565,9 +565,9 @@ void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Disable cpu hogging indicator command                           */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
+void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_DisableCpuHogCmd_t);
 
     /*
     ** Verify message packet length
@@ -587,7 +587,7 @@ void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_NoArgsCmd_t);
+    size_t ExpectedLength = sizeof(HS_ResetResetsPerformedCmd_t);
 
     /*
     ** Verify message packet length

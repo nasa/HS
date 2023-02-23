@@ -54,15 +54,112 @@
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_NOOP_CC, #HS_RESET_CC, #HS_ENABLE_APPMON_CC, #HS_DISABLE_APPMON_CC,
- *  #HS_ENABLE_EVENTMON_CC, #HS_DISABLE_EVENTMON_CC, #HS_ENABLE_ALIVENESS_CC, #HS_DISABLE_ALIVENESS_CC,
- *  #HS_RESET_RESETS_PERFORMED_CC
- *  Also see #HS_SEND_HK_MID
+ *  For command details see #HS_NOOP_CC
  */
 typedef struct
 {
-    CFE_MSG_CommandHeader_t CmdHeader; /**< \brief Command header */
-} HS_NoArgsCmd_t;
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_NoopCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_RESET_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_ResetCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_ENABLE_APPMON_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_EnableAppMonCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_DISABLE_APPMON_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_DisableAppMonCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_ENABLE_EVENTMON_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_EnableEventMonCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_DISABLE_EVENTMON_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_DisableEventMonCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_ENABLE_ALIVENESS_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_EnableAlivenessCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_DISABLE_ALIVENESS_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_DisableAlivenessCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_RESET_RESETS_PERFORMED_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_ResetResetsPerformedCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_RESET_RESETS_PERFORMED_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_EnableCpuHogCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_RESET_RESETS_PERFORMED_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_DisableCpuHogCmd_t;
 
 /**
  *  \brief Set Max Resets Command
@@ -71,11 +168,21 @@ typedef struct
  */
 typedef struct
 {
-    CFE_MSG_CommandHeader_t CmdHeader; /**< \brief Command header */
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
 
     uint16 MaxResets; /**< \brief Maximum Resets */
     uint16 Padding;   /**< \brief Structure padding */
 } HS_SetMaxResetsCmd_t;
+
+/**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_SEND_HK_MID
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_SendHkCmd_t;
 
 /**\}*/
 
@@ -89,7 +196,7 @@ typedef struct
  */
 typedef struct
 {
-    CFE_MSG_TelemetryHeader_t TlmHeader; /**< \brief Telemetry Header */
+    CFE_MSG_TelemetryHeader_t TelemetryHeader; /**< \brief Telemetry Header */
 
     uint8  CmdCount;              /**< \brief HS Application Command Counter */
     uint8  CmdErrCount;           /**< \brief HS Application Command Error Counter */

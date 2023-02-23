@@ -50,7 +50,6 @@ void HS_MonitorApplications(void)
     uint32           TableIndex = 0;
     uint16           ActionType;
     uint32           MsgActsIndex = 0;
-    CFE_SB_Buffer_t *BufPtr       = NULL;
 
     memset(&AppInfo, 0, sizeof(AppInfo));
 
@@ -188,8 +187,8 @@ void HS_MonitorApplications(void)
                                 if ((HS_AppData.MsgActCooldown[MsgActsIndex] == 0) &&
                                     (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_DISABLED))
                                 {
-                                    BufPtr = (CFE_SB_Buffer_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf;
-                                    CFE_SB_TransmitMsg(&BufPtr->Msg, true);
+                                    CFE_SB_TransmitMsg(
+                                        (const CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf, true);
                                     HS_AppData.MsgActExec++;
                                     HS_AppData.MsgActCooldown[MsgActsIndex] =
                                         HS_AppData.MATablePtr[MsgActsIndex].Cooldown;

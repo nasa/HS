@@ -350,7 +350,8 @@ int32 HS_SbInit(void)
     int32 Status;
 
     /* Initialize housekeeping packet  */
-    CFE_MSG_Init(&HS_AppData.HkPacket.TlmHeader.Msg, CFE_SB_ValueToMsgId(HS_HK_TLM_MID), sizeof(HS_HkPacket_t));
+    CFE_MSG_Init(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), CFE_SB_ValueToMsgId(HS_HK_TLM_MID),
+                 sizeof(HS_HkPacket_t));
 
     /* Create Command Pipe */
     Status = CFE_SB_CreatePipe(&HS_AppData.CmdPipe, HS_CMD_PIPE_DEPTH, HS_CMD_PIPE_NAME);

@@ -68,11 +68,22 @@ extern CFE_ES_WriteToSysLog_context_t context_CFE_ES_WriteToSysLog;
 /* Command buffer typedef for any handler */
 typedef union
 {
-    CFE_SB_Buffer_t       Buf;
-    HS_NoArgsCmd_t        NoArgsCmd;
-    HS_SetMaxResetsCmd_t  SetMaxResetsCmd;
-    HS_SetUtilParamsCmd_t SetUtilParamsCmd;
-    HS_SetUtilDiagCmd_t   SetUtilDiagCmd;
+    CFE_SB_Buffer_t   Buf;
+    CFE_MSG_Message_t Msg;
+
+    HS_NoopCmd_t                 NoopCmd;
+    HS_ResetCmd_t                ResetCmd;
+    HS_EnableAppMonCmd_t         EnableAppMonCmd;
+    HS_DisableAppMonCmd_t        DisableAppMonCmd;
+    HS_EnableEventMonCmd_t       EnableEventMonCmd;
+    HS_DisableEventMonCmd_t      DisableEventMonCmd;
+    HS_EnableAlivenessCmd_t      EnableAlivenessCmd;
+    HS_DisableAlivenessCmd_t     DisableAlivenessCmd;
+    HS_ResetResetsPerformedCmd_t ResetResetsPerformedCmd;
+    HS_EnableCpuHogCmd_t         EnableCpuHogCmd;
+    HS_DisableCpuHogCmd_t        DisableCpuHogCmd;
+    HS_SetMaxResetsCmd_t         SetMaxResetsCmd;
+    HS_SendHkCmd_t               SendHkCmd;
 } UT_CmdBuf_t;
 
 extern UT_CmdBuf_t UT_CmdBuf;

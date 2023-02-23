@@ -54,13 +54,13 @@ void HS_VerifyMsgLength_Test_Nominal(void)
      */
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    Result = HS_VerifyMsgLength(&UT_CmdBuf.Buf.Msg, sizeof(HS_NoArgsCmd_t));
+    Result = HS_VerifyMsgLength(&UT_CmdBuf.Msg, sizeof(HS_EnableCpuHogCmd_t));
 
     /* Verify results */
     UtAssert_True(Result == true, "Result == true");
@@ -93,7 +93,7 @@ void HS_VerifyMsgLength_Test_LengthErrorHK(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    Result = HS_VerifyMsgLength(&UT_CmdBuf.Buf.Msg, sizeof(HS_NoArgsCmd_t));
+    Result = HS_VerifyMsgLength(&UT_CmdBuf.Msg, sizeof(HS_SendHkCmd_t));
 
     /* Verify results */
     UtAssert_True(Result == false, "Result == false");
@@ -134,7 +134,7 @@ void HS_VerifyMsgLength_Test_LengthErrorNonHK(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    Result = HS_VerifyMsgLength(&UT_CmdBuf.Buf.Msg, sizeof(HS_NoArgsCmd_t));
+    Result = HS_VerifyMsgLength(&UT_CmdBuf.Msg, MsgSize + 1);
 
     /* Verify results */
     UtAssert_True(Result == false, "Result == false");

@@ -492,7 +492,7 @@ void HS_MonitorApplications_Test_MsgActsNOACT(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -539,7 +539,7 @@ void HS_MonitorApplications_Test_MsgActsNOACTDisabled(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -591,7 +591,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDefault(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -650,7 +650,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDisabled(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -701,7 +701,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultCoolDown(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -752,7 +752,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultDisabled(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -803,7 +803,7 @@ void HS_MonitorApplications_Test_MsgActsErrorDefaultNoEvent(void)
     HS_AppData.MATablePtr = &MATable[0];
 
     CFE_MSG_Init((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, CFE_SB_ValueToMsgId(HS_CMD_MID),
-                 sizeof(HS_NoArgsCmd_t));
+                 sizeof(HS_NoopCmd_t));
     CFE_MSG_SetFcnCode((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[0].MsgBuf, HS_NOOP_CC);
 
     HS_AppData.AMTablePtr = AMTable;
@@ -2641,7 +2641,7 @@ void HS_ValidateMATable_Test_UnusedTableEntry(void)
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    MsgSize   = sizeof(HS_NoArgsCmd_t);
+    MsgSize   = sizeof(HS_NoopCmd_t);
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2693,7 +2693,7 @@ void HS_ValidateMATable_Test_InvalidEnableState(void)
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    MsgSize   = sizeof(HS_NoArgsCmd_t);
+    MsgSize   = sizeof(HS_NoopCmd_t);
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2750,7 +2750,7 @@ void HS_ValidateMATable_Test_MessageIDTooHigh(void)
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
     TestMsgId = CFE_SB_INVALID_MSG_ID;
-    MsgSize   = sizeof(HS_NoArgsCmd_t);
+    MsgSize   = sizeof(HS_NoopCmd_t);
 
     HS_AppData.MATablePtr = MATable;
 
@@ -2862,7 +2862,7 @@ void HS_ValidateMATable_Test_EntryGood(void)
              "MsgActs verify results: good = %%d, bad = %%d, unused = %%d");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    MsgSize   = sizeof(HS_NoArgsCmd_t);
+    MsgSize   = sizeof(HS_NoopCmd_t);
 
     HS_AppData.MATablePtr = MATable;
 

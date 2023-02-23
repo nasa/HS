@@ -65,7 +65,7 @@ void HS_AppPipe_Test_SendHK(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_SEND_HK_MID);
     FcnCode   = 0;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.SendHkCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -90,7 +90,7 @@ void HS_AppPipe_Test_Noop(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.NoopCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -117,7 +117,7 @@ void HS_AppPipe_Test_Reset(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -148,7 +148,7 @@ void HS_AppPipe_Test_EnableAppMon(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -177,7 +177,7 @@ void HS_AppPipe_Test_DisableAppMon(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -206,7 +206,7 @@ void HS_AppPipe_Test_EnableEventMon(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -235,7 +235,7 @@ void HS_AppPipe_Test_DisableEventMon(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -261,7 +261,7 @@ void HS_AppPipe_Test_EnableAliveness(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -287,7 +287,7 @@ void HS_AppPipe_Test_DisableAliveness(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -313,7 +313,7 @@ void HS_AppPipe_Test_ResetResetsPerformed(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_RESETS_PERFORMED_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetResetsPerformedCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -339,7 +339,7 @@ void HS_AppPipe_Test_SetMaxResets(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_MAX_RESETS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.SetMaxResetsCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -365,7 +365,7 @@ void HS_AppPipe_Test_EnableCPUHog(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -391,7 +391,7 @@ void HS_AppPipe_Test_DisableCPUHog(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -421,7 +421,7 @@ void HS_AppPipe_Test_InvalidCC(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = 99;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -459,7 +459,7 @@ void HS_AppPipe_Test_InvalidCCNoEvent(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = 99;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -489,7 +489,7 @@ void HS_AppPipe_Test_InvalidMID(void)
 
     TestMsgId = CFE_SB_INVALID_MSG_ID;
     FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -530,7 +530,7 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -633,7 +633,7 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -730,7 +730,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -829,7 +829,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -928,7 +928,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1028,7 +1028,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1126,7 +1126,7 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1223,7 +1223,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1314,7 +1314,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1409,7 +1409,7 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1491,7 +1491,7 @@ void HS_Noop_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.NoopCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1526,7 +1526,7 @@ void HS_Noop_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.NoopCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1556,7 +1556,7 @@ void HS_ResetCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1591,7 +1591,7 @@ void HS_ResetCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1645,7 +1645,7 @@ void HS_EnableAppMonCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1686,7 +1686,7 @@ void HS_EnableAppMonCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1723,7 +1723,7 @@ void HS_DisableAppMonCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1761,7 +1761,7 @@ void HS_DisableAppMonCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_APPMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1796,7 +1796,7 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1836,7 +1836,7 @@ void HS_EnableEventMonCmd_Test_DisabledMsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1871,7 +1871,7 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1915,7 +1915,7 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -1961,7 +1961,7 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2006,7 +2006,7 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2049,7 +2049,7 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2093,7 +2093,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2139,7 +2139,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2181,7 +2181,7 @@ void HS_DisableEventMonCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENTMON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2216,7 +2216,7 @@ void HS_EnableAlivenessCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2256,7 +2256,7 @@ void HS_EnableAlivenessCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2291,7 +2291,7 @@ void HS_DisableAlivenessCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2331,7 +2331,7 @@ void HS_DisableAlivenessCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2355,7 +2355,7 @@ void HS_DisableAlivenessCmd_Test_MsgLengthError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableCPUHogCmd_Test(void)
+void HS_EnableCpuHogCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -2366,7 +2366,7 @@ void HS_EnableCPUHogCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2377,7 +2377,7 @@ void HS_EnableCPUHogCmd_Test(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_EnableCPUHogCmd(&UT_CmdBuf.Buf);
+    HS_EnableCpuHogCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -2398,7 +2398,7 @@ void HS_EnableCPUHogCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableCPUHogCmd_Test_MsgLengthError(void)
+void HS_EnableCpuHogCmd_Test_MsgLengthError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -2406,7 +2406,7 @@ void HS_EnableCPUHogCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2417,7 +2417,7 @@ void HS_EnableCPUHogCmd_Test_MsgLengthError(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_EnableCPUHogCmd(&UT_CmdBuf.Buf);
+    HS_EnableCpuHogCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
@@ -2430,7 +2430,7 @@ void HS_EnableCPUHogCmd_Test_MsgLengthError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableCPUHogCmd_Test(void)
+void HS_DisableCpuHogCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -2441,7 +2441,7 @@ void HS_DisableCPUHogCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2452,7 +2452,7 @@ void HS_DisableCPUHogCmd_Test(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_DisableCPUHogCmd(&UT_CmdBuf.Buf);
+    HS_DisableCpuHogCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -2473,7 +2473,7 @@ void HS_DisableCPUHogCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableCPUHogCmd_Test_MsgLengthError(void)
+void HS_DisableCpuHogCmd_Test_MsgLengthError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -2481,7 +2481,7 @@ void HS_DisableCPUHogCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_CPUHOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2492,7 +2492,7 @@ void HS_DisableCPUHogCmd_Test_MsgLengthError(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_DisableCPUHogCmd(&UT_CmdBuf.Buf);
+    HS_DisableCpuHogCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
@@ -2517,7 +2517,7 @@ void HS_ResetResetsPerformedCmd_Test(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_RESETS_PERFORMED_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetResetsPerformedCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -2552,7 +2552,7 @@ void HS_ResetResetsPerformedCmd_Test_MsgLengthError(void)
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_RESET_RESETS_PERFORMED_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoArgsCmd);
+    MsgSize   = sizeof(UT_CmdBuf.ResetResetsPerformedCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
@@ -3319,13 +3319,13 @@ void UtTest_Setup(void)
     UtTest_Add(HS_DisableAlivenessCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
                "HS_DisableAlivenessCmd_Test_MsgLengthError");
 
-    UtTest_Add(HS_EnableCPUHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableCPUHogCmd_Test");
-    UtTest_Add(HS_EnableCPUHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_EnableCPUHogCmd_Test_MsgLengthError");
+    UtTest_Add(HS_EnableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableCpuHogCmd_Test");
+    UtTest_Add(HS_EnableCpuHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
+               "HS_EnableCpuHogCmd_Test_MsgLengthError");
 
-    UtTest_Add(HS_DisableCPUHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableCPUHogCmd_Test");
-    UtTest_Add(HS_DisableCPUHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_DisableCPUHogCmd_Test_MsgLengthError");
+    UtTest_Add(HS_DisableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableCpuHogCmd_Test");
+    UtTest_Add(HS_DisableCpuHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
+               "HS_DisableCpuHogCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_ResetResetsPerformedCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetResetsPerformedCmd_Test");
     UtTest_Add(HS_ResetResetsPerformedCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,

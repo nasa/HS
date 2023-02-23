@@ -227,7 +227,7 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_ENABLE_CPUHOG_CC
  */
-void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
+void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Process a disable CPU Hogging indicator command
@@ -242,7 +242,7 @@ void HS_EnableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_DISABLE_CPUHOG_CC
  */
-void HS_DisableCPUHogCmd(const CFE_SB_Buffer_t *BufPtr);
+void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Process a reset resets performed command
