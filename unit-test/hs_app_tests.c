@@ -1516,7 +1516,6 @@ void HS_TblInit_Test_RegisterMsgActsTableError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_TblInit_Test_RegisterExeCountTableError(void)
 {
     int32 Result;
@@ -1549,9 +1548,7 @@ void HS_TblInit_Test_RegisterExeCountTableError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_TblInit_Test_LoadExeCountTableError(void)
 {
     int32 Result;
@@ -1583,7 +1580,6 @@ void HS_TblInit_Test_LoadExeCountTableError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 6, "CFE_EVS_SendEvent was called %u time(s), expected 6",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
 void HS_TblInit_Test_LoadAppMonTableError(void)
 {
@@ -2003,7 +1999,6 @@ void HS_ProcessCommands_Test_NullMsgPtr(void)
  */
 void UtTest_Setup(void)
 {
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_AppMain_Test_NominalWaitForStartupSync, HS_Test_Setup, HS_Test_TearDown,
                "HS_AppMain_Test_NominalWaitForStartupSync");
     UtTest_Add(HS_AppMain_Test_NominalRcvMsgSuccess, HS_Test_Setup, HS_Test_TearDown,
@@ -2023,10 +2018,8 @@ void UtTest_Setup(void)
                "HS_AppMain_Test_SBSubscribeEVSShortError");
     UtTest_Add(HS_AppMain_Test_RcvMsgError, HS_Test_Setup, HS_Test_TearDown, "HS_AppMain_Test_RcvMsgError");
     UtTest_Add(HS_AppMain_Test_StateDisabled, HS_Test_Setup, HS_Test_TearDown, "HS_AppMain_Test_StateDisabled");
-#endif
 
     UtTest_Add(HS_AppInit_Test_EVSRegisterError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_EVSRegisterError");
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_AppInit_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_Nominal");
     UtTest_Add(HS_AppInit_Test_CorruptCDSResetsPerformed, HS_Test_Setup, HS_Test_TearDown,
                "HS_AppInit_Test_CorruptCDSResetsPerformed");
@@ -2039,7 +2032,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_AppInit_Test_SBInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_SBInitError");
     UtTest_Add(HS_AppInit_Test_TblInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_TblInitError");
     UtTest_Add(HS_AppInit_Test_CustomInitError, HS_Test_Setup, HS_Test_TearDown, "HS_AppInit_Test_CustomInitError");
-#endif
 
     UtTest_Add(HS_SbInit_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_SbInit_Test_Nominal");
     UtTest_Add(HS_SbInit_Test_CreateSBCmdPipeError, HS_Test_Setup, HS_Test_TearDown,
@@ -2054,7 +2046,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_SbInit_Test_SubscribeWakeupError, HS_Test_Setup, HS_Test_TearDown,
                "HS_SbInit_Test_SubscribeWakeupError");
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_TblInit_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_TblInit_Test_Nominal");
     UtTest_Add(HS_TblInit_Test_RegisterAppMonTableError, HS_Test_Setup, HS_Test_TearDown,
                "HS_TblInit_Test_RegisterAppMonTableError");
@@ -2072,7 +2063,6 @@ void UtTest_Setup(void)
                "HS_TblInit_Test_LoadEventMonTableError");
     UtTest_Add(HS_TblInit_Test_LoadMsgActsTableError, HS_Test_Setup, HS_Test_TearDown,
                "HS_TblInit_Test_LoadMsgActsTableError");
-#endif
 
     UtTest_Add(HS_ProcessMain_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ProcessMain_Test");
     UtTest_Add(HS_ProcessMain_Test_MonStateDisabled, HS_Test_Setup, HS_Test_TearDown,

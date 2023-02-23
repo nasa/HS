@@ -627,7 +627,6 @@ int32 HS_ValidateEMTable(void *TableData)
     return TableResult;
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* Validate the Execution Counters Table                           */
@@ -638,11 +637,10 @@ int32 HS_ValidateXCTable(void *TableData)
     HS_XCTEntry_t *TableArray = (HS_XCTEntry_t *)TableData;
 
     int32  TableResult = CFE_SUCCESS;
-    uint32 TableIndex  = 0;
-    int32  EntryResult = 0;
-
-    uint16 ResourceType = 0;
-    uint32 NullTerm     = 0;
+    uint32 TableIndex;
+    int32  EntryResult;
+    uint16 ResourceType;
+    uint32 NullTerm;
 
     uint32 GoodCount                = 0;
     uint32 BadCount                 = 0;
@@ -718,7 +716,6 @@ int32 HS_ValidateXCTable(void *TableData)
 
     return TableResult;
 }
-#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */

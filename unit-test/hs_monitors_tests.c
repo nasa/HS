@@ -2397,7 +2397,6 @@ void HS_ValidateEMTable_Test_Null(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_UnusedTableEntry(void)
 {
     int32         Result;
@@ -2437,9 +2436,7 @@ void HS_ValidateXCTable_Test_UnusedTableEntry(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_BufferNotNull(void)
 {
     int32         Result;
@@ -2491,9 +2488,7 @@ void HS_ValidateXCTable_Test_BufferNotNull(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_ResourceTypeNotValid(void)
 {
     int32         Result;
@@ -2551,9 +2546,7 @@ void HS_ValidateXCTable_Test_ResourceTypeNotValid(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 2, "CFE_EVS_SendEvent was called %u time(s), expected 2",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_EntryGood(void)
 {
     int32         Result;
@@ -2593,9 +2586,7 @@ void HS_ValidateXCTable_Test_EntryGood(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_ValidateXCTable_Test_Null(void)
 {
     int32 Result;
@@ -2623,7 +2614,6 @@ void HS_ValidateXCTable_Test_Null(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
 void HS_ValidateMATable_Test_UnusedTableEntry(void)
 {
@@ -3053,7 +3043,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_ValidateEMTable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_EntryGood");
     UtTest_Add(HS_ValidateEMTable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateEMTable_Test_Null");
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_ValidateXCTable_Test_UnusedTableEntry, HS_Test_Setup, HS_Test_TearDown,
                "HS_ValidateXCTable_Test_UnusedTableEntry");
     UtTest_Add(HS_ValidateXCTable_Test_BufferNotNull, HS_Test_Setup, HS_Test_TearDown,
@@ -3062,7 +3051,6 @@ void UtTest_Setup(void)
                "HS_ValidateXCTable_Test_ResourceTypeNotValid");
     UtTest_Add(HS_ValidateXCTable_Test_EntryGood, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_EntryGood");
     UtTest_Add(HS_ValidateXCTable_Test_Null, HS_Test_Setup, HS_Test_TearDown, "HS_ValidateXCTable_Test_Null");
-#endif
 
     UtTest_Add(HS_ValidateMATable_Test_UnusedTableEntry, HS_Test_Setup, HS_Test_TearDown,
                "HS_ValidateMATable_Test_UnusedTableEntry");

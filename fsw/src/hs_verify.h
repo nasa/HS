@@ -41,8 +41,8 @@
 /*
  * Maximum number execution counters
  */
-#if HS_MAX_EXEC_CNT_SLOTS < 0
-#error HS_MAX_MSG_ACT_TYPES cannot be less than 0
+#if HS_MAX_EXEC_CNT_SLOTS < 1
+#error HS_MAX_MSG_ACT_TYPES cannot be less than 1
 #elif HS_MAX_EXEC_CNT_SLOTS > 4294967295
 #error HS_MAX_MSG_ACT_TYPES can not exceed 4294967295
 #endif

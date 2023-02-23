@@ -609,7 +609,6 @@ void HS_HousekeepingReq_Test_InvalidMsgLength(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -702,9 +701,7 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -802,9 +799,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -901,9 +896,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1002,9 +995,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1099,9 +1090,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1197,9 +1186,7 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeISR(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1288,9 +1275,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1382,9 +1367,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1478,7 +1461,6 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 32, "CFE_EVS_SendEvent was called %u time(s), expected 32",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
 void HS_Noop_Test(void)
 {
@@ -2641,7 +2623,6 @@ void HS_SetMaxResetsCmd_Test_MsgLengthError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_Nominal(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
@@ -2668,9 +2649,7 @@ void HS_AcquirePointers_Test_Nominal(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled(void)
 {
     int32 strCmpResult;
@@ -2743,9 +2722,7 @@ void HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled(void
     UtAssert_True(call_count_CFE_EVS_SendEvent == 4, "CFE_EVS_SendEvent was called %u time(s), expected 4",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2(void)
 {
     int32 strCmpResult;
@@ -2831,9 +2808,7 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2(v
     UtAssert_True(call_count_CFE_EVS_SendEvent == 5, "CFE_EVS_SendEvent was called %u time(s), expected 5",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled(void)
 {
     int32 strCmpResult;
@@ -2919,9 +2894,7 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled(vo
     UtAssert_True(call_count_CFE_EVS_SendEvent == 5, "CFE_EVS_SendEvent was called %u time(s), expected 5",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError(void)
 {
     HS_AppData.AppMonLoaded         = HS_STATE_DISABLED;
@@ -2963,9 +2936,7 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoS
     UtAssert_True(call_count_CFE_EVS_SendEvent == 3, "CFE_EVS_SendEvent was called %u time(s), expected 3",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError2(void)
 {
     HS_AppData.AppMonLoaded         = HS_STATE_DISABLED;
@@ -3007,9 +2978,7 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoS
     UtAssert_True(call_count_CFE_EVS_SendEvent == 3, "CFE_EVS_SendEvent was called %u time(s), expected 3",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled(void)
 {
     HS_AppData.AppMonLoaded         = HS_STATE_DISABLED;
@@ -3046,7 +3015,6 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppM
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
-#endif
 
 void HS_AppMonStatusRefresh_Test_CycleCountZero(void)
 {
@@ -3250,7 +3218,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_HousekeepingReq_Test_InvalidMsgLength, HS_Test_Setup, HS_Test_TearDown,
                "HS_HousekeepingReq_Test_InvalidMsgLength");
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_HousekeepingReq_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown,
                "HS_HousekeepingReq_Test_AllFlagsEnabled");
     UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppMain, HS_Test_Setup, HS_Test_TearDown,
@@ -3269,8 +3236,6 @@ void UtTest_Setup(void)
                "HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError");
     UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeUnknown, HS_Test_Setup, HS_Test_TearDown,
                "HS_HousekeepingReq_Test_ResourceTypeAppMain");
-
-#endif
 
     UtTest_Add(HS_Noop_Test, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test");
     UtTest_Add(HS_Noop_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test_MsgLengthError");
@@ -3335,7 +3300,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_SetMaxResetsCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
                "HS_SetMaxResetsCmd_Test_MsgLengthError");
 
-#if HS_MAX_EXEC_CNT_SLOTS != 0
     UtTest_Add(HS_AcquirePointers_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_AcquirePointers_Test_Nominal");
     UtTest_Add(HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled, HS_Test_Setup, HS_Test_TearDown,
                "HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled");
@@ -3349,7 +3313,6 @@ void UtTest_Setup(void)
     UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled,
                HS_Test_Setup, HS_Test_TearDown,
                "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled");
-#endif
 
     UtTest_Add(HS_AppMonStatusRefresh_Test_CycleCountZero, HS_Test_Setup, HS_Test_TearDown,
                "HS_AppMonStatusRefresh_Test_CycleCountZero");
