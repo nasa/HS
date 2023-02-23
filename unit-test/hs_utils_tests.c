@@ -53,7 +53,7 @@ void HS_VerifyMsgLength_Test_Nominal(void)
      * message ID values to return.
      */
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_CPUHOG_CC;
+    FcnCode   = HS_ENABLE_CPU_HOG_CC;
     MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);

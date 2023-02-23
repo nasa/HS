@@ -74,7 +74,7 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_ENABLE_APPMON_CC
+ *  For command details see #HS_ENABLE_APP_MON_CC
  */
 typedef struct
 {
@@ -84,7 +84,7 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_DISABLE_APPMON_CC
+ *  For command details see #HS_DISABLE_APP_MON_CC
  */
 typedef struct
 {
@@ -94,7 +94,7 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_ENABLE_EVENTMON_CC
+ *  For command details see #HS_ENABLE_EVENT_MON_CC
  */
 typedef struct
 {
@@ -104,7 +104,7 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_DISABLE_EVENTMON_CC
+ *  For command details see #HS_DISABLE_EVENT_MON_CC
  */
 typedef struct
 {

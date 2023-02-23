@@ -72,19 +72,19 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     HS_ResetCmd(BufPtr);
                     break;
 
-                case HS_ENABLE_APPMON_CC:
+                case HS_ENABLE_APP_MON_CC:
                     HS_EnableAppMonCmd(BufPtr);
                     break;
 
-                case HS_DISABLE_APPMON_CC:
+                case HS_DISABLE_APP_MON_CC:
                     HS_DisableAppMonCmd(BufPtr);
                     break;
 
-                case HS_ENABLE_EVENTMON_CC:
+                case HS_ENABLE_EVENT_MON_CC:
                     HS_EnableEventMonCmd(BufPtr);
                     break;
 
-                case HS_DISABLE_EVENTMON_CC:
+                case HS_DISABLE_EVENT_MON_CC:
                     HS_DisableEventMonCmd(BufPtr);
                     break;
 
@@ -104,11 +104,11 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     HS_SetMaxResetsCmd(BufPtr);
                     break;
 
-                case HS_ENABLE_CPUHOG_CC:
+                case HS_ENABLE_CPU_HOG_CC:
                     HS_EnableCpuHogCmd(BufPtr);
                     break;
 
-                case HS_DISABLE_CPUHOG_CC:
+                case HS_DISABLE_CPU_HOG_CC:
                     HS_DisableCpuHogCmd(BufPtr);
                     break;
 

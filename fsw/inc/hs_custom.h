@@ -36,6 +36,16 @@
 #define HS_UTIL_DIAG_REPORTS 4
 
 /**
+ *  \brief No Arguments Command
+ *
+ *  For command details see #HS_REPORT_DIAG_CC
+ */
+typedef struct
+{
+    CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
+} HS_ReportDiagCmd_t;
+
+/**
  * \ingroup cfshscmdcodes
  *
  * Custom command codes must not conflict with those in hs_msgdefs.h
@@ -49,7 +59,7 @@
  *       Reports the Utilization Diagnostics
  *
  *  \par Command Structure
- *       #HS_NoArgsCmd_t
+ *       #HS_ReportDiagCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
