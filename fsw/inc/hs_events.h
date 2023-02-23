@@ -19,7 +19,7 @@
 
 /**
  * @file
- *   Specification for the CFS Health and Safety (HS) event identifers.
+ *   Specification for the CFS Health and Safety (HS) event identifiers.
  */
 #ifndef HS_EVENTS_H
 #define HS_EVENTS_H

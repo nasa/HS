@@ -53,7 +53,7 @@ HS_AppData_t HS_AppData;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppMain(void)
 {
-    int32            Status    = CFE_SUCCESS;
+    int32            Status;
     uint32           RunStatus = CFE_ES_RunStatus_APP_RUN;
     CFE_SB_Buffer_t *BufPtr    = NULL;
 
@@ -417,7 +417,7 @@ int32 HS_TblInit(void)
 {
     uint32 TableSize  = 0;
     uint32 TableIndex = 0;
-    int32  Status     = CFE_SUCCESS;
+    int32  Status;
 
     /* Register The HS Applications Monitor Table */
     TableSize = HS_MAX_MONITORED_APPS * sizeof(HS_AMTEntry_t);
