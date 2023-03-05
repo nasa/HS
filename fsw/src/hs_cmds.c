@@ -405,14 +405,6 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
         {
             Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
                                         CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
-
-            if (Status != CFE_SUCCESS)
-            {
-                CFE_EVS_SendEvent(HS_EVENTMON_LONG_SUB_EID, CFE_EVS_EventType_ERROR,
-                                  "Event Monitor Enable: Error Subscribing to long-format Events,RC=0x%08X",
-                                  (unsigned int)Status);
-            }
-
             if (Status == CFE_SUCCESS)
             {
                 Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe,
@@ -424,6 +416,12 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
                                       "Event Monitor Enable: Error Subscribing to short-format Events,RC=0x%08X",
                                       (unsigned int)Status);
                 }
+            }
+            else
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_LONG_SUB_EID, CFE_EVS_EventType_ERROR,
+                                  "Event Monitor Enable: Error Subscribing to long-format Events,RC=0x%08X",
+                                  (unsigned int)Status);
             }
         }
 
@@ -462,13 +460,6 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
         {
             Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
 
-            if (Status != CFE_SUCCESS)
-            {
-                CFE_EVS_SendEvent(HS_EVENTMON_LONG_UNSUB_EID, CFE_EVS_EventType_ERROR,
-                                  "Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x%08X",
-                                  (unsigned int)Status);
-            }
-
             if (Status == CFE_SUCCESS)
             {
                 Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe);
@@ -479,6 +470,12 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
                                       "Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x%08X",
                                       (unsigned int)Status);
                 }
+            }
+            else
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_LONG_UNSUB_EID, CFE_EVS_EventType_ERROR,
+                                  "Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x%08X",
+                                  (unsigned int)Status);
             }
         }
 
