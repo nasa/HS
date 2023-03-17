@@ -524,6 +524,8 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
     HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
     uint32            TableIndex;
 
+    HS_HkTlm_Payload_t *PayloadPtr;
+
     memset(EMTable, 0, sizeof(EMTable));
 
     HS_AppData.EMTablePtr = EMTable;
@@ -565,27 +567,28 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 1, "HS_AppData.HkPacket.InvalidEventMonCount == 1");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 1, "PayloadPtr->InvalidEventMonCount == 1");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
@@ -618,6 +621,8 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint8             ExpectedStatusFlags = 0;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -669,30 +674,30 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags,
-                  "HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags");
+    UtAssert_True(PayloadPtr->StatusFlags == ExpectedStatusFlags, "PayloadPtr->StatusFlags == ExpectedStatusFlags");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
@@ -711,6 +716,8 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
     CFE_ES_TaskInfo_t TaskInfo;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     int i;
 
@@ -768,32 +775,33 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == 5, "HS_AppData.HkPacket.ExeCounts[0] == 5");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == 5, "PayloadPtr->ExeCounts[0] == 5");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -810,6 +818,8 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
     uint32            TableIndex;
     CFE_ES_TaskInfo_t TaskInfo;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -865,32 +875,33 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == 5, "HS_AppData.HkPacket.ExeCounts[0] == 5");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == 5, "PayloadPtr->ExeCounts[0] == 5");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -907,6 +918,8 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
     uint32            TableIndex;
     CFE_ES_TaskInfo_t TaskInfo;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -963,33 +976,33 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT,
-                  "HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1005,6 +1018,8 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -1058,33 +1073,33 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT,
-                  "HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1101,6 +1116,8 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
     uint32            TableIndex;
     CFE_ES_TaskInfo_t TaskInfo;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -1154,33 +1171,33 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT,
-                  "HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1196,6 +1213,8 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -1243,33 +1262,33 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT,
-                  "HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1285,6 +1304,8 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint32            TableIndex;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -1335,33 +1356,33 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
-    UtAssert_True(HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT,
-                  "HS_AppData.HkPacket.ExeCounts[0] == HS_INVALID_EXECOUNT");
+    UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1377,6 +1398,8 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
     HS_XCTEntry_t     XCTable[HS_MAX_EXEC_CNT_SLOTS];
     uint8             ExpectedStatusFlags = 0;
     int               i;
+
+    HS_HkTlm_Payload_t *PayloadPtr;
 
     memset(EMTable, 0, sizeof(EMTable));
     memset(XCTable, 0, sizeof(XCTable));
@@ -1429,30 +1452,30 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
     HS_HousekeepingReq(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_True(HS_AppData.HkPacket.CmdCount == 1, "HS_AppData.HkPacket.CmdCount == 1");
-    UtAssert_True(HS_AppData.HkPacket.CmdErrCount == 2, "HS_AppData.HkPacket.CmdErrCount == 2");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAppMonState == 3, "HS_AppData.HkPacket.CurrentAppMonState == 3");
-    UtAssert_True(HS_AppData.HkPacket.CurrentEventMonState == 4, "HS_AppData.HkPacket.CurrentEventMonState == 4");
-    UtAssert_True(HS_AppData.HkPacket.CurrentAlivenessState == 5, "HS_AppData.HkPacket.CurrentAlivenessState == 5");
-    UtAssert_True(HS_AppData.HkPacket.CurrentCPUHogState == 6, "HS_AppData.HkPacket.CurrentCPUHogState == 6");
-    UtAssert_True(HS_AppData.HkPacket.ResetsPerformed == 7, "HS_AppData.HkPacket.ResetsPerformed == 7");
-    UtAssert_True(HS_AppData.HkPacket.MaxResets == 8, "HS_AppData.HkPacket.MaxResets == 8");
-    UtAssert_True(HS_AppData.HkPacket.EventsMonitoredCount == 9, "HS_AppData.HkPacket.EventsMonitoredCount == 9");
-    UtAssert_True(HS_AppData.HkPacket.MsgActExec == 10, "HS_AppData.HkPacket.MsgActExec == 10");
-    UtAssert_True(HS_AppData.HkPacket.InvalidEventMonCount == 0, "HS_AppData.HkPacket.InvalidEventMonCount == 0");
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_True(PayloadPtr->CmdCount == 1, "PayloadPtr->CmdCount == 1");
+    UtAssert_True(PayloadPtr->CmdErrCount == 2, "PayloadPtr->CmdErrCount == 2");
+    UtAssert_True(PayloadPtr->CurrentAppMonState == 3, "PayloadPtr->CurrentAppMonState == 3");
+    UtAssert_True(PayloadPtr->CurrentEventMonState == 4, "PayloadPtr->CurrentEventMonState == 4");
+    UtAssert_True(PayloadPtr->CurrentAlivenessState == 5, "PayloadPtr->CurrentAlivenessState == 5");
+    UtAssert_True(PayloadPtr->CurrentCPUHogState == 6, "PayloadPtr->CurrentCPUHogState == 6");
+    UtAssert_True(PayloadPtr->ResetsPerformed == 7, "PayloadPtr->ResetsPerformed == 7");
+    UtAssert_True(PayloadPtr->MaxResets == 8, "PayloadPtr->MaxResets == 8");
+    UtAssert_True(PayloadPtr->EventsMonitoredCount == 9, "PayloadPtr->EventsMonitoredCount == 9");
+    UtAssert_True(PayloadPtr->MsgActExec == 10, "PayloadPtr->MsgActExec == 10");
+    UtAssert_True(PayloadPtr->InvalidEventMonCount == 0, "PayloadPtr->InvalidEventMonCount == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags,
-                  "HS_AppData.HkPacket.StatusFlags == ExpectedStatusFlags");
+    UtAssert_True(PayloadPtr->StatusFlags == ExpectedStatusFlags, "PayloadPtr->StatusFlags == ExpectedStatusFlags");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[0] == 0, "HS_AppData.HkPacket.AppMonEnables[0] == 0");
+    UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(HS_AppData.HkPacket.AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
@@ -2560,6 +2583,9 @@ void HS_SetMaxResetsCmd_Test(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+
+    HS_SetMaxResets_Payload_t *PayloadPtr;
+
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Max Resets Performable by HS has been set to %%d");
 
@@ -2573,7 +2599,9 @@ void HS_SetMaxResetsCmd_Test(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
-    UT_CmdBuf.SetMaxResetsCmd.MaxResets = 5;
+    PayloadPtr = &UT_CmdBuf.SetMaxResetsCmd.Payload;
+
+    PayloadPtr->MaxResets = 5;
 
     /* Execute the function being tested */
     HS_SetMaxResetsCmd(&UT_CmdBuf.Buf);
@@ -2600,6 +2628,8 @@ void HS_SetMaxResetsCmd_Test_MsgLengthError(void)
     CFE_MSG_FcnCode_t FcnCode;
     size_t            MsgSize;
 
+    HS_SetMaxResets_Payload_t *PayloadPtr;
+
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_SET_MAX_RESETS_CC;
     MsgSize   = sizeof(UT_CmdBuf.SetMaxResetsCmd);
@@ -2610,7 +2640,9 @@ void HS_SetMaxResetsCmd_Test_MsgLengthError(void)
     /* ignore dummy message length check */
     UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
 
-    UT_CmdBuf.SetMaxResetsCmd.MaxResets = 5;
+    PayloadPtr = &UT_CmdBuf.SetMaxResetsCmd.Payload;
+
+    PayloadPtr->MaxResets = 5;
 
     /* Execute the function being tested */
     HS_SetMaxResetsCmd(&UT_CmdBuf.Buf);

@@ -64,7 +64,7 @@ typedef struct
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkPacket_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdCount will increment
  *       - The #HS_UTIL_DIAG_REPORT_EID informational event message will be
  *         generated when the command is executed
  *
@@ -73,7 +73,7 @@ typedef struct
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkPacket_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
  *
  *  \par Criticality
  *       None
@@ -92,7 +92,7 @@ typedef struct
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkPacket_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdCount will increment
  *
  *  \par Error Conditions
  *       This command may fail for the following reason(s):
@@ -100,7 +100,7 @@ typedef struct
  *       - Any parameter is set to 0.
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkPacket_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
  *
  *  \par Criticality
  *       None
@@ -119,14 +119,14 @@ typedef struct
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkPacket_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdCount will increment
  *
  *  \par Error Conditions
  *       This command may fail for the following reason(s):
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkPacket_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
  *
  *  \par Criticality
  *       None
