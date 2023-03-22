@@ -24,6 +24,7 @@
 #include "hs_app.h"
 #include "hs_test_utils.h"
 #include "hs_msgids.h"
+#include "hs_dispatch.h"
 
 /* UT includes */
 #include "uttest.h"

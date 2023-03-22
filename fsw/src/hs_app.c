@@ -35,6 +35,7 @@
 #include "hs_custom_internal.h"
 #include "hs_version.h"
 #include "hs_cmds.h"
+#include "hs_dispatch.h"
 #include "hs_verify.h"
 
 /************************************************************************

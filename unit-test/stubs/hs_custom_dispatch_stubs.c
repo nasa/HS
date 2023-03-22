@@ -20,40 +20,24 @@
 /**
  * @file
  *
- * Auto-Generated stub implementations for functions defined in hs_utils header
+ * Auto-Generated stub implementations for functions defined in hs_custom_dispatch header
  */
 
-#include "hs_utils.h"
+#include "hs_custom_dispatch.h"
 #include "utgenstub.h"
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_AMTActionIsValid()
+ * Generated stub function for HS_CustomCommands()
  * ----------------------------------------------------
  */
-bool HS_AMTActionIsValid(uint16 ActionType)
+int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr)
 {
-    UT_GenStub_SetupReturnBuffer(HS_AMTActionIsValid, bool);
+    UT_GenStub_SetupReturnBuffer(HS_CustomCommands, int32);
 
-    UT_GenStub_AddParam(HS_AMTActionIsValid, uint16, ActionType);
+    UT_GenStub_AddParam(HS_CustomCommands, const CFE_SB_Buffer_t *, BufPtr);
 
-    UT_GenStub_Execute(HS_AMTActionIsValid, Basic, NULL);
+    UT_GenStub_Execute(HS_CustomCommands, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_AMTActionIsValid, bool);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for HS_EMTActionIsValid()
- * ----------------------------------------------------
- */
-bool HS_EMTActionIsValid(uint16 ActionType)
-{
-    UT_GenStub_SetupReturnBuffer(HS_EMTActionIsValid, bool);
-
-    UT_GenStub_AddParam(HS_EMTActionIsValid, uint16, ActionType);
-
-    UT_GenStub_Execute(HS_EMTActionIsValid, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(HS_EMTActionIsValid, bool);
+    return UT_GenStub_GetReturnValue(HS_CustomCommands, int32);
 }

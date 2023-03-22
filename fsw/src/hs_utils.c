@@ -35,57 +35,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* Verify message packet length                                    */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
-{
-    bool              result       = true;
-    size_t            ActualLength = 0;
-    CFE_MSG_FcnCode_t CommandCode  = 0;
-    CFE_SB_MsgId_t    MessageID    = CFE_SB_INVALID_MSG_ID;
-
-    /*
-    ** Verify the message packet length...
-    */
-
-    CFE_MSG_GetSize(MsgPtr, &ActualLength);
-    if (ExpectedLength != ActualLength)
-    {
-        CFE_MSG_GetMsgId(MsgPtr, &MessageID);
-        CFE_MSG_GetFcnCode(MsgPtr, &CommandCode);
-
-        if (CFE_SB_MsgIdToValue(MessageID) == HS_SEND_HK_MID)
-        {
-            /*
-            ** For a bad HK request, just send the event. We only increment
-            ** the error counter for ground commands and not internal messages.
-            */
-            CFE_EVS_SendEvent(HS_HKREQ_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "Invalid HK request msg length: ID = 0x%08lX, CC = %d, Len = %d, Expected = %d",
-                              (unsigned long)CFE_SB_MsgIdToValue(MessageID), (int)CommandCode, (int)ActualLength,
-                              (int)ExpectedLength);
-        }
-        else
-        {
-            /*
-            ** All other cases, increment error counter
-            */
-            CFE_EVS_SendEvent(HS_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "Invalid msg length: ID = 0x%08lX, CC = %d, Len = %d, Expected = %d",
-                              (unsigned long)CFE_SB_MsgIdToValue(MessageID), (int)CommandCode, (int)ActualLength,
-                              (int)ExpectedLength);
-            HS_AppData.CmdErrCount++;
-        }
-
-        result = false;
-    }
-
-    return result;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
 /* Verify AMT Action Type                                          */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

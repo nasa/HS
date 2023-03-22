@@ -39,22 +39,6 @@ void HS_CustomCleanup(void)
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_CustomCommands()
- * ----------------------------------------------------
- */
-int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_GenStub_SetupReturnBuffer(HS_CustomCommands, int32);
-
-    UT_GenStub_AddParam(HS_CustomCommands, const CFE_SB_Buffer_t *, BufPtr);
-
-    UT_GenStub_Execute(HS_CustomCommands, Basic, NULL);
-
-    return UT_GenStub_GetReturnValue(HS_CustomCommands, int32);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for HS_CustomGetUtil()
  * ----------------------------------------------------
  */
@@ -116,6 +100,18 @@ void HS_MarkIdleCallback(void)
 
 /*
  * ----------------------------------------------------
+ * Generated stub function for HS_ReportDiagCmd()
+ * ----------------------------------------------------
+ */
+void HS_ReportDiagCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_ReportDiagCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_ReportDiagCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
  * Generated stub function for HS_SetUtilDiagCmd()
  * ----------------------------------------------------
  */
@@ -136,17 +132,6 @@ void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr)
     UT_GenStub_AddParam(HS_SetUtilParamsCmd, const CFE_SB_Buffer_t *, BufPtr);
 
     UT_GenStub_Execute(HS_SetUtilParamsCmd, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for HS_UtilDiagReport()
- * ----------------------------------------------------
- */
-void HS_UtilDiagReport(void)
-{
-
-    UT_GenStub_Execute(HS_UtilDiagReport, Basic, NULL);
 }
 
 /*
