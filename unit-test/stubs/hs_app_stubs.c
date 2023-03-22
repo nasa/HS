@@ -17,41 +17,92 @@
  * limitations under the License.
  ************************************************************************/
 
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in hs_app header
+ */
+
 #include "hs_app.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-HS_AppData_t HS_AppData;
-
-void HS_AppMain(void)
-{
-    UT_DEFAULT_IMPL(HS_AppMain);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AppInit()
+ * ----------------------------------------------------
+ */
 int32 HS_AppInit(void)
 {
-    return UT_DEFAULT_IMPL(HS_AppInit);
+    UT_GenStub_SetupReturnBuffer(HS_AppInit, int32);
+
+    UT_GenStub_Execute(HS_AppInit, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_AppInit, int32);
 }
 
-int32 HS_SbInit(void)
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AppMain()
+ * ----------------------------------------------------
+ */
+void HS_AppMain(void)
 {
-    return UT_DEFAULT_IMPL(HS_SbInit);
+
+    UT_GenStub_Execute(HS_AppMain, Basic, NULL);
 }
 
-int32 HS_TblInit(void)
-{
-    return UT_DEFAULT_IMPL(HS_TblInit);
-}
-
-int32 HS_ProcessMain(void)
-{
-    return UT_DEFAULT_IMPL(HS_ProcessMain);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ProcessCommands()
+ * ----------------------------------------------------
+ */
 int32 HS_ProcessCommands(void)
 {
-    return UT_DEFAULT_IMPL(HS_ProcessCommands);
+    UT_GenStub_SetupReturnBuffer(HS_ProcessCommands, int32);
+
+    UT_GenStub_Execute(HS_ProcessCommands, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_ProcessCommands, int32);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ProcessMain()
+ * ----------------------------------------------------
+ */
+int32 HS_ProcessMain(void)
+{
+    UT_GenStub_SetupReturnBuffer(HS_ProcessMain, int32);
+
+    UT_GenStub_Execute(HS_ProcessMain, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_ProcessMain, int32);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SbInit()
+ * ----------------------------------------------------
+ */
+int32 HS_SbInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(HS_SbInit, int32);
+
+    UT_GenStub_Execute(HS_SbInit, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_SbInit, int32);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_TblInit()
+ * ----------------------------------------------------
+ */
+int32 HS_TblInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(HS_TblInit, int32);
+
+    UT_GenStub_Execute(HS_TblInit, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_TblInit, int32);
 }
