@@ -17,27 +17,60 @@
  * limitations under the License.
  ************************************************************************/
 
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in hs_utils header
+ */
+
 #include "hs_utils.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utstubs.h"
-
-bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_VerifyMsgLength), MsgPtr);
-    UT_Stub_RegisterContextGenericArg(UT_KEY(HS_VerifyMsgLength), ExpectedLength);
-    return UT_DEFAULT_IMPL(HS_VerifyMsgLength);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AMTActionIsValid()
+ * ----------------------------------------------------
+ */
 bool HS_AMTActionIsValid(uint16 ActionType)
 {
-    UT_Stub_RegisterContextGenericArg(UT_KEY(HS_AMTActionIsValid), ActionType);
-    return UT_DEFAULT_IMPL(HS_AMTActionIsValid);
+    UT_GenStub_SetupReturnBuffer(HS_AMTActionIsValid, bool);
+
+    UT_GenStub_AddParam(HS_AMTActionIsValid, uint16, ActionType);
+
+    UT_GenStub_Execute(HS_AMTActionIsValid, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_AMTActionIsValid, bool);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_EMTActionIsValid()
+ * ----------------------------------------------------
+ */
 bool HS_EMTActionIsValid(uint16 ActionType)
 {
-    UT_Stub_RegisterContextGenericArg(UT_KEY(HS_EMTActionIsValid), ActionType);
-    return UT_DEFAULT_IMPL(HS_EMTActionIsValid);
+    UT_GenStub_SetupReturnBuffer(HS_EMTActionIsValid, bool);
+
+    UT_GenStub_AddParam(HS_EMTActionIsValid, uint16, ActionType);
+
+    UT_GenStub_Execute(HS_EMTActionIsValid, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_EMTActionIsValid, bool);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_VerifyMsgLength()
+ * ----------------------------------------------------
+ */
+bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
+{
+    UT_GenStub_SetupReturnBuffer(HS_VerifyMsgLength, bool);
+
+    UT_GenStub_AddParam(HS_VerifyMsgLength, const CFE_MSG_Message_t *, MsgPtr);
+    UT_GenStub_AddParam(HS_VerifyMsgLength, size_t, ExpectedLength);
+
+    UT_GenStub_Execute(HS_VerifyMsgLength, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_VerifyMsgLength, bool);
 }

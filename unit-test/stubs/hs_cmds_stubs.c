@@ -17,120 +17,223 @@
  * limitations under the License.
  ************************************************************************/
 
-#include "hs_app.h"
+/**
+ * @file
+ *
+ * Auto-Generated stub implementations for functions defined in hs_cmds header
+ */
+
 #include "hs_cmds.h"
-#include "hs_custom.h"
-#include "hs_monitors.h"
-#include "hs_msgids.h"
-#include "hs_events.h"
-#include "hs_utils.h"
-#include "hs_version.h"
+#include "utgenstub.h"
 
-/* UT includes */
-#include "uttest.h"
-#include "utassert.h"
-#include "utstubs.h"
-
-void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_AppPipe), BufPtr);
-    UT_DEFAULT_IMPL(HS_AppPipe);
-}
-
-void HS_ResetCounters(void)
-{
-    UT_DEFAULT_IMPL(HS_ResetCounters);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AcquirePointers()
+ * ----------------------------------------------------
+ */
 void HS_AcquirePointers(void)
 {
-    UT_DEFAULT_IMPL(HS_AcquirePointers);
+
+    UT_GenStub_Execute(HS_AcquirePointers, Basic, NULL);
 }
 
-void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_HousekeepingReq), BufPtr);
-    UT_DEFAULT_IMPL(HS_HousekeepingReq);
-}
-
-void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_NoopCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_NoopCmd);
-}
-
-void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_ResetCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_ResetCmd);
-}
-
-void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_EnableAppMonCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_EnableAppMonCmd);
-}
-
-void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_DisableAppMonCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_DisableAppMonCmd);
-}
-
-void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_EnableEventMonCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_EnableEventMonCmd);
-}
-
-void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_DisableEventMonCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_DisableEventMonCmd);
-}
-
-void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_EnableAlivenessCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_EnableAlivenessCmd);
-}
-
-void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_DisableAlivenessCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_DisableAlivenessCmd);
-}
-
-void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_EnableCpuHogCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_EnableCpuHogCmd);
-}
-
-void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_DisableCpuHogCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_DisableCpuHogCmd);
-}
-
-void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_ResetResetsPerformedCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_ResetResetsPerformedCmd);
-}
-
-void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_Stub_RegisterContext(UT_KEY(HS_SetMaxResetsCmd), BufPtr);
-    UT_DEFAULT_IMPL(HS_SetMaxResetsCmd);
-}
-
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AppMonStatusRefresh()
+ * ----------------------------------------------------
+ */
 void HS_AppMonStatusRefresh(void)
 {
-    UT_DEFAULT_IMPL(HS_AppMonStatusRefresh);
+
+    UT_GenStub_Execute(HS_AppMonStatusRefresh, Basic, NULL);
 }
 
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_AppPipe()
+ * ----------------------------------------------------
+ */
+void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_AppPipe, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_AppPipe, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_DisableAlivenessCmd()
+ * ----------------------------------------------------
+ */
+void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_DisableAlivenessCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_DisableAlivenessCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_DisableAppMonCmd()
+ * ----------------------------------------------------
+ */
+void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_DisableAppMonCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_DisableAppMonCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_DisableCpuHogCmd()
+ * ----------------------------------------------------
+ */
+void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_DisableCpuHogCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_DisableCpuHogCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_DisableEventMonCmd()
+ * ----------------------------------------------------
+ */
+void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_DisableEventMonCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_DisableEventMonCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_EnableAlivenessCmd()
+ * ----------------------------------------------------
+ */
+void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_EnableAlivenessCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_EnableAlivenessCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_EnableAppMonCmd()
+ * ----------------------------------------------------
+ */
+void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_EnableAppMonCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_EnableAppMonCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_EnableCpuHogCmd()
+ * ----------------------------------------------------
+ */
+void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_EnableCpuHogCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_EnableCpuHogCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_EnableEventMonCmd()
+ * ----------------------------------------------------
+ */
+void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_EnableEventMonCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_EnableEventMonCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_HousekeepingReq()
+ * ----------------------------------------------------
+ */
+void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_HousekeepingReq, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_HousekeepingReq, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_MsgActsStatusRefresh()
+ * ----------------------------------------------------
+ */
 void HS_MsgActsStatusRefresh(void)
 {
-    UT_DEFAULT_IMPL(HS_MsgActsStatusRefresh);
+
+    UT_GenStub_Execute(HS_MsgActsStatusRefresh, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_NoopCmd()
+ * ----------------------------------------------------
+ */
+void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_NoopCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_NoopCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ResetCmd()
+ * ----------------------------------------------------
+ */
+void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_ResetCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_ResetCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ResetCounters()
+ * ----------------------------------------------------
+ */
+void HS_ResetCounters(void)
+{
+
+    UT_GenStub_Execute(HS_ResetCounters, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ResetResetsPerformedCmd()
+ * ----------------------------------------------------
+ */
+void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_ResetResetsPerformedCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_ResetResetsPerformedCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SetMaxResetsCmd()
+ * ----------------------------------------------------
+ */
+void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_SetMaxResetsCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_SetMaxResetsCmd, Basic, NULL);
 }
