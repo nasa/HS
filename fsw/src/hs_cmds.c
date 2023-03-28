@@ -34,6 +34,14 @@
 #include "hs_utils.h"
 #include "hs_version.h"
 
+/**
+ * \brief Internal Macro to access the internal payload structure of a message
+ *
+ * This is done as a macro so it can be applied consistently to all
+ * message processing functions, based on the way FM defines its messages.
+ */
+#define HS_GET_CMD_PAYLOAD(ptr, type) (&((const type *)(ptr))->Payload)
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* Process a command pipe message                                  */
@@ -155,7 +163,11 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
     int32              Status;
     uint32             TableIndex;
 
+    HS_HkTlm_Payload_t *PayloadPtr;
+
     memset(&TaskInfo, 0, sizeof(TaskInfo));
+
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
 
     /*
     ** Verify message packet length
@@ -165,21 +177,21 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         /*
         ** Update HK variables
         */
-        HS_AppData.HkPacket.CmdCount              = HS_AppData.CmdCount;
-        HS_AppData.HkPacket.CmdErrCount           = HS_AppData.CmdErrCount;
-        HS_AppData.HkPacket.CurrentAppMonState    = HS_AppData.CurrentAppMonState;
-        HS_AppData.HkPacket.CurrentEventMonState  = HS_AppData.CurrentEventMonState;
-        HS_AppData.HkPacket.CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
-        HS_AppData.HkPacket.CurrentCPUHogState    = HS_AppData.CurrentCPUHogState;
-        HS_AppData.HkPacket.ResetsPerformed       = HS_AppData.CDSData.ResetsPerformed;
-        HS_AppData.HkPacket.MaxResets             = HS_AppData.CDSData.MaxResets;
-        HS_AppData.HkPacket.EventsMonitoredCount  = HS_AppData.EventsMonitoredCount;
-        HS_AppData.HkPacket.MsgActExec            = HS_AppData.MsgActExec;
+        PayloadPtr->CmdCount              = HS_AppData.CmdCount;
+        PayloadPtr->CmdErrCount           = HS_AppData.CmdErrCount;
+        PayloadPtr->CurrentAppMonState    = HS_AppData.CurrentAppMonState;
+        PayloadPtr->CurrentEventMonState  = HS_AppData.CurrentEventMonState;
+        PayloadPtr->CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
+        PayloadPtr->CurrentCPUHogState    = HS_AppData.CurrentCPUHogState;
+        PayloadPtr->ResetsPerformed       = HS_AppData.CDSData.ResetsPerformed;
+        PayloadPtr->MaxResets             = HS_AppData.CDSData.MaxResets;
+        PayloadPtr->EventsMonitoredCount  = HS_AppData.EventsMonitoredCount;
+        PayloadPtr->MsgActExec            = HS_AppData.MsgActExec;
 
         /*
         ** Calculate the current number of invalid event monitor entries
         */
-        HS_AppData.HkPacket.InvalidEventMonCount = 0;
+        PayloadPtr->InvalidEventMonCount = 0;
 
         for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
         {
@@ -189,7 +201,7 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
 
                 if (Status != CFE_SUCCESS)
                 {
-                    HS_AppData.HkPacket.InvalidEventMonCount++;
+                    PayloadPtr->InvalidEventMonCount++;
                 }
             }
         }
@@ -197,26 +209,26 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         /*
         ** Build the HK status flags byte
         */
-        HS_AppData.HkPacket.StatusFlags = 0;
+        PayloadPtr->StatusFlags = 0;
         if (HS_AppData.ExeCountState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_XCT;
+            PayloadPtr->StatusFlags |= HS_LOADED_XCT;
         }
         if (HS_AppData.MsgActsState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_MAT;
+            PayloadPtr->StatusFlags |= HS_LOADED_MAT;
         }
         if (HS_AppData.AppMonLoaded == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_AMT;
+            PayloadPtr->StatusFlags |= HS_LOADED_AMT;
         }
         if (HS_AppData.EventMonLoaded == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags |= HS_LOADED_EMT;
+            PayloadPtr->StatusFlags |= HS_LOADED_EMT;
         }
         if (HS_AppData.CDSState == HS_STATE_ENABLED)
         {
-            HS_AppData.HkPacket.StatusFlags |= HS_CDS_IN_USE;
+            PayloadPtr->StatusFlags |= HS_CDS_IN_USE;
         }
 
         /*
@@ -224,11 +236,11 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
         */
         for (TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
         {
-            HS_AppData.HkPacket.AppMonEnables[TableIndex] = HS_AppData.AppMonEnables[TableIndex];
+            PayloadPtr->AppMonEnables[TableIndex] = HS_AppData.AppMonEnables[TableIndex];
         }
 
-        HS_AppData.HkPacket.UtilCpuAvg  = HS_AppData.UtilCpuAvg;
-        HS_AppData.HkPacket.UtilCpuPeak = HS_AppData.UtilCpuPeak;
+        PayloadPtr->UtilCpuAvg  = HS_AppData.UtilCpuAvg;
+        PayloadPtr->UtilCpuPeak = HS_AppData.UtilCpuPeak;
 
         /*
         ** Add the execution counters
@@ -276,7 +288,7 @@ void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
                 } /* end ResourceType switch statement */
             }     /* end ExeCountState if statement */
 
-            HS_AppData.HkPacket.ExeCounts[TableIndex] = ExeCount;
+            PayloadPtr->ExeCounts[TableIndex] = ExeCount;
         }
 
         /*
@@ -603,8 +615,9 @@ void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t                ExpectedLength = sizeof(HS_SetMaxResetsCmd_t);
-    HS_SetMaxResetsCmd_t *CmdPtr         = NULL;
+    size_t ExpectedLength = sizeof(HS_SetMaxResetsCmd_t);
+
+    const HS_SetMaxResets_Payload_t *CmdPtr;
 
     /*
     ** Verify message packet length
@@ -612,7 +625,7 @@ void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
         HS_AppData.CmdCount++;
-        CmdPtr = ((HS_SetMaxResetsCmd_t *)BufPtr);
+        CmdPtr = HS_GET_CMD_PAYLOAD(BufPtr, HS_SetMaxResetsCmd_t);
 
         HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);
 

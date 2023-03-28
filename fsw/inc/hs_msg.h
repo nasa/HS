@@ -162,6 +162,15 @@ typedef struct
 } HS_DisableCpuHogCmd_t;
 
 /**
+ *  \brief Set Max Resets Payload
+ */
+typedef struct
+{
+    uint16 MaxResets; /**< \brief Maximum Resets */
+    uint16 Padding;   /**< \brief Structure padding */
+} HS_SetMaxResets_Payload_t;
+
+/**
  *  \brief Set Max Resets Command
  *
  *  For command details see #HS_SET_MAX_RESETS_CC
@@ -170,8 +179,7 @@ typedef struct
 {
     CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
 
-    uint16 MaxResets; /**< \brief Maximum Resets */
-    uint16 Padding;   /**< \brief Structure padding */
+    HS_SetMaxResets_Payload_t Payload;
 } HS_SetMaxResetsCmd_t;
 
 /**
@@ -192,12 +200,10 @@ typedef struct
  */
 
 /**
- *  \brief Housekeeping Packet Structure
+ *  \brief Housekeeping Packet Payload
  */
 typedef struct
 {
-    CFE_MSG_TelemetryHeader_t TelemetryHeader; /**< \brief Telemetry Header */
-
     uint8  CmdCount;              /**< \brief HS Application Command Counter */
     uint8  CmdErrCount;           /**< \brief HS Application Command Error Counter */
     uint8  CurrentAppMonState;    /**< \brief Status of HS Application Monitor */
@@ -219,6 +225,16 @@ typedef struct
     uint32 UtilCpuPeak; /**< \brief Current CPU Utilization Peak */
 
     uint32 ExeCounts[HS_MAX_EXEC_CNT_SLOTS]; /**< \brief Execution Counters */
+} HS_HkTlm_Payload_t;
+
+/**
+ *  \brief Housekeeping Packet Structure
+ */
+typedef struct
+{
+    CFE_MSG_TelemetryHeader_t TelemetryHeader; /**< \brief Telemetry Header */
+
+    HS_HkTlm_Payload_t Payload;
 } HS_HkPacket_t;
 
 /**\}*/

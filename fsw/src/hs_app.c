@@ -478,7 +478,7 @@ int32 HS_TblInit(void)
         for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
         {
             /* HS 8005.1 Report 0xFFFFFFFF for all entries */
-            HS_AppData.HkPacket.ExeCounts[TableIndex] = HS_INVALID_EXECOUNT;
+            HS_AppData.HkPacket.Payload.ExeCounts[TableIndex] = HS_INVALID_EXECOUNT;
         }
     }
 
