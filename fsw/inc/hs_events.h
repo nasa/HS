@@ -648,7 +648,7 @@
  *  \par Cause:
  *
  *  This event message is issued on the first error when a table validation
- *  fails for a application monitor table load.
+ *  fails for an application monitor table load.
  */
 #define HS_AMTVAL_ERR_EID 51
 
@@ -708,7 +708,7 @@
  *  \par Cause:
  *
  *  This event message is issued when a table validation has been
- *  completed for an message actions table load
+ *  completed for a message actions table load
  */
 #define HS_MATVAL_INF_EID 56
 
@@ -720,7 +720,7 @@
  *  \par Cause:
  *
  *  This event message is issued on the first error when a table validation
- *  fails for an message actions table load.
+ *  fails for a message actions table load.
  */
 #define HS_MATVAL_ERR_EID 57
 
