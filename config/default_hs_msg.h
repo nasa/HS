@@ -19,32 +19,20 @@
 
 /**
  * @file
- *   Specification for the CFS Health and Safety (HS) table structures
+ *   Specification for the CFS Health and Safety (HS) command and telemetry
+ *   message data types.
  *
- * @note
- *   Constants and enumerated types related to these table structures
- *   are defined in hs_tbldefs.h.
+ * This is a compatibility header for the "hs_msg.h" file that has
+ * traditionally provided the message definitions for cFS apps.
+ *
+ * @note This file may be overridden/superceded by mission-provided defintions
+ * either by overriding this header or by generating definitions from a command/data
+ * dictionary tool.
  */
-#ifndef HS_TBL_H
-#define HS_TBL_H
+#ifndef HK_MSG_H
+#define HK_MSG_H
 
-/*************************************************************************
- * Includes
- *************************************************************************/
-#include <cfe.h>
-#include <hs_tbldefs.h>
-#include <hs_platform_cfg.h>
-
-/************************************************************************
- * Macro Definitions
- ************************************************************************/
-
-/**
- * \name Macros for Action Type numbers of Message Actions
- * \{
- */
-#define HS_AMT_ACT_MSG(num) (HS_AMT_ACT_LAST_NONMSG + 1 + (num))
-#define HS_EMT_ACT_MSG(num) (HS_EMT_ACT_LAST_NONMSG + 1 + (num))
-/**\}*/
+#include "hs_msgdefs.h"
+#include "hs_msg_structs.h"
 
 #endif

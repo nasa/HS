@@ -29,10 +29,11 @@
  * Includes
  ************************************************************************/
 #include "hs_msg.h"
+#include "hs_tbldefs.h"
 #include "hs_tbl.h"
+#include "hs_platform_cfg.h"
 #include "cfe.h"
 #include "cfe_msgids.h"
-#include "hs_extern_typedefs.h"
 
 /************************************************************************
  * Macro Definitions

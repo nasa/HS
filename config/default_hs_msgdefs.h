@@ -36,32 +36,6 @@
  ************************************************************************/
 
 /**
- * \name HS Switch States (AppMon, EventMon, Aliveness)
- * \{
- */
-#define HS_STATE_DISABLED 0
-#define HS_STATE_ENABLED  1
-/**\}*/
-
-/**
- * \name HS Internal Status Flags
- * \{
- */
-#define HS_LOADED_XCT 0x01
-#define HS_LOADED_MAT 0x02
-#define HS_LOADED_AMT 0x04
-#define HS_LOADED_EMT 0x08
-#define HS_CDS_IN_USE 0x10
-/**\}*/
-
-/**
- * \name HS Invalid Execution Counter
- * \{
- */
-#define HS_INVALID_EXECOUNT 0xFFFFFFFF
-/**\}*/
-
-/**
  * \defgroup cfshscmdcodes CFS Health and Safety Command Codes
  * \{
  */
