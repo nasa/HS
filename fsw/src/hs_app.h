@@ -115,6 +115,12 @@ typedef struct
 
     uint32 RunStatus; /**< \brief HS App run status */
 
+    uint32 SysMonPspModuleId;  /**< \brief PSP module to track system health, cpu utilization */
+    uint16 SysMonSubsystemId;  /**< \brief Subsystem ID for cpu utilization function */
+    uint16 SysMonSubchannelId; /**< \brief Subchannel ID for cpu utilization function */
+
+    uint32 UtilizationCycleCounter; /**< \brief Counter to run cpu utilization check */
+
     uint32 CurrentCPUHoggingTime; /**< \brief Count of cycles that CPU utilization is above hogging threshold */
     uint32 MaxCPUHoggingTime;     /**< \brief Count of hogging cycles after which an event reports hogging */
     uint32 CurrentCPUUtilIndex;   /**< \brief Current index into the Utilization Tracker */

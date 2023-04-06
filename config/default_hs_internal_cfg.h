@@ -56,37 +56,6 @@
 #define HS_APP_NAME "HS"
 
 /**
- * \brief Idle Task Configuration Parameters (custom)
- *
- *  \par Description:
- *       These parameters are used by #CFE_ES_CreateChildTask
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       These limits will vary by platform and available resources.
- */
-#define HS_IDLE_TASK_NAME       "HS_IDLE_TASK"
-#define HS_IDLE_TASK_STACK_PTR  0
-#define HS_IDLE_TASK_STACK_SIZE 4096
-#define HS_IDLE_TASK_FLAGS      0
-
-/**
- * \brief Idle Task Priority (custom)
- *
- *  \par Description:
- *       This parameter is used to set the priority of the Idle Task. It should
- *       be higher than all other user created tasks, but may need to be set lower
- *       than the maximum value if an OS uses its own minimum priority task.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       This parameter can't be larger than 255.
- */
-#define HS_IDLE_TASK_PRIORITY 252
-
-/**
  * \brief Watchdog Timeout Value
  *
  *  \par Description:
@@ -351,50 +320,67 @@
 #define HS_MAT_FILENAME "/cf/hs_mat.tbl"
 
 /**
- * \brief CPU Utilization Calls per Mark (custom)
+ * \brief System monitor PSP
  *
  *  \par Description:
- *       Number of times the Mark function must be called before it actually
- *       marks the time. This influences the interval size. The function
- *       calling the Mark function may not run at the same rate as the HS cycle
- *       (or HS may not want to monitor utilization every cycle) so this the
- *       interval to be at least as long as an HS cycle.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
+ *       Variable to use for system monitor.  If
+ *       the module name is not found, CPU monitoring
+ *       will be disabled.
  *
  *  \par Limits:
- *       This parameter can't be larger than an unsigned 32 bit
- *       integer (4294967295).
+ *       Must be a name of a module that is implemented by the PSP
  */
-#define HS_UTIL_CALLS_PER_MARK 1
+#define HS_SYSTEM_MONITOR_DEVICE "linux_sysmon"
 
 /**
- * \brief CPU Utilization Cycles per Interval (custom)
+ * \brief CPU Utilization subsystem name
+ *
+ *  \par Description:
+ *       Subsystem name to use for system CPU utilization monitor
+ *       Reverts to 0 if the name is not found.
+ *
+ */
+#define HS_SYSTEM_MONITOR_SUBSYSTEM_NAME "aggregate"
+
+/**
+ * \brief CPU Utilization subchannel name
+ *
+ *  \par Description:
+ *       Subchannel name to use for system CPU utilization monitor
+ *       Reverts to 0 if the name is not found.
+ *
+ */
+#define HS_SYSTEM_MONITOR_SUBCHANNEL_NAME "cpu-load"
+
+/**
+ * \brief CPU Utilization Cycles per Interval
  *
  *  \par Description:
  *       Number of HS Cycles it takes to complete a CPU Utilization Interval.
  *       HS will monitor the utilization after this number of HS wakeup cycles.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
  *
  *  \par Limits:
  *       This parameter can't be larger than an unsigned 32 bit
  *       integer (4294967295).
+ *
+ *       This interval should not be less than the collection period of the
+ *       underlying PSP module, otherwise the same data will be reported.
+ *
  */
-#define HS_UTIL_CYCLES_PER_INTERVAL 1
+#define HS_CPU_UTILIZATION_CYCLES_PER_INTERVAL 30
 
 /**
- * \brief CPU Utilization Total Utils Per Interval
+ * \brief CPU Utilization Maximum Range
  *
  *  \par Description:
- *       Number of Utils (counts) equal to full utilization. This allows for higher
+ *       Number of steps equal to full utilization. This allows for higher
  *       resolution than percentages, and non decimal based values.
  *
  *  \par Limits:
  *       This parameter can't be larger than an unsigned 32 bit
  *       integer (4294967295).
  */
-#define HS_UTIL_PER_INTERVAL_TOTAL 10000
+#define HS_CPU_UTILIZATION_MAX 10000
 
 /**
  * \brief CPU Utilization Hogging Utils Per Interval
@@ -404,63 +390,9 @@
  *       during one interval. A greater number of counts is also considered hogging.
  *
  *  \par Limits:
- *       This parameter can't be larger than #HS_UTIL_PER_INTERVAL_TOTAL.
+ *       This parameter can't be larger than #HS_CPU_UTILIZATION_MAX.
  */
 #define HS_UTIL_PER_INTERVAL_HOGGING 9900
-
-/**
- * \brief CPU Utilization Conversion Factor Multiplication 1 (custom)
- *
- *  \par Description:
- *       First multiplication conversion factor. Number of idle ticks is multiplied
- *       this value first when converting to utils.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       There may be processor dependent limits on value. Note that all math
- *       is done using "uint32" values; it is important that the number
- *       of loop iterations in HS_IDLE, times this value, not overflow.
- *
- *       The result of the conversion must be a 32 bit signed integer
- *       (between -2147483648 and 2147483647).
- */
-#define HS_UTIL_CONV_MULT1 1
-
-/**
- * \brief CPU Utilization Conversion Factor Division (custom)
- *
- *  \par Description:
- *       Division conversion factor. Number of idle ticks is divided by this value
- *       after it has been multiplied by #HS_UTIL_CONV_MULT1.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       There may be processor dependent limits on value.
- *
- *       The result of the conversion must be a 32 bit signed integer
- *       (between -2147483648 and 2147483647).
- */
-#define HS_UTIL_CONV_DIV 10000
-
-/**
- * \brief CPU Utilization Conversion Factor Multiplication 2 (custom)
- *
- *  \par Description:
- *       Second multiplication conversion factor. Number of idle ticks is multiplied
- *       this value after being divided by #HS_UTIL_CONV_DIV after being multiplied by
- *       #HS_UTIL_CONV_MULT1 when converting to utils.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       There may be processor dependent limits on value.
- *
- *       The result of the conversion must be a 32 bit signed integer
- *       (between -2147483648 and 2147483647).
- */
-#define HS_UTIL_CONV_MULT2 1
 
 /**
  * \brief CPU Utilization Hogging Timeout
@@ -500,38 +432,6 @@
  *       This parameter can't be larger than #HS_UTIL_PEAK_NUM_INTERVAL .
  */
 #define HS_UTIL_AVERAGE_NUM_INTERVAL 4
-
-/**
- * \brief CPU Utilization Diagnostics Mask (custom)
- *
- *  \par Description:
- *       Count mask for CPU Utilization Calibration. Time will be marked
- *       when (Counts & Mask) == Mask
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       This parameter can't be larger than an unsigned 32 bit
- *       integer (4294967295).
- */
-#define HS_UTIL_DIAG_MASK 0xFFFFFFFF
-
-/**
- * \brief CPU Utilization Diagnostics Array Configuration (custom)
- *
- *  \par Description:
- *       Time will be marked into an array of subseconds. The independant parameter
- *       controls the exponent to which 2 is raised to determine the array size. As
- *       such, large values will require significant memory usage.
- *       Note that these values are only necessarily relevant in the
- *       default hs_custom.c.
- *
- *  \par Limits:
- *       This parameter must be less than 32 and may not be negative.
- */
-#define HS_UTIL_TIME_DIAG_ARRAY_POWER  4
-#define HS_UTIL_TIME_DIAG_ARRAY_LENGTH (1 << (HS_UTIL_TIME_DIAG_ARRAY_POWER))
-#define HS_UTIL_TIME_DIAG_ARRAY_MASK   (HS_UTIL_TIME_DIAG_ARRAY_LENGTH - 1)
 
 /**
  * \brief Mission specific version number for HS application

@@ -49,15 +49,15 @@
 
 /**
   \page cfshsintro CFS Health and Safety Introduction
-        
+
   <H2> Scope </H2>
 
   This document provides a complete specification for the commands and telemetry associated
-  with the Health and Safety (HS) application software.  The document is intended primarily 
-  for users of the software (operations personal, test engineers, and maintenance personnel).  
-  The last section of the document, the deployment guide section, is intended for mission 
-  developers when deploying and configuring the HS application software for a mission 
-  flight software build environment. 
+  with the Health and Safety (HS) application software.  The document is intended primarily
+  for users of the software (operations personal, test engineers, and maintenance personnel).
+  The last section of the document, the deployment guide section, is intended for mission
+  developers when deploying and configuring the HS application software for a mission
+  flight software build environment.
 
   \ref cfshsversion
 
@@ -107,18 +107,18 @@
 
 /**
     \page cfshsovr CFS Health and Safety Overview
-    
+
     The CFS Health and Safety (HS) application provides functionality for Application Monitoring,
     Event Monitoring, Hardware Watchdog Servicing, Execution Counter Reporting (optional), and CPU
     Aliveness Indication (via UART).
-    
+
     Application Monitoring, Event Monitoring, and Execution Counter Reporting are configurable by
     table while the application is running. Application Monitoring, Event Monitoring and CPU
     Aliveness Indication can be disabled or enabled by ground command, and can be configured to
     be disabled or enabled (if a table is provided) on startup.
-    
+
     \section HS Design Overview
-    
+
     The Health and Safety application nominally runs once per second. First, it makes updates based
     on any table loads during the previous second. Next, it performs Application Monitoring, if
     enabled, in the order listed in the table, taking actions if necessary. Next, the Aliveness
@@ -126,13 +126,13 @@
     received during the previous cycle are checked, in order, if enabled, against the Event Monitor
     Table (in the order listed in the table) and actions are taken if necessary. Next, all commands
     and housekeeping requests received during the previous cycle are processed. Finally, the hardware
-    watchdog is serviced after which the HS application waits until the next cycle to begin the 
+    watchdog is serviced after which the HS application waits until the next cycle to begin the
     process again.
 **/
 
 /**
   \page cfshsopr CFS Health and Safety Operation
-  
+
   The Health and Safety Application consists of several mostly independent components. The following
   describes these components and their potential uses.
 
@@ -274,7 +274,7 @@
 
 /**
   \page cfshsdg CFS Health and Safety Deployment Guide
-  
+
   The Health and Safety application cycle may be any length of time, but typically 1 Hz is chosen as the
   desired rate. The cycle time is important when considering all of the configuration parameters and directly
   affects the values that should be chosen for Application Monitoring. The cycle is initiated by pending
@@ -286,7 +286,7 @@
   the HS processing cycle is over, before it pends on the Software Bus for the next packet. Just as a general
   note, configuration of how HS should run should be carefully considered in the context of the system it
   will be run on and the desires of the project. As some examples:
- 
+
   On a system with a fairly reliable schedule, the easiest method for setting up HS to run could be to add
   the #HS_WAKEUP_MID to the Scheduler (SCH) Application to be sent once per second, setting
   #HS_POST_PROCESSING_DELAY to 0 and #HS_WAKEUP_TIMEOUT to #CFE_SB_PEND_FOREVER (or to greater than a second
@@ -378,13 +378,13 @@
   marker can also be used by dumping performance data with different masks set which may (or may not)
   provide higher resolution timing data as the performance monitor uses a different timer.
 
-  The second step is to choose the #HS_UTIL_PER_INTERVAL_TOTAL value: this is equivalent to one full
+  The second step is to choose the #HS_CPU_UTILIZATION_MAX value: this is equivalent to one full
   interval of CPU utilization, so if a value of 100 was used, then the value reported in telemetry would
   be the percentage. Alternatively a higher value (10000 or 100000) could provide higher resolution
   information if the calibration is of high enough precision and accuracy. The calibration is then
   configured using the following equation:
 
-  #HS_UTIL_PER_INTERVAL_TOTAL = (((Max Number of Idle Task Cycles per Second * #HS_UTIL_CONV_MULT1 ) /
+  #HS_CPU_UTILIZATION_MAX = (((Max Number of Idle Task Cycles per Second * #HS_UTIL_CONV_MULT1 ) /
                                 #HS_UTIL_CONV_DIV ) * #HS_UTIL_CONV_MULT2)
 
   The multiplication and division parameters should be set so as to prevent overflows (of 32 bit values)
@@ -393,7 +393,7 @@
   no further calibration would be necessary.
 
   Also, please be aware that HS has a performance ID, #HS_APPMAIN_PERF_ID, that keeps track of the
-  performance of the HS app.    
+  performance of the HS app.
 **/
 
 /**
@@ -401,14 +401,14 @@
 
   The CFS Health and Safety application utilizes three (if not using Execution Counter Reporting)
   or four tables.
-    
+
   <H2> Application Monitor Table (AMT) </H2>
-    
+
   The AMT is the configuration table for the HS Application Monitor, defining when to take action
   and what action to take.
-    
+
   The AMT consists of an array of records numbering #HS_MAX_MONITORED_APPS defined by #HS_AMTEntry_t.
-    
+
   <UL>
     <LI> The Application Name should be the name of the application as the system knows it: up
          to #OS_MAX_API_NAME in length.
@@ -416,35 +416,35 @@
          in the table are no longer than the maximum length.
     <LI> The Cycle Count is the number of HS cycles that the named application's execution counter
          must not be incremented before the defined action is taken.
-    <LI> The Action Type is the action to take: 
+    <LI> The Action Type is the action to take:
     <UL>
-        <LI> #HS_AMT_ACT_NOACT for a disabled entry.      
+        <LI> #HS_AMT_ACT_NOACT for a disabled entry.
         <LI> #HS_AMT_ACT_PROC_RESET for an entry that causes a processor reset.
         <LI> #HS_AMT_ACT_APP_RESTART for an entry that restarts the named application.
         <LI> #HS_AMT_ACT_EVENT for an entry that only generates an event message.
         <LI> HS_AMT_ACT_MSG(num) for an entry that generates a message action, where 'num' is
              the index into the Message Actions Table.
-    </UL>  
+    </UL>
   </UL>
 
   While there is no valid AMT loaded, the HS Application Monitor will be disabled (it will be disabled
   again if an attempt to enable it is made).
 
   <H2> Event Monitor Table (EMT) </H2>
-    
+
   The EMT is the configuration table for the HS Event Monitor, defining when to take action and what action to take.
-    
+
   The EMT consists of an array of records numbering #HS_MAX_MONITORED_EVENTS defined by #HS_EMTEntry_t.
-    
+
   <UL>
     <LI> The Application Name should be the name of the application as the system knows it: up
          to #OS_MAX_API_NAME in length.
     <LI> The Null Terminator must be 0: this exists as quick method making sure that the strings in
          the table are no longer than the maximum length.
     <LI> The Event ID is the number of the event being monitored for.
-    <LI> The Action Type is the action to take: 
+    <LI> The Action Type is the action to take:
     <UL>
-        <LI> #HS_EMT_ACT_NOACT for a disabled entry.      
+        <LI> #HS_EMT_ACT_NOACT for a disabled entry.
         <LI> #HS_EMT_ACT_PROC_RESET for an entry that causes a processor reset.
         <LI> #HS_EMT_ACT_APP_RESTART for an entry that restarts the named application.
         <LI> #HS_EMT_ACT_APP_DELETE for an entry that deletes the named application.
@@ -455,13 +455,13 @@
 
   While there is no valid EMT loaded, the HS Event Monitor will be disabled (it will be disabled
   again if an attempt to enable it is made).
-    
+
   <H2> Message Actions Table (MAT) </H2>
-    
+
   The MAT stores the messages sent by the HS Application Monitor or HS Event Monitor Message Action Type.
-    
+
   The MAT consists of an array of records numbering #HS_MAX_MSG_ACT_TYPES defined by #HS_MATEntry_t.
-    
+
   <UL>
     <LI> The Cooldown value determines how many cycles must be waited before a message can be sent
          again; a value of 0 means the message can be sent multiple times in one cycle, a value of
@@ -470,20 +470,20 @@
     <LI> The Message is an array of bytes of length #HS_MAX_MSG_ACT_SIZE which contains the message
          to be sent. Keep byte-swapping issues in mind when populating this field.
     <LI> The Enable State determines whether the message action in that record can be sent:
-    <UL> 
+    <UL>
         <LI> #HS_MAT_STATE_DISABLED for a disabled entry.
         <LI> #HS_MAT_STATE_ENABLED for an enabled entry which will generate an event when sent.
         <LI> #HS_MAT_STATE_NOEVENT for an enabled entry which will not generate an event when sent.
     </UL>
   </UL>
-    
+
   While there is no valid MAT loaded, no Message Actions will be sent.
-    
+
   <H2> Execution Counter Table (XCT) </H2>
 
   The EMT is the configuration table for the HS Execution Counter reporting, defining which counters
   are reported in telemetry.
-    
+
   The XCT consists of an array of records numbering #HS_MAX_EXEC_CNT_SLOTS defined by #HS_XCTEntry_t.
 
   <UL>
@@ -491,16 +491,16 @@
          it: up to #OS_MAX_API_NAME in length.
     <LI> The Null Terminator must be 0: this exists as quick method making sure that the strings
          in the table are no longer than the maximum length.
-    <LI> The Resource Type is the type of resource being monitored: 
-    <UL> 
-      <LI> #HS_XCT_TYPE_NOTYPE for a disabled entry.      
+    <LI> The Resource Type is the type of resource being monitored:
+    <UL>
+      <LI> #HS_XCT_TYPE_NOTYPE for a disabled entry.
       <LI> #HS_XCT_TYPE_APP_MAIN for an Application Main Task.
       <LI> #HS_XCT_TYPE_APP_CHILD for a Child Task.
       <LI> #HS_XCT_TYPE_ISR for an ISR counter.
       <LI> #HS_XCT_TYPE_DEVICE for a Device Driver counter.
     </UL>
   </UL>
-    
+
   While there is no valid XCT loaded, all Execution Counters in telemetry will be reported
   as invalid (0xFFFFFFFF).
 **/
@@ -528,7 +528,7 @@
   </B> <BR> <BR> <I>
      RTSes may still be started using Message Actions, provided your system is using the Stored
      Command (SC) Application. Message Actions were added in favor of retaining RTS capabilities
-     as they provide a more generic solution (such as systems without SC or with an alternative type of SC). 
+     as they provide a more generic solution (such as systems without SC or with an alternative type of SC).
   </I>
 
   <B> (Q)

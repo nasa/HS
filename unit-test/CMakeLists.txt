@@ -15,9 +15,7 @@ add_cfe_coverage_stubs("hs_internal"
   stubs/hs_dispatch_stubs.c
   stubs/hs_monitors_stubs.c
   stubs/hs_utils_stubs.c
-  stubs/hs_custom_global_stubs.c
-  stubs/hs_custom_internal_stubs.c
-  stubs/hs_custom_dispatch_stubs.c
+  stubs/hs_sysmon_stubs.c
 )
 
 # Link with the cfe core stubs and unit test assert libs

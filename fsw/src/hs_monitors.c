@@ -28,8 +28,7 @@
 *************************************************************************/
 #include "hs_app.h"
 #include "hs_monitors.h"
-#include "hs_custom.h"
-#include "hs_custom_internal.h"
+#include "hs_sysmon.h"
 #include "hs_tbldefs.h"
 #include "hs_events.h"
 #include "hs_utils.h"
@@ -374,8 +373,8 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MonitorUtilization(void)
 {
-    int32  CurrentUtil   = 0;
-    uint32 UtilIndex     = 0;
+    int32  CurrentUtil;
+    uint32 UtilIndex;
     uint32 CombinedUtil  = 0;
     uint32 PeakUtil      = 0;
     uint32 ThisUtilIndex = HS_AppData.CurrentCPUUtilIndex;
@@ -387,61 +386,65 @@ void HS_MonitorUtilization(void)
         HS_AppData.CurrentCPUUtilIndex = 0;
     }
 
-    CurrentUtil = HS_CustomGetUtil();
-
-    if (CurrentUtil > HS_UTIL_PER_INTERVAL_TOTAL)
-    {
-        CurrentUtil = HS_UTIL_PER_INTERVAL_TOTAL;
-    }
+    CurrentUtil = HS_SysMonGetCpuUtilization();
 
     if (CurrentUtil < 0)
     {
-        CurrentUtil = 0;
-    }
-
-    if ((CurrentUtil >= HS_UTIL_PER_INTERVAL_HOGGING) && (HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED))
-    {
-        HS_AppData.CurrentCPUHoggingTime++;
-
-        if (HS_AppData.CurrentCPUHoggingTime == HS_AppData.MaxCPUHoggingTime)
-        {
-            CFE_EVS_SendEvent(HS_CPUMON_HOGGING_ERR_EID, CFE_EVS_EventType_ERROR, "CPU Hogging Detected");
-            CFE_ES_WriteToSysLog("HS App: CPU Hogging Detected\n");
-        }
+        /* CPU utilization not known, report unique value that indicates this */
+        HS_AppData.UtilCpuAvg  = 0xFFFFFFFF;
+        HS_AppData.UtilCpuPeak = 0xFFFFFFFF;
     }
     else
     {
-        HS_AppData.CurrentCPUHoggingTime = 0;
-    }
-
-    HS_AppData.UtilizationTracker[ThisUtilIndex] = CurrentUtil;
-
-    for (UtilIndex = 0; UtilIndex < HS_UTIL_PEAK_NUM_INTERVAL; UtilIndex++)
-    {
-        if (HS_AppData.UtilizationTracker[UtilIndex] > PeakUtil)
+        if (CurrentUtil > HS_CPU_UTILIZATION_MAX)
         {
-            PeakUtil = HS_AppData.UtilizationTracker[UtilIndex];
+            CurrentUtil = HS_CPU_UTILIZATION_MAX;
         }
 
-        if (ThisUtilIndex >= HS_UTIL_AVERAGE_NUM_INTERVAL)
+        if ((CurrentUtil >= HS_UTIL_PER_INTERVAL_HOGGING) && (HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED))
         {
-            if ((UtilIndex > (ThisUtilIndex - HS_UTIL_AVERAGE_NUM_INTERVAL)) && (UtilIndex <= ThisUtilIndex))
+            HS_AppData.CurrentCPUHoggingTime++;
+
+            if (HS_AppData.CurrentCPUHoggingTime == HS_AppData.MaxCPUHoggingTime)
             {
-                CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+                CFE_EVS_SendEvent(HS_CPUMON_HOGGING_ERR_EID, CFE_EVS_EventType_ERROR, "CPU Hogging Detected");
+                CFE_ES_WriteToSysLog("HS App: CPU Hogging Detected\n");
             }
         }
         else
         {
-            if ((UtilIndex <= ThisUtilIndex) ||
-                (UtilIndex > (HS_UTIL_PEAK_NUM_INTERVAL - (HS_UTIL_AVERAGE_NUM_INTERVAL - ThisUtilIndex))))
+            HS_AppData.CurrentCPUHoggingTime = 0;
+        }
+
+        HS_AppData.UtilizationTracker[ThisUtilIndex] = CurrentUtil;
+
+        for (UtilIndex = 0; UtilIndex < HS_UTIL_PEAK_NUM_INTERVAL; UtilIndex++)
+        {
+            if (HS_AppData.UtilizationTracker[UtilIndex] > PeakUtil)
             {
-                CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+                PeakUtil = HS_AppData.UtilizationTracker[UtilIndex];
+            }
+
+            if (ThisUtilIndex >= HS_UTIL_AVERAGE_NUM_INTERVAL)
+            {
+                if ((UtilIndex > (ThisUtilIndex - HS_UTIL_AVERAGE_NUM_INTERVAL)) && (UtilIndex <= ThisUtilIndex))
+                {
+                    CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+                }
+            }
+            else
+            {
+                if ((UtilIndex <= ThisUtilIndex) ||
+                    (UtilIndex > (HS_UTIL_PEAK_NUM_INTERVAL - (HS_UTIL_AVERAGE_NUM_INTERVAL - ThisUtilIndex))))
+                {
+                    CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+                }
             }
         }
-    }
 
-    HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
-    HS_AppData.UtilCpuPeak = PeakUtil;
+        HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
+        HS_AppData.UtilCpuPeak = PeakUtil;
+    }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

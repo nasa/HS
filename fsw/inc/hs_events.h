@@ -913,7 +913,7 @@
  *  This event message is issued if the HS_CustomInit routine returns
  *  any value other than CFE_SUCCESS.
  */
-#define HS_CUSTOM_INIT_ERR_EID 74
+#define HS_SYSMON_INIT_ERR_EID 74
 
 /**
  * \brief HS AppMon Table Validation Null Pointer Event ID

@@ -20,24 +20,47 @@
 /**
  * @file
  *
- * Auto-Generated stub implementations for functions defined in hs_custom_dispatch header
+ * Auto-Generated stub implementations for functions defined in hs_sysmon header
  */
 
-#include "hs_custom_dispatch.h"
+#include "hs_sysmon.h"
 #include "utgenstub.h"
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_CustomCommands()
+ * Generated stub function for HS_SysMonCleanup()
  * ----------------------------------------------------
  */
-int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr)
+void HS_SysMonCleanup(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_CustomCommands, int32);
 
-    UT_GenStub_AddParam(HS_CustomCommands, const CFE_SB_Buffer_t *, BufPtr);
+    UT_GenStub_Execute(HS_SysMonCleanup, Basic, NULL);
+}
 
-    UT_GenStub_Execute(HS_CustomCommands, Basic, NULL);
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SysMonGetCpuUtilization()
+ * ----------------------------------------------------
+ */
+int32 HS_SysMonGetCpuUtilization(void)
+{
+    UT_GenStub_SetupReturnBuffer(HS_SysMonGetCpuUtilization, int32);
 
-    return UT_GenStub_GetReturnValue(HS_CustomCommands, int32);
+    UT_GenStub_Execute(HS_SysMonGetCpuUtilization, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_SysMonGetCpuUtilization, int32);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SysMonInit()
+ * ----------------------------------------------------
+ */
+CFE_Status_t HS_SysMonInit(void)
+{
+    UT_GenStub_SetupReturnBuffer(HS_SysMonInit, CFE_Status_t);
+
+    UT_GenStub_Execute(HS_SysMonInit, Basic, NULL);
+
+    return UT_GenStub_GetReturnValue(HS_SysMonInit, CFE_Status_t);
 }

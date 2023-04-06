@@ -24,7 +24,6 @@
 #include "hs_cmds.h"
 #include "hs_test_utils.h"
 #include "hs_dispatch.h"
-#include "hs_custom_dispatch.h"
 #include "hs_msgids.h"
 
 /* UT includes */
@@ -339,18 +338,7 @@ void HS_AppPipe_Test_DisableCPUHog(void)
 
 void HS_AppPipe_Test_InvalidCC(void)
 {
-    /* Setup for CustomCommands to handle it */
     HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), 99, sizeof(UT_CmdBuf));
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_ZERO(HS_AppData.CmdErrCount);
-
-    /* Setup for CustomCommands to NOT handle it */
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), 99, sizeof(UT_CmdBuf));
-    UT_SetDefaultReturnValue(UT_KEY(HS_CustomCommands), CFE_STATUS_BAD_COMMAND_CODE);
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);

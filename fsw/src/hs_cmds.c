@@ -27,7 +27,6 @@
 *************************************************************************/
 #include "hs_app.h"
 #include "hs_cmds.h"
-#include "hs_custom_internal.h"
 #include "hs_monitors.h"
 #include "hs_msgids.h"
 #include "hs_events.h"

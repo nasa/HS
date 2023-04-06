@@ -31,7 +31,6 @@
 #include "hs_msgdefs.h"
 #include "hs_events.h"
 #include "hs_dispatch.h"
-#include "hs_custom_dispatch.h"
 #include "hs_version.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -164,14 +163,11 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     break;
 
                 default:
-                    if (HS_CustomCommands(BufPtr) != CFE_SUCCESS)
-                    {
-                        CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
-                                          "Invalid command code: ID = 0x%08lX, CC = %d",
-                                          (unsigned long)CFE_SB_MsgIdToValue(MessageID), CommandCode);
+                    CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
+                                      "Invalid command code: ID = 0x%08lX, CC = %d",
+                                      (unsigned long)CFE_SB_MsgIdToValue(MessageID), CommandCode);
 
-                        HS_AppData.CmdErrCount++;
-                    }
+                    HS_AppData.CmdErrCount++;
                     break;
 
             } /* end CommandCode switch */
