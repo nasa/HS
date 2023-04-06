@@ -35,21 +35,6 @@
  ************************************************************************/
 
 /**
- * \brief Process a command pipe message
- *
- *  \par Description
- *       Processes a single software bus command pipe message. Checks
- *       the message and command IDs and calls the appropriate routine
- *       to handle the message.
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \param[in] BufPtr Pointer to Software Bus buffer
- */
-void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr);
-
-/**
  * \brief Reset counters
  *
  *  \par Description
@@ -89,7 +74,7 @@ void HS_AcquirePointers(void);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  */
-void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr);
+void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Noop command

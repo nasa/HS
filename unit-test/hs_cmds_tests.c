@@ -52,471 +52,7 @@ int32 HS_CMDS_TEST_CFE_ES_GetTaskInfoHook(void *UserObj, int32 StubRetcode, uint
     return CFE_SUCCESS;
 }
 
-void HS_AppPipe_Test_SendHK(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
-
-    memset(EMTable, 0, sizeof(EMTable));
-
-    HS_AppData.EMTablePtr = EMTable;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_SEND_HK_MID);
-    FcnCode   = 0;
-    MsgSize   = sizeof(UT_CmdBuf.SendHkCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_Noop(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoopCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    /* Assert */
-    UtAssert_INT32_EQ(call_count_CFE_EVS_SendEvent, 1);
-    UtAssert_INT32_EQ(HS_AppData.CmdErrCount, 0);
-    UtAssert_INT32_EQ(HS_AppData.CmdCount, 1);
-}
-
-void HS_AppPipe_Test_Reset(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_RESET_CC;
-    MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_EnableAppMon(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_AMTEntry_t     AMTable[HS_MAX_MONITORED_APPS];
-
-    memset(AMTable, 0, sizeof(AMTable));
-
-    HS_AppData.AMTablePtr = AMTable;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_APP_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_DisableAppMon(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_AMTEntry_t     AMTable[HS_MAX_MONITORED_APPS];
-
-    HS_AppData.AMTablePtr = AMTable;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_APP_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_EnableEventMon(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
-
-    HS_AppData.EMTablePtr = EMTable;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_EVENT_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_DisableEventMon(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_EMTEntry_t     EMTable[HS_MAX_MONITORED_EVENTS];
-
-    HS_AppData.EMTablePtr = EMTable;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_EVENT_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_EnableAliveness(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_DisableAliveness(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_ResetResetsPerformed(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_RESET_RESETS_PERFORMED_CC;
-    MsgSize   = sizeof(UT_CmdBuf.ResetResetsPerformedCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_SetMaxResets(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_SET_MAX_RESETS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetMaxResetsCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_EnableCPUHog(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_CPU_HOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_DisableCPUHog(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_CPU_HOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    /* Generates 1 message we don't care about in this test */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_InvalidCC(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    int32             strCmpResult;
-    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
-             "Invalid command code: ID = 0x%%08lX, CC = %%d");
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = 99;
-    MsgSize   = sizeof(UT_CmdBuf);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* bypass custom command check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_CustomCommands), !CFE_SUCCESS);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
-
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CC_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-
-    strCmpResult =
-        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
-
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_InvalidCCNoEvent(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = 99;
-    MsgSize   = sizeof(UT_CmdBuf);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdErrCount == 0, "HS_AppData.CmdErrCount == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_AppPipe_Test_InvalidMID(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    int32             strCmpResult;
-    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Invalid command pipe message ID: 0x%%08lX");
-
-    TestMsgId = CFE_SB_INVALID_MSG_ID;
-    FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
-    /* Execute the function being tested */
-    HS_AppPipe(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
-
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_MID_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-
-    strCmpResult =
-        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
-
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_HousekeepingReq_Test_InvalidEventMon(void)
+void HS_SendHkCmd_Test_InvalidEventMon(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -544,9 +80,6 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
     /* Fail first, succeed on second */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     HS_AppData.CmdCount                = 1;
     HS_AppData.CmdErrCount             = 2;
     HS_AppData.CurrentAppMonState      = 3;
@@ -564,7 +97,7 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
     }
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -598,21 +131,7 @@ void HS_HousekeepingReq_Test_InvalidEventMon(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_InvalidMsgLength(void)
-{
-    /* set message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
-
-    /* No errors generated for an invalid message length */
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
+void HS_SendHkCmd_Test_AllFlagsEnabled(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -642,9 +161,6 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT;
 
     HS_AppData.CmdCount                = 1;
@@ -671,7 +187,7 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
     ExpectedStatusFlags |= HS_CDS_IN_USE;
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -707,7 +223,7 @@ void HS_HousekeepingReq_Test_AllFlagsEnabled(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
+void HS_SendHkCmd_Test_ResourceTypeAppMain(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -763,16 +279,13 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
     /* Causes line "Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId)" to be reached */
     UT_SetDeferredRetcode(UT_KEY(OS_TaskGetIdByName), 1, OS_SUCCESS);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Sets TaskInfo.ExecutionCounter to 5, returns CFE_SUCCESS, goes to line "ExeCount = TaskInfo.ExecutionCounter" */
     TaskInfo.ExecutionCounter = 5;
     UT_SetDataBuffer(UT_KEY(CFE_ES_GetTaskInfo), &TaskInfo, sizeof(TaskInfo), false);
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -808,7 +321,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppMain(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
+void HS_SendHkCmd_Test_ResourceTypeAppChild(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -863,16 +376,13 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
     /* Causes line "Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId)" to be reached */
     UT_SetDeferredRetcode(UT_KEY(OS_TaskGetIdByName), 1, OS_SUCCESS);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Sets TaskInfo.ExecutionCounter to 5, returns CFE_SUCCESS, goes to line "ExeCount = TaskInfo.ExecutionCounter" */
     TaskInfo.ExecutionCounter = 5;
     UT_SetDataBuffer(UT_KEY(CFE_ES_GetTaskInfo), &TaskInfo, sizeof(TaskInfo), false);
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -908,7 +418,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChild(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
+void HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -963,9 +473,6 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
     /* Causes line "Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId)" to be skipped */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetTaskIDByName), 1, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Sets TaskInfo.ExecutionCounter to 5, returns CFE_SUCCESS, goes to line "ExeCount = TaskInfo.ExecutionCounter" */
     TaskInfo.ExecutionCounter = 5;
     UT_SetDataBuffer(UT_KEY(CFE_ES_GetTaskInfo), &TaskInfo, sizeof(TaskInfo), false);
@@ -973,7 +480,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1009,7 +516,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
+void HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -1063,14 +570,11 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
     /* Causes line "Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId)" to be skipped */
     UT_SetDeferredRetcode(UT_KEY(OS_TaskGetIdByName), 1, OS_SUCCESS);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Sets CFE_ES_GetTaskInfo to return an error and bypass "ExeCount = TaskInfo.ExecutionCounter" */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetTaskInfo), 1, -1);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1106,7 +610,7 @@ void HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
+void HS_SendHkCmd_Test_ResourceTypeDevice(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -1161,14 +665,11 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
     /* Causes line "Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId)" to be reached */
     UT_SetDeferredRetcode(UT_KEY(OS_TaskGetIdByName), 1, OS_SUCCESS);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Sets TaskInfo.ExecutionCounter to 5, returns CFE_SUCCESS, goes to line "ExeCount = TaskInfo.ExecutionCounter" */
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1204,7 +705,7 @@ void HS_HousekeepingReq_Test_ResourceTypeDevice(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeISR(void)
+void HS_SendHkCmd_Test_ResourceTypeISR(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -1233,9 +734,6 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT;
 
@@ -1259,7 +757,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
     HS_AppData.XCTablePtr[0].ResourceType = HS_XCT_TYPE_ISR;
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1295,7 +793,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISR(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
+void HS_SendHkCmd_Test_ResourceTypeISRGenCounterError(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -1324,9 +822,6 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT;
 
@@ -1353,7 +848,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_ES_GetGenCounterIDByName), -1);
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1389,7 +884,7 @@ void HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
+void HS_SendHkCmd_Test_ResourceTypeUnknown(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
     CFE_MSG_FcnCode_t FcnCode;
@@ -1420,9 +915,6 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     HS_AppData.EMTablePtr[0].ActionType = HS_EMT_ACT_NOACT;
 
     HS_AppData.CmdCount                = 1;
@@ -1449,7 +941,7 @@ void HS_HousekeepingReq_Test_ResourceTypeUnknown(void)
     ExpectedStatusFlags |= HS_CDS_IN_USE;
 
     /* Execute the function being tested */
-    HS_HousekeepingReq(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.Buf);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -1501,9 +993,6 @@ void HS_Noop_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_NoopCmd(&UT_CmdBuf.Buf);
 
@@ -1523,33 +1012,6 @@ void HS_Noop_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_Noop_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_NOOP_CC;
-    MsgSize   = sizeof(UT_CmdBuf.NoopCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    /* Execute the function being tested */
-    HS_NoopCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_ResetCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1565,9 +1027,6 @@ void HS_ResetCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
     HS_ResetCmd(&UT_CmdBuf.Buf);
@@ -1588,40 +1047,8 @@ void HS_ResetCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_ResetCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_RESET_CC;
-    MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    /* Execute the function being tested */
-    HS_ResetCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_ResetCounters_Test(void)
 {
-    /* No setup required for this test */
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_ResetCounters();
 
@@ -1655,9 +1082,6 @@ void HS_EnableAppMonCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     HS_AppData.AMTablePtr = AMTable;
 
     /* Execute the function being tested */
@@ -1682,41 +1106,6 @@ void HS_EnableAppMonCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableAppMonCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-    HS_AMTEntry_t     AMTable[HS_MAX_MONITORED_APPS];
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_APP_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* set message length check error */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.AMTablePtr = AMTable;
-
-    HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
-
-    /* Execute the function being tested */
-    HS_EnableAppMonCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_DISABLED,
-                  "HS_AppData.CurrentAppMonState == HS_STATE_DISABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_DisableAppMonCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1732,9 +1121,6 @@ void HS_DisableAppMonCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     /* Execute the function being tested */
     HS_DisableAppMonCmd(&UT_CmdBuf.Buf);
@@ -1758,38 +1144,6 @@ void HS_DisableAppMonCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableAppMonCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_APP_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
-
-    /* Execute the function being tested */
-    HS_DisableAppMonCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_ENABLED,
-                  "HS_AppData.CurrentAppMonState == HS_STATE_ENABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_EnableEventMonCmd_Test_Disabled(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1805,9 +1159,6 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
 
@@ -1833,38 +1184,6 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableEventMonCmd_Test_DisabledMsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_EVENT_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
-
-    /* Execute the function being tested */
-    HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_DISABLED,
-                  "HS_AppData.CurrentEventMonState == HS_STATE_DISABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -1880,9 +1199,6 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
 
@@ -1929,9 +1245,6 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
 
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_SubscribeEx), 1, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
 
@@ -1975,9 +1288,6 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
 
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_SubscribeEx), 2, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
 
@@ -2015,9 +1325,6 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
 
@@ -2058,9 +1365,6 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
 
@@ -2107,9 +1411,6 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
 
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_Unsubscribe), 1, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
 
@@ -2153,9 +1454,6 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
 
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_Unsubscribe), 2, -1);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
 
@@ -2178,38 +1476,6 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableEventMonCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_EVENT_MON_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableEventMonCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
-
-    /* Execute the function being tested */
-    HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_ENABLED,
-                  "HS_AppData.CurrentEventMonState == HS_STATE_ENABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_EnableAlivenessCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2225,9 +1491,6 @@ void HS_EnableAlivenessCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
 
@@ -2253,38 +1516,6 @@ void HS_EnableAlivenessCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableAlivenessCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
-
-    /* Execute the function being tested */
-    HS_EnableAlivenessCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED,
-                  "HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_DisableAlivenessCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2300,9 +1531,6 @@ void HS_DisableAlivenessCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
 
@@ -2328,38 +1556,6 @@ void HS_DisableAlivenessCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableAlivenessCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_ALIVENESS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
-
-    /* Execute the function being tested */
-    HS_DisableAlivenessCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED,
-                  "HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_EnableCpuHogCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2375,9 +1571,6 @@ void HS_EnableCpuHogCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
 
@@ -2403,38 +1596,6 @@ void HS_EnableCpuHogCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_EnableCpuHogCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_ENABLE_CPU_HOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
-
-    /* Execute the function being tested */
-    HS_EnableCpuHogCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED,
-                  "HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_DisableCpuHogCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2450,9 +1611,6 @@ void HS_DisableCpuHogCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
 
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
 
@@ -2478,38 +1636,6 @@ void HS_DisableCpuHogCmd_Test(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
-void HS_DisableCpuHogCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_DISABLE_CPU_HOG_CC;
-    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
-
-    /* Execute the function being tested */
-    HS_DisableCpuHogCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED,
-                  "HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
-}
-
 void HS_ResetResetsPerformedCmd_Test(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2527,9 +1653,6 @@ void HS_ResetResetsPerformedCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     /* Execute the function being tested */
     HS_ResetResetsPerformedCmd(&UT_CmdBuf.Buf);
 
@@ -2546,33 +1669,6 @@ void HS_ResetResetsPerformedCmd_Test(void)
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_ResetResetsPerformedCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_RESET_RESETS_PERFORMED_CC;
-    MsgSize   = sizeof(UT_CmdBuf.ResetResetsPerformedCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    /* Execute the function being tested */
-    HS_ResetResetsPerformedCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2596,9 +1692,6 @@ void HS_SetMaxResetsCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), true);
-
     PayloadPtr = &UT_CmdBuf.SetMaxResetsCmd.Payload;
 
     PayloadPtr->MaxResets = 5;
@@ -2619,39 +1712,6 @@ void HS_SetMaxResetsCmd_Test(void)
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-}
-
-void HS_SetMaxResetsCmd_Test_MsgLengthError(void)
-{
-    CFE_SB_MsgId_t    TestMsgId;
-    CFE_MSG_FcnCode_t FcnCode;
-    size_t            MsgSize;
-
-    HS_SetMaxResets_Payload_t *PayloadPtr;
-
-    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_SET_MAX_RESETS_CC;
-    MsgSize   = sizeof(UT_CmdBuf.SetMaxResetsCmd);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
-    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
-
-    /* ignore dummy message length check */
-    UT_SetDefaultReturnValue(UT_KEY(HS_VerifyMsgLength), false);
-
-    PayloadPtr = &UT_CmdBuf.SetMaxResetsCmd.Payload;
-
-    PayloadPtr->MaxResets = 5;
-
-    /* Execute the function being tested */
-    HS_SetMaxResetsCmd(&UT_CmdBuf.Buf);
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -3227,68 +2287,36 @@ void HS_MsgActsStatusRefresh_Test(void)
  */
 void UtTest_Setup(void)
 {
-    UtTest_Add(HS_AppPipe_Test_SendHK, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_SendHK");
-    UtTest_Add(HS_AppPipe_Test_Noop, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_Noop");
-    UtTest_Add(HS_AppPipe_Test_Reset, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_Reset");
-    UtTest_Add(HS_AppPipe_Test_EnableAppMon, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableAppMon");
-    UtTest_Add(HS_AppPipe_Test_DisableAppMon, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableAppMon");
-    UtTest_Add(HS_AppPipe_Test_EnableEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableEventMon");
-    UtTest_Add(HS_AppPipe_Test_DisableEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableEventMon");
-    UtTest_Add(HS_AppPipe_Test_EnableAliveness, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableAliveness");
-    UtTest_Add(HS_AppPipe_Test_DisableAliveness, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableAliveness");
-    UtTest_Add(HS_AppPipe_Test_ResetResetsPerformed, HS_Test_Setup, HS_Test_TearDown,
-               "HS_AppPipe_Test_ResetResetsPerformed");
-    UtTest_Add(HS_AppPipe_Test_SetMaxResets, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_SetMaxResets");
-    UtTest_Add(HS_AppPipe_Test_EnableCPUHog, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableCPUHog");
-    UtTest_Add(HS_AppPipe_Test_DisableCPUHog, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableCPUHog");
-    UtTest_Add(HS_AppPipe_Test_InvalidCC, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_InvalidCC");
-    UtTest_Add(HS_AppPipe_Test_InvalidCCNoEvent, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_InvalidCCNoEvent");
-    UtTest_Add(HS_AppPipe_Test_InvalidMID, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_InvalidMID");
+    UtTest_Add(HS_SendHkCmd_Test_InvalidEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_InvalidEventMon");
 
-    UtTest_Add(HS_HousekeepingReq_Test_InvalidEventMon, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_InvalidEventMon");
-    UtTest_Add(HS_HousekeepingReq_Test_InvalidMsgLength, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_InvalidMsgLength");
-
-    UtTest_Add(HS_HousekeepingReq_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_AllFlagsEnabled");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppMain, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeAppMain");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppChild, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeAppChild");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeAppChildTaskIdError");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeAppChildTaskInfoError");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeDevice, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeDevice");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeISR, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeISR");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeISRGenCounterError");
-    UtTest_Add(HS_HousekeepingReq_Test_ResourceTypeUnknown, HS_Test_Setup, HS_Test_TearDown,
-               "HS_HousekeepingReq_Test_ResourceTypeAppMain");
+    UtTest_Add(HS_SendHkCmd_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_AllFlagsEnabled");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppMain, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeAppMain");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChild, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeAppChild");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeDevice, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeDevice");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeISR, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_ResourceTypeISR");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeISRGenCounterError, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeISRGenCounterError");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeUnknown, HS_Test_Setup, HS_Test_TearDown,
+               "HS_SendHkCmd_Test_ResourceTypeAppMain");
 
     UtTest_Add(HS_Noop_Test, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test");
-    UtTest_Add(HS_Noop_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test_MsgLengthError");
 
     UtTest_Add(HS_ResetCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetCmd_Test");
-    UtTest_Add(HS_ResetCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown, "HS_ResetCmd_Test_MsgLengthError");
-
     UtTest_Add(HS_ResetCounters_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetCounters_Test");
 
     UtTest_Add(HS_EnableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAppMonCmd_Test");
-    UtTest_Add(HS_EnableAppMonCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_EnableAppMonCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_DisableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAppMonCmd_Test");
-    UtTest_Add(HS_DisableAppMonCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_DisableAppMonCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_EnableEventMonCmd_Test_Disabled, HS_Test_Setup, HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_Disabled");
-    UtTest_Add(HS_EnableEventMonCmd_Test_DisabledMsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_EnableEventMonCmd_Test_DisabledMsgLengthError");
 
     UtTest_Add(HS_EnableEventMonCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_AlreadyEnabled");
@@ -3305,32 +2333,18 @@ void UtTest_Setup(void)
                "HS_DisableEventMonCmd_Test_UnsubscribeLongError");
     UtTest_Add(HS_DisableEventMonCmd_Test_UnsubscribeShortError, HS_Test_Setup, HS_Test_TearDown,
                "HS_DisableEventMonCmd_Test_UnsubscribeShortError");
-    UtTest_Add(HS_DisableEventMonCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_DisableEventMonCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_EnableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAlivenessCmd_Test");
-    UtTest_Add(HS_EnableAlivenessCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_EnableAlivenessCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_DisableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAlivenessCmd_Test");
-    UtTest_Add(HS_DisableAlivenessCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_DisableAlivenessCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_EnableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableCpuHogCmd_Test");
-    UtTest_Add(HS_EnableCpuHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_EnableCpuHogCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_DisableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableCpuHogCmd_Test");
-    UtTest_Add(HS_DisableCpuHogCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_DisableCpuHogCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_ResetResetsPerformedCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetResetsPerformedCmd_Test");
-    UtTest_Add(HS_ResetResetsPerformedCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_ResetResetsPerformedCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_SetMaxResetsCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_SetMaxResetsCmd_Test");
-    UtTest_Add(HS_SetMaxResetsCmd_Test_MsgLengthError, HS_Test_Setup, HS_Test_TearDown,
-               "HS_SetMaxResetsCmd_Test_MsgLengthError");
 
     UtTest_Add(HS_AcquirePointers_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_AcquirePointers_Test_Nominal");
     UtTest_Add(HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled, HS_Test_Setup, HS_Test_TearDown,

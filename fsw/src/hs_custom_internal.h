@@ -137,27 +137,6 @@ void HS_CustomMonitorUtilization(void);
 int32 HS_CustomGetUtil(void);
 
 /**
- * \brief Process Custom Commands
- *
- *  \par Description
- *       This function allows for hs_custom.c to define custom commands.
- *       It will be called for any command code not already allocated
- *       to a Health and Safety command. If a custom command is found,
- *       then it is responsible for incrementing the command processed
- *       or command error counter as appropriate.
- *
- *  \par Assumptions, External Events, and Notes:
- *       If a command is found, this function MUST return #CFE_SUCCESS,
- *       otherwise is must not return #CFE_SUCCESS
- *
- *  \param[in] BufPtr Pointer to Software Bus buffer
- *
- *  \return Execution status, see \ref CFEReturnCodes
- *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
- */
-int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr);
-
-/**
  * \brief Task that increments counters
  *
  *  \par Description
@@ -221,7 +200,7 @@ void HS_MarkIdleCallback(void);
  *  \par Assumptions, External Events, and Notes:
  *       None
  */
-void HS_UtilDiagReport(void);
+void HS_ReportDiagCmd(const CFE_SB_Buffer_t *BufPtr);
 
 /**
  * \brief Set Utilization Parameters

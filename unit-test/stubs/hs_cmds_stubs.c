@@ -50,18 +50,6 @@ void HS_AppMonStatusRefresh(void)
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_AppPipe()
- * ----------------------------------------------------
- */
-void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_GenStub_AddParam(HS_AppPipe, const CFE_SB_Buffer_t *, BufPtr);
-
-    UT_GenStub_Execute(HS_AppPipe, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for HS_DisableAlivenessCmd()
  * ----------------------------------------------------
  */
@@ -158,18 +146,6 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_HousekeepingReq()
- * ----------------------------------------------------
- */
-void HS_HousekeepingReq(const CFE_SB_Buffer_t *BufPtr)
-{
-    UT_GenStub_AddParam(HS_HousekeepingReq, const CFE_SB_Buffer_t *, BufPtr);
-
-    UT_GenStub_Execute(HS_HousekeepingReq, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for HS_MsgActsStatusRefresh()
  * ----------------------------------------------------
  */
@@ -224,6 +200,18 @@ void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
     UT_GenStub_AddParam(HS_ResetResetsPerformedCmd, const CFE_SB_Buffer_t *, BufPtr);
 
     UT_GenStub_Execute(HS_ResetResetsPerformedCmd, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SendHkCmd()
+ * ----------------------------------------------------
+ */
+void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    UT_GenStub_AddParam(HS_SendHkCmd, const CFE_SB_Buffer_t *, BufPtr);
+
+    UT_GenStub_Execute(HS_SendHkCmd, Basic, NULL);
 }
 
 /*

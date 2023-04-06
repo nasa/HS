@@ -19,48 +19,42 @@
 
 /**
  * @file
- *   Utility functions for the cFS Health and Safety (HS) application.
+ *   Specification for the CFS Health and Safety (HS) mission specific
+ *   custom function private interface
  */
-#ifndef HS_UTILS_H
-#define HS_UTILS_H
+#ifndef HS_CUSTOM_DISPATCH_H
+#define HS_CUSTOM_DISPATCH_H
 
 /*************************************************************************
  * Includes
- *************************************************************************/
+ ************************************************************************/
 #include "cfe.h"
+#include "hs_platform_cfg.h"
+#include "hs_custom_internal.h"
+
+/*************************************************************************
+ * Exported Functions
+ *************************************************************************/
 
 /**
- * \brief Verify AMT Action Type
+ * \brief Process Custom Commands
  *
  *  \par Description
- *       Checks if the specified value is a valid AMT Action Type.
+ *       This function allows for hs_custom.c to define custom commands.
+ *       It will be called for any command code not already allocated
+ *       to a Health and Safety command. If a custom command is found,
+ *       then it is responsible for incrementing the command processed
+ *       or command error counter as appropriate.
  *
  *  \par Assumptions, External Events, and Notes:
- *       None
+ *       If a command is found, this function MUST return #CFE_SUCCESS,
+ *       otherwise is must not return #CFE_SUCCESS
  *
- *  \param[in] ActionType Action type to validate
+ *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \return Boolean action valid response
- *  \retval true  Action type valid
- *  \retval false Action type not valid
+ *  \return Execution status, see \ref CFEReturnCodes
+ *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-bool HS_AMTActionIsValid(uint16 ActionType);
-
-/**
- * \brief Verify EMT Action Type
- *
- *  \par Description
- *       Checks if the specified value is a valid EMT Action Type.
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \param[in] ActionType Action type to validate
- *
- *  \return Boolean action valid response
- *  \retval true  Action type valid
- *  \retval false Action type not valid
- */
-bool HS_EMTActionIsValid(uint16 ActionType);
+int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr);
 
 #endif

@@ -3,7 +3,9 @@ project(CFS_HS C)
 set(APP_SRC_FILES
   fsw/src/hs_monitors.c
   fsw/src/hs_utils.c
+  fsw/src/hs_dispatch.c
   fsw/src/hs_custom.c
+  fsw/src/hs_custom_dispatch.c
   fsw/src/hs_app.c
   fsw/src/hs_cmds.c
 )

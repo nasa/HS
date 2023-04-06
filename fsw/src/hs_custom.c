@@ -37,6 +37,7 @@
 #include "hs_utils.h"
 #include "hs_custom.h"
 #include "hs_custom_internal.h"
+#include "hs_dispatch.h"
 #include "hs_events.h"
 #include "hs_monitors.h"
 #include "hs_perfids.h"
@@ -217,50 +218,10 @@ void HS_CustomMonitorUtilization(void)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* Processes any additional commands                               */
-/*                                                                 */
-/* NOTE: For complete prolog information, see 'hs_custom.h'        */
-/*                                                                 */
-/* This function MUST return CFE_SUCCESS if any command is found   */
-/* and must NOT return CFE_SUCCESS if no command was found         */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr)
-{
-    int32 Status = CFE_SUCCESS;
-
-    CFE_MSG_FcnCode_t CommandCode = 0;
-
-    CFE_MSG_GetFcnCode(&BufPtr->Msg, &CommandCode);
-
-    switch (CommandCode)
-    {
-        case HS_REPORT_DIAG_CC:
-            HS_UtilDiagReport();
-            break;
-
-        case HS_SET_UTIL_PARAMS_CC:
-            HS_SetUtilParamsCmd(BufPtr);
-            break;
-
-        case HS_SET_UTIL_DIAG_CC:
-            HS_SetUtilDiagCmd(BufPtr);
-            break;
-
-        default:
-            Status = !CFE_SUCCESS;
-            break;
-
-    } /* end CommandCode switch */
-
-    return Status;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
 /* Report Utilization Diagnostics Information                      */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_UtilDiagReport(void)
+void HS_ReportDiagCmd(const CFE_SB_Buffer_t *BufPtr)
 {
     uint32 DiagValue[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
     uint32 DiagCount[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
@@ -385,51 +346,37 @@ int32 HS_CustomGetUtil(void)
 
 void HS_SetUtilParamsCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t                 ExpectedLength = sizeof(HS_SetUtilParamsCmd_t);
-    HS_SetUtilParamsCmd_t *CmdPtr         = NULL;
+    const HS_SetUtilParamsCmd_t *CmdPtr = NULL;
 
-    /*
-    ** Verify message packet length
-    */
-    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
+    CmdPtr = ((const HS_SetUtilParamsCmd_t *)BufPtr);
+
+    if ((CmdPtr->Mult1 != 0) && (CmdPtr->Mult2 != 0) && (CmdPtr->Div != 0))
     {
-        CmdPtr = ((HS_SetUtilParamsCmd_t *)BufPtr);
-
-        if ((CmdPtr->Mult1 != 0) && (CmdPtr->Mult2 != 0) && (CmdPtr->Div != 0))
-        {
-            HS_CustomData.UtilMult1 = CmdPtr->Mult1;
-            HS_CustomData.UtilMult2 = CmdPtr->Mult2;
-            HS_CustomData.UtilDiv   = CmdPtr->Div;
-            HS_AppData.CmdCount++;
-            CFE_EVS_SendEvent(HS_SET_UTIL_PARAMS_DBG_EID, CFE_EVS_EventType_DEBUG,
-                              "Utilization Parms set: Mult1: %d Div: %d Mult2: %d", (int)HS_CustomData.UtilMult1,
-                              (int)HS_CustomData.UtilDiv, (int)HS_CustomData.UtilMult2);
-        }
-        else
-        {
-            HS_AppData.CmdErrCount++;
-            CFE_EVS_SendEvent(HS_SET_UTIL_PARAMS_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "Utilization Parms Error: No parameter may be 0: Mult1: %d Div: %d Mult2: %d",
-                              (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
-        }
+        HS_CustomData.UtilMult1 = CmdPtr->Mult1;
+        HS_CustomData.UtilMult2 = CmdPtr->Mult2;
+        HS_CustomData.UtilDiv   = CmdPtr->Div;
+        HS_AppData.CmdCount++;
+        CFE_EVS_SendEvent(HS_SET_UTIL_PARAMS_DBG_EID, CFE_EVS_EventType_DEBUG,
+                          "Utilization Parms set: Mult1: %d Div: %d Mult2: %d", (int)HS_CustomData.UtilMult1,
+                          (int)HS_CustomData.UtilDiv, (int)HS_CustomData.UtilMult2);
+    }
+    else
+    {
+        HS_AppData.CmdErrCount++;
+        CFE_EVS_SendEvent(HS_SET_UTIL_PARAMS_ERR_EID, CFE_EVS_EventType_ERROR,
+                          "Utilization Parms Error: No parameter may be 0: Mult1: %d Div: %d Mult2: %d",
+                          (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
     }
 }
 
 void HS_SetUtilDiagCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t               ExpectedLength = sizeof(HS_SetUtilDiagCmd_t);
-    HS_SetUtilDiagCmd_t *CmdPtr         = NULL;
+    const HS_SetUtilDiagCmd_t *CmdPtr = NULL;
 
-    /*
-    ** Verify message packet length
-    */
-    if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
-    {
-        HS_AppData.CmdCount++;
-        CmdPtr = ((HS_SetUtilDiagCmd_t *)BufPtr);
+    HS_AppData.CmdCount++;
+    CmdPtr = ((const HS_SetUtilDiagCmd_t *)BufPtr);
 
-        HS_CustomData.UtilMask = CmdPtr->Mask;
-        CFE_EVS_SendEvent(HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_EventType_DEBUG,
-                          "Utilization Diagnostics Mask has been set to %08X", (unsigned int)HS_CustomData.UtilMask);
-    }
+    HS_CustomData.UtilMask = CmdPtr->Mask;
+    CFE_EVS_SendEvent(HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_EventType_DEBUG,
+                      "Utilization Diagnostics Mask has been set to %08X", (unsigned int)HS_CustomData.UtilMask);
 }
