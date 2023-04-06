@@ -26,15 +26,15 @@
  *   Constants and enumerated types related to these message structures
  *   are defined in hs_msgdefs.h.
  */
-#ifndef HS_MSG_H
-#define HS_MSG_H
+#ifndef HS_MSG_STRUCTS_H
+#define HS_MSG_STRUCTS_H
 
 /************************************************************************
  * Includes
  ************************************************************************/
-#include <hs_msgdefs.h>
-#include <hs_platform_cfg.h>
-#include <cfe.h>
+#include "hs_msgdefs.h"
+#include "hs_mission_cfg.h"
+#include "cfe_msg_hdr.h"
 
 /************************************************************************
  * Macro Definitions
