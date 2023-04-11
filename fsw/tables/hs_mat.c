@@ -31,41 +31,83 @@
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 
-CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_MsgActs_Tbl", HS_APP_NAME ".MsgActs_Tbl", "HS MsgActs Table", "hs_mat.tbl",
-                                     (sizeof(HS_MATEntry_t) * HS_MAX_MSG_ACT_TYPES)};
+#include "cfe_tbl_msg.h"
+#include "cfe_es_msg.h"
+#include "cfe_msgids.h"
 
-HS_MATEntry_t HS_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
+CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_Default_MsgActs_Tbl", HS_APP_NAME ".MsgActs_Tbl", "HS MsgActs Table",
+                                     "hs_mat.tbl", (sizeof(HS_MATEntry_t) * HS_MAX_MSG_ACT_TYPES)};
+
+/* Checksum for each desired command - Note that if checksum is enabled, real values (non-zero) must be input */
+#ifndef CFE_TBL_NOOP_CKSUM
+#define CFE_TBL_NOOP_CKSUM 0x00
+#endif
+
+#ifndef CFE_ES_NOOP_CKSUM
+#define CFE_ES_NOOP_CKSUM 0x00
+#endif
+
+/* Desired Command Types. Note - HS_MAX_MSG_ACT_SIZE should be sized appropriately given desired cmd types */
+typedef union
+{
+    CFE_TBL_NoopCmd_t cmd1;   /**< \brief Desired cmd1 type */
+    CFE_ES_NoopCmd_t  cmd2;   /**< \brief Desired cmd2 type */
+    HS_MATMsgBuf_t    MsgBuf; /**< \brief Message Buffer for alignment */
+} HS_Message;
+
+/* MAT Table Entry Structure */
+typedef struct
+{
+    uint16     EnableState; /**< \brief If entry contains message */
+    uint16     Cooldown;    /**< \brief Maximum rate at which message can be sent */
+    HS_Message HsMsg;       /**< \brief HS Message/Command Entry */
+} HS_MatTableEntry_t;
+
+/* Helper macro to get size of structure elements */
+#define HS_MEMBER_SIZE(member) (sizeof(((HS_Message *)0)->member))
+
+HS_MatTableEntry_t HS_Default_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
     /*          EnableState               Cooldown   Message */
 
-    /*   0 */ {HS_MAT_STATE_DISABLED,
-               10,
-               {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    /*   0 */
+    {.EnableState = HS_MAT_STATE_ENABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   1 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_ENABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd2.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_ES_CMD_MID, HS_MEMBER_SIZE(cmd2), CFE_ES_NOOP_CC, CFE_ES_NOOP_CKSUM)},
     /*   2 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   3 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   4 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   5 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   6 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
     /*   7 */
-    {HS_MAT_STATE_DISABLED,
-     10,
-     {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}},
+    {.EnableState = HS_MAT_STATE_DISABLED,
+     .Cooldown    = 10,
+     .HsMsg.cmd1.CommandHeader =
+         CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)},
+
 };
