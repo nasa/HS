@@ -22,6 +22,7 @@
  */
 
 #include "hs_monitors.h"
+#include "hs_sysmon.h"
 #include "hs_test_utils.h"
 #include "hs_msgids.h"
 
@@ -1681,23 +1682,17 @@ void HS_MonitorEvent_Test_MsgActsMATDisabled(void)
 
 void HS_MonitorUtilization_Test_HighCurrentUtil(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 1;
-    HS_CustomData.UtilMult1            = -3;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
     HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL - 2;
 
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, HS_UTIL_PER_INTERVAL_TOTAL);
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
 
     /* Verify results */
-    UtAssert_True(
-        HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_UTIL_PER_INTERVAL_TOTAL,
-        "HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_UTIL_PER_INTERVAL_TOTAL %u %u",
-        HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1], HS_UTIL_PER_INTERVAL_TOTAL);
+    UtAssert_True(HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_CPU_UTILIZATION_MAX,
+                  "HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_CPU_UTILIZATION_MAX %u %u",
+                  HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1], HS_CPU_UTILIZATION_MAX);
     /* For this test case, we don't care about any messages or variables changed after this is set */
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1707,85 +1702,54 @@ void HS_MonitorUtilization_Test_HighCurrentUtil(void)
 
 void HS_MonitorUtilization_Test_CurrentUtilLessThanZero(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 1;
-    HS_CustomData.UtilMult1            = HS_UTIL_PER_INTERVAL_TOTAL + 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
-    HS_AppData.CurrentCPUUtilIndex = 0;
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, -1);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
 
     /* Verify results */
-    UtAssert_True(HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == 0,
-                  "HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == 0");
-    /* For this test case, we don't care about any messages or variables changed after this is set */
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
-                  call_count_CFE_EVS_SendEvent);
+    UtAssert_UINT32_EQ(HS_AppData.UtilCpuAvg, 0xFFFFFFFF);
+    UtAssert_UINT32_EQ(HS_AppData.UtilCpuPeak, 0xFFFFFFFF);
 }
 
 void HS_MonitorUtilization_Test_CPUHogging(void)
 {
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    char  ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    HS_AppData.CurrentCPUHogState    = HS_STATE_ENABLED;
+    HS_AppData.MaxCPUHoggingTime     = 1;
+    HS_AppData.CurrentCPUHoggingTime = 0;
+    HS_AppData.CurrentCPUUtilIndex   = HS_UTIL_PEAK_NUM_INTERVAL;
 
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CPU Hogging Detected");
-    snprintf(ExpectedSysLogString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "HS App: CPU Hogging Detected\n");
+    /* test below the hogging threshold */
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_UTIL_PER_INTERVAL_HOGGING - 1);
 
-    HS_CustomData.LastIdleTaskInterval = 0;
-    HS_CustomData.UtilMult1            = 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
+    /* Execute the function being tested */
+    HS_MonitorUtilization();
 
-    HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
-    HS_AppData.MaxCPUHoggingTime  = 1;
+    /* Verify results - no hogging or event reported here */
+    UtAssert_ZERO(HS_AppData.CurrentCPUHoggingTime);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
 
-    HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL;
-
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, HS_UTIL_PER_INTERVAL_TOTAL + 1);
+    /* now above the hogging threshold */
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_UTIL_PER_INTERVAL_HOGGING + 1);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
 
     /* Verify results */
-    UtAssert_True(HS_AppData.CurrentCPUHoggingTime == 1, "HS_AppData.CurrentCPUHoggingTime == 1");
-
+    UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHoggingTime, 1);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CPUMON_HOGGING_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-
-    strCmpResult =
-        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
-
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
-
-    strCmpResult = strncmp(ExpectedSysLogString, context_CFE_ES_WriteToSysLog.Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
-
-    UtAssert_True(strCmpResult == 0, "Sys Log string matched expected result, '%s'", context_CFE_ES_WriteToSysLog.Spec);
-
-    /* For this test case, we don't care about any variables changed after this message */
 }
 
 void HS_MonitorUtilization_Test_CPUHoggingNotMax(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 0;
-    HS_CustomData.UtilMult1            = 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
     HS_AppData.MaxCPUHoggingTime  = 2;
 
     HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL;
 
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, HS_UTIL_PER_INTERVAL_TOTAL + 1);
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX + 1);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
@@ -1802,17 +1766,12 @@ void HS_MonitorUtilization_Test_CPUHoggingNotMax(void)
 
 void HS_MonitorUtilization_Test_CurrentCPUHogStateDisabled(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 0;
-    HS_CustomData.UtilMult1            = 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
     HS_AppData.MaxCPUHoggingTime  = 1;
 
     HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL;
 
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, -1);
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
@@ -1829,27 +1788,21 @@ void HS_MonitorUtilization_Test_CurrentCPUHogStateDisabled(void)
 
 void HS_MonitorUtilization_Test_HighUtilIndex(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 0;
-    HS_CustomData.UtilMult1            = 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
     HS_AppData.MaxCPUHoggingTime  = 1;
 
     HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL - 1;
 
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, HS_UTIL_PER_INTERVAL_TOTAL);
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
 
     /* Verify results */
     UtAssert_True(HS_AppData.CurrentCPUHoggingTime == 0, "HS_AppData.CurrentCPUHoggingTime == 0");
-    UtAssert_True(HS_AppData.UtilCpuAvg == (HS_UTIL_PER_INTERVAL_TOTAL / HS_UTIL_AVERAGE_NUM_INTERVAL),
-                  "HS_AppData.UtilCpuAvg  == (HS_UTIL_PER_INTERVAL_TOTAL / HS_UTIL_AVERAGE_NUM_INTERVAL)");
-    UtAssert_True(HS_AppData.UtilCpuPeak == HS_UTIL_PER_INTERVAL_TOTAL,
-                  "HS_AppData.UtilCpuPeak == HS_UTIL_PER_INTERVAL_TOTAL");
+    UtAssert_True(HS_AppData.UtilCpuAvg == (HS_CPU_UTILIZATION_MAX / HS_UTIL_AVERAGE_NUM_INTERVAL),
+                  "HS_AppData.UtilCpuAvg  == (HS_CPU_UTILIZATION_MAX / HS_UTIL_AVERAGE_NUM_INTERVAL)");
+    UtAssert_True(HS_AppData.UtilCpuPeak == HS_CPU_UTILIZATION_MAX, "HS_AppData.UtilCpuPeak == HS_CPU_UTILIZATION_MAX");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
@@ -1858,27 +1811,21 @@ void HS_MonitorUtilization_Test_HighUtilIndex(void)
 
 void HS_MonitorUtilization_Test_LowUtilIndex(void)
 {
-    HS_CustomData.LastIdleTaskInterval = 0;
-    HS_CustomData.UtilMult1            = 1;
-    HS_CustomData.UtilMult2            = 1;
-    HS_CustomData.UtilDiv              = 1;
-
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
     HS_AppData.MaxCPUHoggingTime  = 1;
 
     HS_AppData.CurrentCPUUtilIndex = 1;
 
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomGetUtil), 1, HS_UTIL_PER_INTERVAL_TOTAL);
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX);
 
     /* Execute the function being tested */
     HS_MonitorUtilization();
 
     /* Verify results */
     UtAssert_True(HS_AppData.CurrentCPUHoggingTime == 0, "HS_AppData.CurrentCPUHoggingTime == 0");
-    UtAssert_True(HS_AppData.UtilCpuAvg == (HS_UTIL_PER_INTERVAL_TOTAL / HS_UTIL_AVERAGE_NUM_INTERVAL),
-                  "HS_AppData.UtilCpuAvg  == (HS_UTIL_PER_INTERVAL_TOTAL / HS_UTIL_AVERAGE_NUM_INTERVAL)");
-    UtAssert_True(HS_AppData.UtilCpuPeak == HS_UTIL_PER_INTERVAL_TOTAL,
-                  "HS_AppData.UtilCpuPeak == HS_UTIL_PER_INTERVAL_TOTAL");
+    UtAssert_True(HS_AppData.UtilCpuAvg == (HS_CPU_UTILIZATION_MAX / HS_UTIL_AVERAGE_NUM_INTERVAL),
+                  "HS_AppData.UtilCpuAvg  == (HS_CPU_UTILIZATION_MAX / HS_UTIL_AVERAGE_NUM_INTERVAL)");
+    UtAssert_True(HS_AppData.UtilCpuPeak == HS_CPU_UTILIZATION_MAX, "HS_AppData.UtilCpuPeak == HS_CPU_UTILIZATION_MAX");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",

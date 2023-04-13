@@ -4,8 +4,7 @@ set(APP_SRC_FILES
   fsw/src/hs_monitors.c
   fsw/src/hs_utils.c
   fsw/src/hs_dispatch.c
-  fsw/src/hs_custom.c
-  fsw/src/hs_custom_dispatch.c
+  fsw/src/hs_sysmon.c
   fsw/src/hs_app.c
   fsw/src/hs_cmds.c
 )
@@ -15,6 +14,7 @@ add_cfe_app(hs ${APP_SRC_FILES})
 
 # This permits direct access to public headers in the fsw/inc directory
 target_include_directories(hs PUBLIC fsw/inc)
+add_cfe_app_dependency(hs iodriver)
 
 set(APP_TABLE_FILES
   fsw/tables/hs_mat.c

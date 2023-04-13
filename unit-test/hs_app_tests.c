@@ -22,6 +22,7 @@
  */
 
 #include "hs_app.h"
+#include "hs_sysmon.h"
 #include "hs_test_utils.h"
 #include "hs_msgids.h"
 #include "hs_dispatch.h"
@@ -1100,11 +1101,6 @@ void HS_AppInit_Test_TblInitError(void)
 
 void HS_AppInit_Test_CustomInitError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error in custom initialization, RC=0x%%08X");
-
     HS_AppData.ServiceWatchdogFlag   = 99;
     HS_AppData.AlivenessCounter      = 99;
     HS_AppData.RunStatus             = 99;
@@ -1115,14 +1111,11 @@ void HS_AppInit_Test_CustomInitError(void)
     HS_AppData.CurrentAlivenessState = 99;
     HS_AppData.CurrentCPUHogState    = 99;
 
-    /* Causes HS_CustomInit to return an error */
-    UT_SetDeferredRetcode(UT_KEY(HS_CustomInit), 1, -1);
+    /* Causes HS_SysMonInit to return an error */
+    UT_SetDeferredRetcode(UT_KEY(HS_SysMonInit), 1, -1);
 
     /* Execute the function being tested */
-    Result = HS_AppInit();
-
-    /* Verify results */
-    UtAssert_True(Result == -1, "Result == -1");
+    UtAssert_INT32_EQ(HS_AppInit(), -1);
 
     UtAssert_True(HS_AppData.ServiceWatchdogFlag == HS_STATE_ENABLED,
                   "HS_AppData.ServiceWatchdogFlag == HS_STATE_ENABLED");
@@ -1141,18 +1134,9 @@ void HS_AppInit_Test_CustomInitError(void)
 
     /* This event message is not generated directly by the function under test, but it's useful to check for it to
      * ensure that a TBL init error occurred rather than an SB init error */
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CUSTOM_INIT_ERR_EID);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SYSMON_INIT_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-
-    strCmpResult =
-        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
-
-    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
-
-    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
-                  call_count_CFE_EVS_SendEvent);
 }
 
 void HS_SbInit_Test_Nominal(void)

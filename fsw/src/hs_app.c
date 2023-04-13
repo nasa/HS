@@ -32,7 +32,7 @@
 #include "hs_msgids.h"
 #include "hs_perfids.h"
 #include "hs_monitors.h"
-#include "hs_custom_internal.h"
+#include "hs_sysmon.h"
 #include "hs_version.h"
 #include "hs_cmds.h"
 #include "hs_dispatch.h"
@@ -181,7 +181,7 @@ void HS_AppMain(void)
         CFE_ES_WriteToSysLog("HS App: Application Terminating, ERR = 0x%08X\n", (unsigned int)Status);
     }
 
-    HS_CustomCleanup();
+    HS_SysMonCleanup();
 
     /*
     ** Performance Log, Stop
@@ -317,13 +317,13 @@ int32 HS_AppInit(void)
     }
 
     /*
-    ** Perform custom initialization (for cpu utilization monitoring)
+    ** Perform initialization for system monitoring
     */
-    Status = HS_CustomInit();
+    Status = HS_SysMonInit();
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CUSTOM_INIT_ERR_EID, CFE_EVS_EventType_ERROR, "Error in custom initialization, RC=0x%08X",
-                          Status);
+        CFE_EVS_SendEvent(HS_SYSMON_INIT_ERR_EID, CFE_EVS_EventType_ERROR,
+                          "Error in system monitor initialization, RC=0x%08X", Status);
         return Status;
     }
 
@@ -551,6 +551,13 @@ int32 HS_ProcessMain(void)
         }
     }
 
+    if (HS_AppData.UtilizationCycleCounter == 0)
+    {
+        HS_MonitorUtilization();
+        HS_AppData.UtilizationCycleCounter = HS_CPU_UTILIZATION_CYCLES_PER_INTERVAL;
+    }
+    --HS_AppData.UtilizationCycleCounter;
+
     /*
     ** Monitor Applications
     */
@@ -558,11 +565,6 @@ int32 HS_ProcessMain(void)
     {
         HS_MonitorApplications();
     }
-
-    /*
-    ** Monitor CPU Utilization
-    */
-    HS_CustomMonitorUtilization();
 
     /*
     ** Output Aliveness

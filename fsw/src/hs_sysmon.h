@@ -19,42 +19,64 @@
 
 /**
  * @file
- *   Specification for the CFS Health and Safety (HS) mission specific
- *   custom function private interface
+ *   Specification for the CFS Health and Safety (HS) system monitoring routines
+ *
+ * System health monitoring is inherently platform-specific and therefore should
+ * be abstracted via the PSP.  This provides local access methods to obtain the
+ * information from the PSP.
  */
-#ifndef HS_CUSTOM_DISPATCH_H
-#define HS_CUSTOM_DISPATCH_H
+#ifndef HS_SYSMON_H
+#define HS_SYSMON_H
 
 /*************************************************************************
  * Includes
  ************************************************************************/
 #include "cfe.h"
 #include "hs_platform_cfg.h"
-#include "hs_custom_internal.h"
 
 /*************************************************************************
  * Exported Functions
  *************************************************************************/
 
 /**
- * \brief Process Custom Commands
+ * \brief Initialize things needed for system monitoring
  *
  *  \par Description
- *       This function allows for hs_custom.c to define custom commands.
- *       It will be called for any command code not already allocated
- *       to a Health and Safety command. If a custom command is found,
- *       then it is responsible for incrementing the command processed
- *       or command error counter as appropriate.
+ *       This function is intended to set up everything necessary for
+ *       System Monitoring at application startup.
  *
  *  \par Assumptions, External Events, and Notes:
- *       If a command is found, this function MUST return #CFE_SUCCESS,
- *       otherwise is must not return #CFE_SUCCESS
- *
- *  \param[in] BufPtr Pointer to Software Bus buffer
+ *       CFE_SUCCESS will be returned if all creation was performed
+ *       properly.
  *
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_CustomCommands(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_SysMonInit(void);
+
+/**
+ * \brief De-Initialize system monitoring
+ *
+ *  \par Description
+ *       This function stops everything that was started during HS_SysMonInit()
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *
+ */
+void HS_SysMonCleanup(void);
+
+/**
+ * \brief Read the system monitor CPU utilization
+ *
+ *  \par Description
+ *       This function is used to read the current value of the cpu utilization
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       The range of output is controlled by the #HS_CPU_UTILIZATION_MAX config
+ *       macro.  Higher numbers represent higher usage, less idle time.
+ *
+ *  \return Utilization value as fixed-point integer
+ */
+int32 HS_SysMonGetCpuUtilization(void);
 
 #endif
