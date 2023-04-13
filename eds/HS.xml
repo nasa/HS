@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    GSC-18128-1, "Core Flight Executive Version 6.7"
+    LEW-19710-1, "CCSDS electronic data sheet implementation"
+
+    Copyright (c) 2006-2019 United States Government as represented by
+    the Administrator of the National Aeronautics and Space Administration.
+    All Rights Reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    This document adheres to the Electronic Data Sheet (EDS) XML schema
+    as prescribed in CCSDS book 876.0.
+
+    Purpose:
+      This describes all interface objects for the Executive Services (CFE_ES)
+      core application
+
+-->
+<PackageFile xmlns="http://www.ccsds.org/schema/sois/seds">
+  <Package name="HS" shortDescription="Health and Safety">
+
+    <DataTypeSet>
+
+      <ContainerDataType name="CMD" baseType="CFE_HDR/CommandHeader">
+      </ContainerDataType>
+
+      <ContainerDataType name="SendHkCmd" baseType="CFE_HDR/CommandHeader" shortDescription="Send Housekeeping command" />
+
+      <ArrayDataType name="ExeCounts" dataTypeRef="BASE_TYPES/uint32">
+        <DimensionList>
+          <Dimension size="${HS/MAX_EXEC_CNT_SLOTS}"/>
+        </DimensionList>
+      </ArrayDataType>
+
+      <ArrayDataType name="AppMonEnables" dataTypeRef="BASE_TYPES/StatusBit">
+        <DimensionList>
+          <Dimension size="${HS/MAX_MONITORED_APPS}"/>
+        </DimensionList>
+      </ArrayDataType>
+
+       <ContainerDataType name="HkTlm_Payload" shortDescription="HK housekeeping">
+        <EntryList>
+          <Entry name="CmdCount" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
+          <Entry name="CmdErrCount" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
+
+          <Entry name="CurrentAppMonState" type="BASE_TYPES/uint8" />
+          <Entry name="CurrentEventMonState" type="BASE_TYPES/uint8" />
+          <Entry name="CurrentAlivenessState" type="BASE_TYPES/uint8" />
+          <Entry name="CurrentCPUHogState" type="BASE_TYPES/uint8" />
+          <Entry name="StatusFlags" type="BASE_TYPES/uint8" />
+          <Entry name="SpareBytes" type="BASE_TYPES/uint8" />
+          <Entry name="ResetsPerformed" type="BASE_TYPES/uint16" />
+          <Entry name="MaxResets" type="BASE_TYPES/uint16" />
+          <Entry name="EventsMonitoredCount" type="BASE_TYPES/uint32" />
+          <Entry name="InvalidEventMonCount" type="BASE_TYPES/uint32" />
+
+          <Entry name="AppMonEnables" type="AppMonEnables" />
+
+          <Entry name="MsgActExec" type="BASE_TYPES/uint32" />
+          <Entry name="UtilCpuAvg" type="BASE_TYPES/uint32" />
+          <Entry name="UtilCpuPeak" type="BASE_TYPES/uint32" />
+
+          <Entry name="ExeCounts" type="ExeCounts" />
+        </EntryList>
+      </ContainerDataType>
+
+       <ContainerDataType name="SetMaxResets_Payload">
+        <EntryList>
+          <Entry name="MaxResets" type="BASE_TYPES/uint16" />
+          <Entry name="Padding" type="BASE_TYPES/uint16" />
+        </EntryList>
+      </ContainerDataType>
+
+      <ContainerDataType name="HkPacket" baseType="CFE_HDR/TelemetryHeader">
+        <EntryList>
+          <Entry type="HkTlm_Payload" name="Payload" />
+        </EntryList>
+      </ContainerDataType>
+
+      <ContainerDataType name="NoopCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="0" />
+        </ConstraintSet>
+      </ContainerDataType>
+
+      <ContainerDataType name="ResetCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="1" />
+        </ConstraintSet>
+      </ContainerDataType>
+
+      <ContainerDataType name="EnableAppMonCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="2" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="DisableAppMonCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="3" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="EnableEventMonCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="4" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="DisableEventMonCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="5" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="EnableAlivenessCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="6" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="DisableAlivenessCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="7" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="ResetResetsPerformedCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="8" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="SetMaxResetsCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="9" />
+        </ConstraintSet>
+        <EntryList>
+          <Entry name="Payload" type="SetMaxResets_Payload" />
+        </EntryList>
+      </ContainerDataType>
+      <ContainerDataType name="EnableCpuHogCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="10" />
+        </ConstraintSet>
+      </ContainerDataType>
+      <ContainerDataType name="DisableCpuHogCmd" baseType="CMD">
+        <ConstraintSet>
+          <ValueConstraint entry="Sec.FunctionCode" value="11" />
+        </ConstraintSet>
+      </ContainerDataType>
+
+
+
+     <ArrayDataType name="MsgArray" dataTypeRef="BASE_TYPES/uint8">
+       <DimensionList>
+         <Dimension size="${HS/MAX_MSG_ACT_SIZE}" />
+       </DimensionList>
+     </ArrayDataType>
+
+     <ContainerDataType name="MATMsgBuf" shortDescription="Message Action Table buffer">
+      <EntryList>
+        <Entry name="Message" type="CFE_HDR/CommandHeader" shortDescription="If entry contains message" />
+      </EntryList>
+    </ContainerDataType>
+
+     <ContainerDataType name="MATEntry" shortDescription="Message Actions Table (MAT) Entry">
+      <EntryList>
+        <Entry name="EnableState" type="BASE_TYPES/uint16" shortDescription="If entry contains message" />
+        <Entry name="Cooldown" type="BASE_TYPES/uint16" shortDescription="Minimum rate at which message can be sent" />
+        <Entry name="MsgBuf" type="MATMsgBuf" shortDescription="Message to be sent" />
+      </EntryList>
+     </ContainerDataType>
+
+     <ContainerDataType name="AMTEntry" shortDescription="Application Monitor Table (AMT) Entry">
+      <EntryList>
+        <Entry name="AppName" type="BASE_TYPES/ApiName" shortDescription="Name of application to be monitored" />
+        <Entry name="NullTerm" type="BASE_TYPES/uint16" shortDescription="Buffer of nulls to terminate string" />
+        <Entry name="CycleCount" type="BASE_TYPES/uint16" shortDescription="Number of cycles before application is missing" />
+        <Entry name="ActionType" type="BASE_TYPES/uint16" shortDescription="Action to take if application is missing" />
+      </EntryList>
+     </ContainerDataType>
+
+     <ContainerDataType name="EMTEntry" shortDescription="Event Monitor Table (EMT) Entry">
+      <EntryList>
+        <Entry name="AppName" type="BASE_TYPES/ApiName" shortDescription="Name of application generating event" />
+        <Entry name="NullTerm" type="BASE_TYPES/uint16" shortDescription="Buffer of nulls to terminate string" />
+        <Entry name="EventID" type="BASE_TYPES/uint16" shortDescription="Event number of monitored event" />
+        <Entry name="ActionType" type="BASE_TYPES/uint16" shortDescription="Action to take if event is received" />
+      </EntryList>
+     </ContainerDataType>
+
+     <ContainerDataType name="XCTEntry" shortDescription="Execution Counters Table (XCT) Entry">
+      <EntryList>
+        <Entry name="ResourceName" type="BASE_TYPES/ApiName" shortDescription="Name of resource being monitored" />
+        <Entry name="NullTerm" type="BASE_TYPES/uint32" shortDescription="Buffer of nulls to terminate string" />
+        <Entry name="ResourceType" type="BASE_TYPES/uint32" shortDescription="Type of execution counter" />
+      </EntryList>
+     </ContainerDataType>
+
+     <ArrayDataType name="MsgActs_Tbl" dataTypeRef="MATEntry">
+      <DimensionList>
+        <Dimension size="${HS/MAX_MSG_ACT_TYPES}" />
+      </DimensionList>
+     </ArrayDataType>
+
+     <ArrayDataType name="AppMon_Tbl" dataTypeRef="AMTEntry">
+      <DimensionList>
+        <Dimension size="${HS/MAX_MONITORED_APPS}" />
+      </DimensionList>
+     </ArrayDataType>
+
+     <ArrayDataType name="EventMon_Tbl" dataTypeRef="EMTEntry">
+      <DimensionList>
+        <Dimension size="${HS/MAX_MONITORED_EVENTS}" />
+      </DimensionList>
+     </ArrayDataType>
+
+     <ArrayDataType name="ExeCount_Tbl" dataTypeRef="XCTEntry">
+      <DimensionList>
+        <Dimension size="${HS/MAX_EXEC_CNT_SLOTS}" />
+      </DimensionList>
+     </ArrayDataType>
+
+  </DataTypeSet>
+
+    <ComponentSet>
+      <Component name="Application">
+        <RequiredInterfaceSet>
+          <Interface name="CMD" shortDescription="DS Ground Commands Message ID" type="CFE_SB/Telecommand">
+            <GenericTypeMapSet>
+              <GenericTypeMap name="TelecommandDataType" type="CMD" />
+            </GenericTypeMapSet>
+          </Interface>
+          <Interface name="SEND_HK" shortDescription="DS Send Hk Data Cmd Message ID" type="CFE_SB/Telecommand">
+            <!-- This uses a bare spacepacket with no payload -->
+            <GenericTypeMapSet>
+              <GenericTypeMap name="TelecommandDataType" type="SendHkCmd" />
+            </GenericTypeMapSet>
+          </Interface>
+          <Interface name="HK_TLM" shortDescription="DS Hk Telemetry Message ID" type="CFE_SB/Telemetry">
+            <GenericTypeMapSet>
+              <GenericTypeMap name="TelemetryDataType" type="HkPacket" />
+            </GenericTypeMapSet>
+          </Interface>
+          <Interface name="DIAG_TLM" shortDescription="DS File Info Telemetry Message ID" type="CFE_SB/Telemetry">
+            <GenericTypeMapSet>
+              <GenericTypeMap name="TelemetryDataType" type="CFE_HDR/TelemetryHeader" />
+            </GenericTypeMapSet>
+          </Interface>
+          <Interface name="COMP_TLM" shortDescription="DS Completed File Info Telemetry Message ID" type="CFE_SB/Telemetry">
+            <GenericTypeMapSet>
+              <GenericTypeMap name="TelemetryDataType" type="CFE_HDR/TelemetryHeader" />
+            </GenericTypeMapSet>
+          </Interface>
+        </RequiredInterfaceSet>
+        <Implementation>
+          <VariableSet>
+            <Variable type="BASE_TYPES/uint16" readOnly="true" name="CmdTopicId" initialValue="${CFE_MISSION/HS_CMD_TOPICID}" />
+            <Variable type="BASE_TYPES/uint16" readOnly="true" name="SendHkTopicId" initialValue="${CFE_MISSION/HS_SEND_HK_TOPICID}" />
+            <Variable type="BASE_TYPES/uint16" readOnly="true" name="HkTlmTopicId" initialValue="${CFE_MISSION/HS_HK_TLM_TOPICID}" />
+            <Variable type="BASE_TYPES/uint16" readOnly="true" name="DiagTlmTopicId" initialValue="${CFE_MISSION/HS_DIAG_TLM_TOPICID}" />
+            <Variable type="BASE_TYPES/uint16" readOnly="true" name="CompTlmTopicId" initialValue="${CFE_MISSION/HS_COMP_TLM_TOPICID}" />
+          </VariableSet>
+          <!-- Assign fixed numbers to the "TopicId" parameter of each interface -->
+          <ParameterMapSet>
+            <ParameterMap interface="CMD" parameter="TopicId" variableRef="CmdTopicId" />
+            <ParameterMap interface="SEND_HK" parameter="TopicId" variableRef="SendHkTopicId" />
+            <ParameterMap interface="HK_TLM" parameter="TopicId" variableRef="HkTlmTopicId" />
+            <ParameterMap interface="DIAG_TLM" parameter="TopicId" variableRef="DiagTlmTopicId" />
+            <ParameterMap interface="COMP_TLM" parameter="TopicId" variableRef="CompTlmTopicId" />
+          </ParameterMapSet>
+        </Implementation>
+      </Component>
+    </ComponentSet>
+
+  </Package>
+</PackageFile>
