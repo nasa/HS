@@ -316,84 +316,45 @@
            of resets stored by HS will be reset. (This may be desirable if HS reset limiting is not desired)
     </UL>
 
-  <H3>Health and Safety CPU Utilization Monitoring Customization</H3>
+  <H3>Health and Safety CPU Utilization Monitoring</H3>
 
-  The Health and Safety application contains the file hs_custom.c which can be adapted to take advantage
-  of platform specific functionality concerning CPU Utilization Monitoring. The delivered implementation
-  contains a generic version which should work well on a variety of platforms, however it may be possible
-  to obtain better accuracy or increase processing efficiency by modifying the contents. As the custom
-  utilization monitoring function is called every HS cycle, and an interface to add additional commands
-  is included, it could even be used as a way to add other capabilities to the HS application (e.g. offboard
-  watchdog servicing, or floating point exception testing) instead of creating an entirely separate application.
+  System monitoring is inherently platform specific, and so the capability of the Health and Safety application
+  to monitor system CPU utilization is now dependent on a module in the CFE Platform Support Package (PSP).
+  This PSP module presents the system monitor variables as virtualized 24-bit ADC-style inputs, where 0 represents
+  the minimum value, and 0xFFFFFF represents the maximum value for any given channel.  All raw values should be
+  normalized into this 24-bit range by the PSP, where it is further processed by HS based on the local filtering
+  parameters.
 
-  This customizable section of code includes five required functions for interface purposes:
+  The following configuration items control the behavior of system monitoring:
+
   <UL>
-    <LI> #HS_CustomInit
-    <LI> #HS_CustomCommands
-    <LI> #HS_CustomMonitorUtilization
-    <LI> #HS_CustomGetUtil
-    <LI> #HS_CustomCleanup
+    <LI> #HS_SYSTEM_MONITOR_DEVICE
+    <LI> #HS_SYSTEM_MONITOR_SUBSYSTEM_NAME
+    <LI> #HS_SYSTEM_MONITOR_SUBCHANNEL_NAME
+    <LI> #HS_CPU_UTILIZATION_CYCLES_PER_INTERVAL
+    <LI> #HS_CPU_UTILIZATION_MAX
+    <LI> #HS_UTIL_PER_INTERVAL_HOGGING
+    <LI> #HS_UTIL_HOGGING_TIMEOUT
+    <LI> #HS_UTIL_PEAK_NUM_INTERVAL
+    <LI> #HS_UTIL_AVERAGE_NUM_INTERVAL
   </UL>
 
-  The remainder of this guide assumes that the generic hs_custom.c is being used when describing how to
-  use and calibrate CPU Utilization Monitoring.
+  The #HS_SYSTEM_MONITOR_DEVICE parameter specifies the name of a PSP device that performs system monitoring,
+  and the #HS_SYSTEM_MONITOR_SUBSYSTEM_NAME and #HS_SYSTEM_MONITOR_SUBCHANNEL_NAME specify (optional) subsystem
+  and subchannel names, respectively.  Upon reading this value, the PSP is expected to return a normalized 24-bit
+  code value where 0 represents no CPU load, and (2^24-1) represents maximum CPU load, over the last
+  measurement period.
 
-  <H3>Health and Safety CPU Utilization Monitoring Calibration</H3>
+  A history of this data is maintained internally within HS, and it is reported in the telemetry via the
+  "UtilCpuAvg" and "UtilCpuPeak" fields, which contain the average and peak values for CPU utilization over
+  the last #HS_UTIL_AVERAGE_NUM_INTERVAL and #HS_UTIL_PEAK_NUM_INTERVAL recording periods, respectively.
+  The reported telemetry is adjusted to a range of [0..#HS_CPU_UTILIZATION_MAX], where the default value
+  of 10000 correlates to 0.01% steps.
 
-  The first step in CPU Utilization Monitoring Calibration is to determine how many Idle Child Task cycles
-  there are in a second (in the default case: one interval is one second). This is done by setting the
-  Utilization Diagnostics Mask by command: for example a command parameter of 0xFF would record the time
-  every 256 cycles. These times are stored in a circular buffer of a size determined by
-  #HS_UTIL_TIME_DIAG_ARRAY_POWER (increasing this parameter will provide more samples, but use more memory).
-  The Report Diagnostics command can then be sent (after a sufficient time to let the circular buffer
-  perform a full cycle) to generate an event message containing the mask, and the four shortest intervals
-  between time records, as well as how frequently those timed intervals occurred. Usually the desired value
-  is the weighted average (based on frequencies) of the two lowest times, though common sense should be used
-  as a sanity check. The Report Diagnostics command can be used multiple times to report additional captured
-  times (the capturing continually runs through the circular buffer). The recorded time uses the microseconds
-  field of #CFE_PSP_GetTime to determine the time, so the source of that timer will determine the precision
-  and accuracy of the timing data. To calibrate the time properly, two values must be used so that the
-  overhead associated with recording the time is cancelled out (so for example, capturing time at 256 and
-  128 cycles, and then finding the difference will give the real time for performing 128 cycles). When done
-  collecting data, reset the mask to 0xFFFFFFFF. This makes sure that no timing data is captured, and so all
-  cycles are of equal length.
+  The threshold for CPU "hogging", where the system has a very high CPU utilization, is controlled by the
+  #HS_UTIL_PER_INTERVAL_HOGGING threshold.  When CPU utilization is above this level, a separate
+  event is triggered indicating that system intervention may be necessary to rectify the situation.
 
-  Good rates at which to record depend on the timing resolution and platform speed. Time is recorded when
-  the mask value is all 1s, so the mask values used should be of the form 2^n - 1 (e.g. 255 (0xFF),
-  2047 (Ox7FF)) to capture once out of 2^n cycles. As the calibration is occurring while the system is
-  running, it is necessary to have large enough chunks of idle time to capture several times within a
-  chunk; with high resolution timers on a fast platform, collecting good data may be possible even wheni
-  the processor is mostly utilized, but with lower time resolution special testing may have to be done with
-  other applications absent. Reported times of 0 imply that the mask is much too small relative to the
-  resolution (though if all times are 0, the mask may be too large such that no times have been recorded,
-  or that #CFE_PSP_GetTime was not configured properly for the platform). If the frequencies of all the
-  lowest times are relatively low, it may imply that the mask is too large relative to the idle time
-  blocks, or that #CFE_PSP_GetTime is not running in constant time and the resolution is high enough to
-  be affected by that (in which case either the lowest, or average of several lowest times can be used).
-  Once the timing information has been acquired, it can be used to determine the time per Idle Child Task
-  cycle, and from there, the number of Idle Child Task cycles per second.
-
-  On some platforms calibration can also be done using a logic analyzer with the performance monitor
-  using ID #HS_IDLETASK_PERF_ID, potentially supplying much higher time resolution. In addition this
-  marker can also be used by dumping performance data with different masks set which may (or may not)
-  provide higher resolution timing data as the performance monitor uses a different timer.
-
-  The second step is to choose the #HS_CPU_UTILIZATION_MAX value: this is equivalent to one full
-  interval of CPU utilization, so if a value of 100 was used, then the value reported in telemetry would
-  be the percentage. Alternatively a higher value (10000 or 100000) could provide higher resolution
-  information if the calibration is of high enough precision and accuracy. The calibration is then
-  configured using the following equation:
-
-  #HS_CPU_UTILIZATION_MAX = (((Max Number of Idle Task Cycles per Second * #HS_UTIL_CONV_MULT1 ) /
-                                #HS_UTIL_CONV_DIV ) * #HS_UTIL_CONV_MULT2)
-
-  The multiplication and division parameters should be set so as to prevent overflows (of 32 bit values)
-  and using any other platform considerations. These values can be set by command, but they also exist
-  as configuration parameters so that if the values are known at compile time for a specific platform,
-  no further calibration would be necessary.
-
-  Also, please be aware that HS has a performance ID, #HS_APPMAIN_PERF_ID, that keeps track of the
-  performance of the HS app.
 **/
 
 /**
