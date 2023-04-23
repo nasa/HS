@@ -42,13 +42,13 @@ void HS_SysMonCleanup(void)
  * Generated stub function for HS_SysMonGetCpuUtilization()
  * ----------------------------------------------------
  */
-int32 HS_SysMonGetCpuUtilization(void)
+CFE_Status_t HS_SysMonGetCpuUtilization(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_SysMonGetCpuUtilization, int32);
+    UT_GenStub_SetupReturnBuffer(HS_SysMonGetCpuUtilization, CFE_Status_t);
 
     UT_GenStub_Execute(HS_SysMonGetCpuUtilization, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_SysMonGetCpuUtilization, int32);
+    return UT_GenStub_GetReturnValue(HS_SysMonGetCpuUtilization, CFE_Status_t);
 }
 
 /*

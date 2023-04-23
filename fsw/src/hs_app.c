@@ -54,7 +54,7 @@ HS_AppData_t HS_AppData;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppMain(void)
 {
-    int32            Status;
+    CFE_Status_t     Status;
     uint32           RunStatus = CFE_ES_RunStatus_APP_RUN;
     CFE_SB_Buffer_t *BufPtr    = NULL;
 
@@ -199,9 +199,9 @@ void HS_AppMain(void)
 /* HS initialization                                               */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_AppInit(void)
+CFE_Status_t HS_AppInit(void)
 {
-    int32 Status;
+    CFE_Status_t Status;
 
     /*
     ** Initialize operating data to default states...
@@ -341,9 +341,9 @@ int32 HS_AppInit(void)
 /* Initialize the software bus interface                           */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_SbInit(void)
+CFE_Status_t HS_SbInit(void)
 {
-    int32 Status;
+    CFE_Status_t Status;
 
     /* Initialize housekeeping packet  */
     CFE_MSG_Init(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), CFE_SB_ValueToMsgId(HS_HK_TLM_MID),
@@ -415,11 +415,11 @@ int32 HS_SbInit(void)
 /* Initialize the table interface                                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_TblInit(void)
+CFE_Status_t HS_TblInit(void)
 {
-    uint32 TableSize  = 0;
-    uint32 TableIndex = 0;
-    int32  Status;
+    uint32       TableSize  = 0;
+    uint32       TableIndex = 0;
+    CFE_Status_t Status;
 
     /* Register The HS Applications Monitor Table */
     TableSize = HS_MAX_MONITORED_APPS * sizeof(HS_AMTEntry_t);
@@ -529,11 +529,11 @@ int32 HS_TblInit(void)
 /* Main Processing Loop                                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_ProcessMain(void)
+CFE_Status_t HS_ProcessMain(void)
 {
-    int32       Status      = CFE_SUCCESS;
-    const char *AliveString = HS_CPU_ALIVE_STRING;
-    uint32      i           = 0;
+    CFE_Status_t Status      = CFE_SUCCESS;
+    const char * AliveString = HS_CPU_ALIVE_STRING;
+    uint32       i           = 0;
 
     /*
     ** Get Tables
@@ -601,9 +601,9 @@ int32 HS_ProcessMain(void)
 /* Process any Commands and Event Messages received this cycle     */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int32 HS_ProcessCommands(void)
+CFE_Status_t HS_ProcessCommands(void)
 {
-    int32            Status = CFE_SUCCESS;
+    CFE_Status_t     Status = CFE_SUCCESS;
     CFE_SB_Buffer_t *BufPtr = NULL;
 
     /*

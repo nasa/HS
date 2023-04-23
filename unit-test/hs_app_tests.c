@@ -72,7 +72,7 @@ void HS_APP_TEST_CFE_RcvBufferHandler(void *UserObj, UT_EntryKey_t FuncKey, cons
 {
     CFE_SB_Buffer_t **BufPtr = UT_Hook_GetArgValueByName(Context, "BufPtr", CFE_SB_Buffer_t **);
 
-    int32 status;
+    CFE_Status_t status;
     HS_APP_TEST_CFE_SB_RcvMsgHookCount++;
 
     if (HS_APP_TEST_CFE_SB_RcvMsgHookCount % 2 == 1)
@@ -570,7 +570,7 @@ void HS_AppMain_Test_StateDisabled(void)
 
 void HS_AppInit_Test_Nominal(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     HS_AppData.ServiceWatchdogFlag   = 99;
     HS_AppData.AlivenessCounter      = 99;
@@ -626,9 +626,9 @@ void HS_AppInit_Test_Nominal(void)
 
 void HS_AppInit_Test_EVSRegisterError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedSysLogString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedSysLogString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "HS App: Error Registering For Event Services, RC = 0x%%08X\n");
 
@@ -679,7 +679,7 @@ void HS_AppInit_Test_EVSRegisterError(void)
 void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
 {
     HS_AppData_t AppData;
-    int32        Result;
+    CFE_Status_t Result;
     int32        strCmpResult;
     char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
@@ -753,7 +753,7 @@ void HS_AppInit_Test_CorruptCDSResetsPerformed(void)
 void HS_AppInit_Test_CorruptCDSMaxResets(void)
 {
     HS_AppData_t AppData;
-    int32        Result;
+    CFE_Status_t Result;
     int32        strCmpResult;
     char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
@@ -824,7 +824,7 @@ void HS_AppInit_Test_CorruptCDSMaxResets(void)
 void HS_AppInit_Test_CorruptCDSNoEvent(void)
 {
     HS_AppData_t AppData;
-    int32        Result;
+    CFE_Status_t Result;
 
     HS_AppData.ServiceWatchdogFlag   = 99;
     HS_AppData.AlivenessCounter      = 99;
@@ -879,9 +879,9 @@ void HS_AppInit_Test_CorruptCDSNoEvent(void)
 
 void HS_AppInit_Test_RestoreCDSError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Failed to restore data from CDS (Err=0x%%08x), initializing resets data");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "HS Initialized.  Version %%d.%%d.%%d.%%d");
@@ -932,9 +932,9 @@ void HS_AppInit_Test_RestoreCDSError(void)
 
 void HS_AppInit_Test_DisableSavingToCDS(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "HS Initialized.  Version %%d.%%d.%%d.%%d");
 
     HS_AppData.ServiceWatchdogFlag   = 99;
@@ -987,9 +987,9 @@ void HS_AppInit_Test_DisableSavingToCDS(void)
 
 void HS_AppInit_Test_SBInitError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Creating SB Command Pipe,RC=0x%%08X");
 
     HS_AppData.ServiceWatchdogFlag   = 99;
@@ -1044,9 +1044,9 @@ void HS_AppInit_Test_SBInitError(void)
 
 void HS_AppInit_Test_TblInitError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Registering AppMon Table,RC=0x%%08X");
 
     HS_AppData.ServiceWatchdogFlag   = 99;
@@ -1385,7 +1385,7 @@ void HS_SbInit_Test_SubscribeWakeupError(void)
 
 void HS_TblInit_Test_Nominal(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     /* Same return value as default, but bypasses default hook function to make test easier to write */
     UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_Load), CFE_SUCCESS);
@@ -1404,9 +1404,9 @@ void HS_TblInit_Test_Nominal(void)
 
 void HS_TblInit_Test_RegisterAppMonTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Registering AppMon Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Register to return -1 on first call, to generate error HS_AMT_REG_ERR_EID */
@@ -1437,9 +1437,9 @@ void HS_TblInit_Test_RegisterAppMonTableError(void)
 
 void HS_TblInit_Test_RegisterEventMonTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Registering EventMon Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Register to return -1 on second call, to generate error HS_EMT_REG_ERR_EID */
@@ -1470,9 +1470,9 @@ void HS_TblInit_Test_RegisterEventMonTableError(void)
 
 void HS_TblInit_Test_RegisterMsgActsTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Registering MsgActs Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Register to return -1 on third call, to generate error HS_MAT_REG_ERR_EID */
@@ -1503,9 +1503,9 @@ void HS_TblInit_Test_RegisterMsgActsTableError(void)
 
 void HS_TblInit_Test_RegisterExeCountTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Registering ExeCount Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Register to return -1 on fourth call, to generate error HS_XCT_REG_ERR_EID */
@@ -1536,9 +1536,9 @@ void HS_TblInit_Test_RegisterExeCountTableError(void)
 
 void HS_TblInit_Test_LoadExeCountTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Loading ExeCount Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Load to fail on first call, to generate error HS_XCT_LD_ERR_EID */
@@ -1568,9 +1568,9 @@ void HS_TblInit_Test_LoadExeCountTableError(void)
 
 void HS_TblInit_Test_LoadAppMonTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Loading AppMon Table,RC=0x%%08X");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Application Monitoring Disabled due to Table Load Failure");
@@ -1613,9 +1613,9 @@ void HS_TblInit_Test_LoadAppMonTableError(void)
 
 void HS_TblInit_Test_LoadEventMonTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Loading EventMon Table,RC=0x%%08X");
     snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitoring Disabled due to Table Load Failure");
@@ -1658,9 +1658,9 @@ void HS_TblInit_Test_LoadEventMonTableError(void)
 
 void HS_TblInit_Test_LoadMsgActsTableError(void)
 {
-    int32 Result;
-    int32 strCmpResult;
-    char  ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    CFE_Status_t Result;
+    int32        strCmpResult;
+    char         ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Error Loading MsgActs Table,RC=0x%%08X");
 
     /* Set CFE_TBL_Load to fail on fourth call, to generate error HS_MAT_LD_ERR_EID */
@@ -1691,7 +1691,7 @@ void HS_TblInit_Test_LoadMsgActsTableError(void)
 
 void HS_ProcessMain_Test(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     HS_AMTEntry_t AMTable;
 
@@ -1737,7 +1737,7 @@ void HS_ProcessMain_Test(void)
 
 void HS_ProcessMain_Test_MonStateDisabled(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     HS_AMTEntry_t AMTable;
 
@@ -1783,7 +1783,7 @@ void HS_ProcessMain_Test_MonStateDisabled(void)
 
 void HS_ProcessMain_Test_AlivenessDisabled(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     HS_AMTEntry_t AMTable;
 
@@ -1828,7 +1828,7 @@ void HS_ProcessMain_Test_AlivenessDisabled(void)
 
 void HS_ProcessMain_Test_WatchdogDisabled(void)
 {
-    int32 Result;
+    CFE_Status_t Result;
 
     HS_AMTEntry_t AMTable;
 
@@ -1876,7 +1876,7 @@ void HS_ProcessMain_Test_WatchdogDisabled(void)
 
 void HS_ProcessCommands_Test(void)
 {
-    int32         Result;
+    CFE_Status_t  Result;
     uint32        i;
     uint8         call_count_CFE_SB_ReceiveBuffer = 0;
     uint8         call_count_HS_AppPipe           = 0;
@@ -1937,7 +1937,7 @@ void HS_ProcessCommands_Test(void)
 
 void HS_ProcessCommands_Test_NullMsgPtr(void)
 {
-    int32         Result;
+    CFE_Status_t  Result;
     uint32        i;
     uint8         call_count_CFE_SB_ReceiveBuffer = 0;
     uint8         call_count_HS_AppPipe           = 0;
