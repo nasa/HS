@@ -107,8 +107,8 @@ void HS_MonitorApplications(void)
                     /*
                     ** Unset the enabled bit flag
                     */
-                    CFE_CLR(HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE],
-                            (TableIndex % HS_BITS_PER_APPMON_ENABLE));
+                    HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE] &=
+                        ~(1 << (TableIndex % HS_BITS_PER_APPMON_ENABLE));
                     switch (ActionType)
                     {
                         case HS_AMT_ACT_PROC_RESET:

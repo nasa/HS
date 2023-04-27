@@ -658,8 +658,8 @@ void HS_AppMonStatusRefresh(void)
         else
         {
             HS_AppData.AppMonCheckInCountdown[TableIndex] = HS_AppData.AMTablePtr[TableIndex].CycleCount;
-            CFE_SET((HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE]),
-                    (TableIndex % HS_BITS_PER_APPMON_ENABLE));
+            HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE] |=
+                (1 << (TableIndex % HS_BITS_PER_APPMON_ENABLE));
         }
     }
 }
