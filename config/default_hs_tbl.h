@@ -28,7 +28,8 @@
 #ifndef HS_TBL_H
 #define HS_TBL_H
 
-#include "hs_mission_cfg.h"
-#include "hs_table_structs.h"
+#include "hs_interface_cfg.h"
+#include "hs_tbldefs.h"
+#include "hs_tblstruct.h"
 
 #endif

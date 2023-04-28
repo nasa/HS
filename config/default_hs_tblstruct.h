@@ -27,8 +27,8 @@
  * either by overriding this header or by generating definitions from a command/data
  * dictionary tool.
  */
-#ifndef HS_TABLE_STRUCTS_H
-#define HS_TABLE_STRUCTS_H
+#ifndef HS_TBLSTRUCT_H
+#define HS_TBLSTRUCT_H
 
 /*************************************************************************
  * Includes
@@ -41,14 +41,6 @@
 /************************************************************************
  * Macro Definitions
  ************************************************************************/
-
-/**
- * \name Macros for Action Type numbers of Message Actions
- * \{
- */
-#define HS_AMT_ACT_MSG(num) (HS_AMT_ACT_LAST_NONMSG + 1 + (num))
-#define HS_EMT_ACT_MSG(num) (HS_EMT_ACT_LAST_NONMSG + 1 + (num))
-/**\}*/
 
 /*************************************************************************
  * Type Definitions
