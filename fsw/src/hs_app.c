@@ -28,7 +28,7 @@
 ** Includes
 *************************************************************************/
 #include "hs_app.h"
-#include "hs_events.h"
+#include "hs_eventids.h"
 #include "hs_msgids.h"
 #include "hs_perfids.h"
 #include "hs_monitors.h"

@@ -29,7 +29,7 @@
 #include "hs_cmds.h"
 #include "hs_msgids.h"
 #include "hs_msgdefs.h"
-#include "hs_events.h"
+#include "hs_eventids.h"
 #include "hs_dispatch.h"
 #include "hs_version.h"
 

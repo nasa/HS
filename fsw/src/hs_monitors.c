@@ -30,7 +30,7 @@
 #include "hs_monitors.h"
 #include "hs_sysmon.h"
 #include "hs_tbldefs.h"
-#include "hs_events.h"
+#include "hs_eventids.h"
 #include "hs_utils.h"
 #include "cfe_evs_msg.h"
 
