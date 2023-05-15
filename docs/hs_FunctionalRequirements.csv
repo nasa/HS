@@ -1,7 +1,7 @@
 Summary,Custom field (Requirement ID),Description,Custom field (Requirement Rationale)
 HS1000,HS1000,"Upon receipt of a No-Op command, HS shall increment the HS Valid Command Counter and generate an event message.",Debug command to verify application is alive.
-HS1001,HS1001,"Upon receipt of a Reset command, HS shall reset the following housekeeping variables to a value of zero:  
-a)       Valid Ground Command Counter    
+HS1001,HS1001,"Upon receipt of a Reset command, HS shall reset the following housekeeping variables to a value of zero:
+a)       Valid Ground Command Counter
 b)       Ground Command Rejected Counter.",Important for testing and on-orbit flight operations in order to start with a “clean slate”.
 HS1002,HS1002,"For all HS commands, if the length contained in the message header is not equal to the expected length, HS shall reject the command and issue an event message.",Basic command verification in the event of SEU or memory corruption
 HS1003,HS1003,"If HS accepts any command as valid, HS shall execute the command, increment the HS Valid Command Counter and issue an event message.",Operators require feedback on command execution.
@@ -63,9 +63,6 @@ HS6009,HS6009,HS shall report average CPU utilization over the last <PLATFORM_DE
 HS6010,HS6010,If the CPU utilization exceeds <PLATFORM_DEFINED> % for <PLATFORM_DEFINED> intervals and CPU Utilization Monitoring is enabled then HS shall issue an event message,Alerts the ground to CPU hogging. This event can be turned on or off.
 HS6011,HS6011,"Upon receipt of an Enable CPU utilization monitoring, HS shall begin monitoring CPU utilization.",Allows mission to turn CPU utilization on or off
 HS6012,HS6012,"Upon receipt of an Disable CPU utilization monitoring, HS shall stop monitoring CPU utilization",Allows mission to turn CPU utilization on or off
-HS6013,HS6013,"Upon receipt of a set utility diagnostics command, HS shall set the utility diagnostics mask.","Run time, operational method to update the utilization diagnostics mask (startup default is in platform configuration) which is used to determine the idle tick length."
-HS6014,HS6014,"Upon receipt of a set utilities parameter command, HS shall set the utility parameters.","Run time, operational method to update the utilization parameters (startup default is in platform configuration) which are used to determine CPU hogging."
-HS6015,HS6015,"Upon receipt of a report utility diagnostics command, HS shall send an event message containing utility diagnostics information.",Operational interface to report utility diagnostics
 HS7000,HS7000,"Upon receipt of a Reset Processor Resets Command, HS shall set the number of cFE Processor Resets commanded by HS to zero.",HS keeps track of the number of cFE Processor Resets it performs in order to  avoid an infinite reset loop. Resetting this count allows HS to continue to perform resets up to the internally set Max.
 HS7001,HS7001,"Upon receipt of a Set Max Processor Resets Command, HS shall set the Maximum number of cFE Processor Resets commanded by HS to the Command-specified value.  ",Allows the ground to modify the default value specified in a configuration file without having to recompile. Primarily used in order to be consistent with cFE. This limit is different than the limit that the cFE maintains.
 HS7100,HS7100,"HS shall generate a housekeeping message containing the following:
