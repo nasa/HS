@@ -392,7 +392,7 @@
  *  \par Limits:
  *       This parameter can't be larger than #HS_CPU_UTILIZATION_MAX.
  */
-#define HS_UTIL_PER_INTERVAL_HOGGING 9900
+#define HS_UTIL_PER_INTERVAL_HOGGING 7500
 
 /**
  * \brief CPU Utilization Hogging Timeout
