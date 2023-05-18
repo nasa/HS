@@ -183,7 +183,7 @@ void HS_AppMain(void);
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_AppInit(void);
+CFE_Status_t HS_AppInit(void);
 
 /**
  * \brief Initialize Software Bus
@@ -198,7 +198,7 @@ int32 HS_AppInit(void);
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_SbInit(void);
+CFE_Status_t HS_SbInit(void);
 
 /**
  * \brief Initialize cFE Table Services
@@ -213,7 +213,7 @@ int32 HS_SbInit(void);
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_TblInit(void);
+CFE_Status_t HS_TblInit(void);
 
 /**
  * \brief Perform Normal Periodic Processing
@@ -230,7 +230,7 @@ int32 HS_TblInit(void);
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_ProcessMain(void);
+CFE_Status_t HS_ProcessMain(void);
 
 /**
  * \brief Process commands received from cFE Software Bus
@@ -245,6 +245,6 @@ int32 HS_ProcessMain(void);
  *  \return Execution status, see \ref CFEReturnCodes
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
-int32 HS_ProcessCommands(void);
+CFE_Status_t HS_ProcessCommands(void);
 
 #endif

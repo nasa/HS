@@ -77,6 +77,6 @@ void HS_SysMonCleanup(void);
  *
  *  \return Utilization value as fixed-point integer
  */
-int32 HS_SysMonGetCpuUtilization(void);
+CFE_Status_t HS_SysMonGetCpuUtilization(void);
 
 #endif

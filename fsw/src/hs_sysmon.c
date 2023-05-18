@@ -44,10 +44,10 @@
  * Initialize The System Monitor functions
  * --------------------------------------------------------
  */
-int32 HS_SysMonInit(void)
+CFE_Status_t HS_SysMonInit(void)
 {
     CFE_PSP_IODriver_Location_t Location;
-    int32                       StatusCode;
+    CFE_Status_t                StatusCode;
 
     if (CFE_PSP_IODriver_FindByName(HS_SYSTEM_MONITOR_DEVICE, &HS_AppData.SysMonPspModuleId) != CFE_PSP_SUCCESS)
     {
@@ -134,14 +134,14 @@ void HS_SysMonCleanup(void)
  * Obtain the System CPU utilization information
  * --------------------------------------------------------
  */
-int32 HS_SysMonGetCpuUtilization(void)
+CFE_Status_t HS_SysMonGetCpuUtilization(void)
 {
     const CFE_PSP_IODriver_Location_t Location = {.PspModuleId  = HS_AppData.SysMonPspModuleId,
                                                   .SubsystemId  = HS_AppData.SysMonSubsystemId,
                                                   .SubchannelId = HS_AppData.SysMonSubchannelId};
     CFE_PSP_IODriver_AdcCode_t        Sample   = 0;
     CFE_PSP_IODriver_AnalogRdWr_t     RdWr     = {.NumChannels = 1, .Samples = &Sample};
-    int32                             StatusCode;
+    CFE_Status_t                      StatusCode;
     int32                             Value;
 
     if (HS_AppData.SysMonPspModuleId == 0)

@@ -304,7 +304,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    int32 Status = CFE_SUCCESS;
+    CFE_Status_t Status = CFE_SUCCESS;
 
     /*
     ** Unsubscribe from Event Messages if currently enabled
@@ -430,7 +430,7 @@ void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AcquirePointers(void)
 {
-    int32 Status;
+    CFE_Status_t Status;
 
     /*
     ** Release the table (AppMon)
