@@ -32,7 +32,8 @@
 #ifndef HK_MSG_H
 #define HK_MSG_H
 
+#include "hs_interface_cfg.h"
 #include "hs_msgdefs.h"
-#include "hs_msg_structs.h"
+#include "hs_msgstruct.h"
 
 #endif

@@ -11,7 +11,6 @@
 # The list of header files that control the HS configuration
 set(HS_PLATFORM_CONFIG_FILE_LIST
   hs_internal_cfg.h
-  hs_custom.h
   hs_msgids.h
   hs_platform_cfg.h
 )

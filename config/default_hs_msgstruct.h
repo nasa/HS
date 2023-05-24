@@ -26,8 +26,8 @@
  *   Constants and enumerated types related to these message structures
  *   are defined in hs_msgdefs.h.
  */
-#ifndef HS_MSG_STRUCTS_H
-#define HS_MSG_STRUCTS_H
+#ifndef HS_MSGSTRUCT_H
+#define HS_MSGSTRUCT_H
 
 /************************************************************************
  * Includes

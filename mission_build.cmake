@@ -13,30 +13,24 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/docs/dox_src ${MISSION_BINARY_DIR}/do
 
 # The list of header files that control the HS configuration
 set(HS_MISSION_CONFIG_FILE_LIST
+  hs_fcncodes.h
+  hs_interface_cfg.h
   hs_mission_cfg.h
   hs_msgdefs.h
   hs_msg.h
+  hs_msgstruct.h
   hs_tbldefs.h
   hs_tbl.h
+  hs_tblstruct.h
 )
 
 if (CFE_EDS_ENABLED_BUILD)
 
   # In an EDS-based build, these files come generated from the EDS tool
-  set(HS_CFGFILE_SRC_hs_mission_cfg "hs_eds_designparameters.h")
-  #set(HS_CFGFILE_SRC_hs_tbldefs "hs_eds_designparameters.h")
-  set(HS_CFGFILE_SRC_hs_msgdefs "hs_eds_cc.h")
-  set(HS_CFGFILE_SRC_hs_msg "hs_eds_typedefs.h")
-  set(HS_CFGFILE_SRC_hs_tbl "hs_eds_typedefs.h")
-
-else(CFE_EDS_ENABLED_BUILD)
-
-  # In a non-EDS build, the user supplies these files, plus a couple more
-  # There are defaults for all in the "config" dir
-  list (APPEND HS_MISSION_CONFIG_FILE_LIST
-    hs_msg_structs.h
-    hs_table_structs.h
-  )
+  set(HS_CFGFILE_SRC_hs_interface_cfg "hs_eds_designparameters.h")
+  set(HS_CFGFILE_SRC_hs_fcncodes      "hs_eds_cc.h")
+  set(HS_CFGFILE_SRC_hs_msgstruct     "hs_eds_typedefs.h")
+  set(HS_CFGFILE_SRC_hs_tblstruct     "hs_eds_typedefs.h")
 
 endif(CFE_EDS_ENABLED_BUILD)
 

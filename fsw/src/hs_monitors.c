@@ -30,7 +30,7 @@
 #include "hs_monitors.h"
 #include "hs_sysmon.h"
 #include "hs_tbldefs.h"
-#include "hs_events.h"
+#include "hs_eventids.h"
 #include "hs_utils.h"
 #include "cfe_evs_msg.h"
 
@@ -45,7 +45,7 @@ void HS_MonitorApplications(void)
 {
     CFE_ES_AppInfo_t AppInfo;
     CFE_ES_AppId_t   AppId = CFE_ES_APPID_UNDEFINED;
-    int32            Status;
+    CFE_Status_t     Status;
     uint32           TableIndex = 0;
     uint16           ActionType;
     uint32           MsgActsIndex = 0;
@@ -222,7 +222,7 @@ void HS_MonitorApplications(void)
 void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
 {
     uint32           TableIndex = 0;
-    int32            Status     = CFE_SUCCESS;
+    CFE_Status_t     Status     = CFE_SUCCESS;
     CFE_ES_AppId_t   AppId      = CFE_ES_APPID_UNDEFINED;
     uint16           ActionType;
     uint32           MsgActsIndex = 0;

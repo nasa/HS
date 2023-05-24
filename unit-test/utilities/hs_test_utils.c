@@ -32,10 +32,9 @@
 #include "hs_tbl.h"
 #include "hs_msgdefs.h"
 #include "hs_version.h"
-#include "hs_events.h"
+#include "hs_eventids.h"
 #include "hs_utils.h"
 #include "hs_cmds.h"
-#include "hs_custom.h"
 #include "hs_monitors.h"
 #include "hs_msg.h"
 

@@ -31,13 +31,13 @@
  * Generated stub function for HS_AppInit()
  * ----------------------------------------------------
  */
-int32 HS_AppInit(void)
+CFE_Status_t HS_AppInit(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_AppInit, int32);
+    UT_GenStub_SetupReturnBuffer(HS_AppInit, CFE_Status_t);
 
     UT_GenStub_Execute(HS_AppInit, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_AppInit, int32);
+    return UT_GenStub_GetReturnValue(HS_AppInit, CFE_Status_t);
 }
 
 /*
@@ -56,13 +56,13 @@ void HS_AppMain(void)
  * Generated stub function for HS_ProcessCommands()
  * ----------------------------------------------------
  */
-int32 HS_ProcessCommands(void)
+CFE_Status_t HS_ProcessCommands(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_ProcessCommands, int32);
+    UT_GenStub_SetupReturnBuffer(HS_ProcessCommands, CFE_Status_t);
 
     UT_GenStub_Execute(HS_ProcessCommands, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_ProcessCommands, int32);
+    return UT_GenStub_GetReturnValue(HS_ProcessCommands, CFE_Status_t);
 }
 
 /*
@@ -70,13 +70,13 @@ int32 HS_ProcessCommands(void)
  * Generated stub function for HS_ProcessMain()
  * ----------------------------------------------------
  */
-int32 HS_ProcessMain(void)
+CFE_Status_t HS_ProcessMain(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_ProcessMain, int32);
+    UT_GenStub_SetupReturnBuffer(HS_ProcessMain, CFE_Status_t);
 
     UT_GenStub_Execute(HS_ProcessMain, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_ProcessMain, int32);
+    return UT_GenStub_GetReturnValue(HS_ProcessMain, CFE_Status_t);
 }
 
 /*
@@ -84,13 +84,13 @@ int32 HS_ProcessMain(void)
  * Generated stub function for HS_SbInit()
  * ----------------------------------------------------
  */
-int32 HS_SbInit(void)
+CFE_Status_t HS_SbInit(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_SbInit, int32);
+    UT_GenStub_SetupReturnBuffer(HS_SbInit, CFE_Status_t);
 
     UT_GenStub_Execute(HS_SbInit, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_SbInit, int32);
+    return UT_GenStub_GetReturnValue(HS_SbInit, CFE_Status_t);
 }
 
 /*
@@ -98,11 +98,11 @@ int32 HS_SbInit(void)
  * Generated stub function for HS_TblInit()
  * ----------------------------------------------------
  */
-int32 HS_TblInit(void)
+CFE_Status_t HS_TblInit(void)
 {
-    UT_GenStub_SetupReturnBuffer(HS_TblInit, int32);
+    UT_GenStub_SetupReturnBuffer(HS_TblInit, CFE_Status_t);
 
     UT_GenStub_Execute(HS_TblInit, Basic, NULL);
 
-    return UT_GenStub_GetReturnValue(HS_TblInit, int32);
+    return UT_GenStub_GetReturnValue(HS_TblInit, CFE_Status_t);
 }
