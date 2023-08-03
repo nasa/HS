@@ -26,13 +26,13 @@
 /*************************************************************************
 ** Includes
 *************************************************************************/
+#include "cfe_msg_custom_api.h"
 #include "hs_app.h"
 #include "hs_monitors.h"
 #include "hs_sysmon.h"
 #include "hs_tbldefs.h"
 #include "hs_eventids.h"
 #include "hs_utils.h"
-#include "cfe_evs_msg.h"
 
 #include <string.h>
 
@@ -186,6 +186,8 @@ void HS_MonitorApplications(void)
                                 if ((HS_AppData.MsgActCooldown[MsgActsIndex] == 0) &&
                                     (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_DISABLED))
                                 {
+                                    CFE_MSG_SetGatewayCRC((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf);
+                                    CFE_MSG_SetMsgTime((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf, CFE_TIME_GetTime());
                                     CFE_SB_TransmitMsg(
                                         (const CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf, true);
                                     HS_AppData.MsgActExec++;
@@ -340,6 +342,8 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
                                 (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_DISABLED))
                             {
                                 SendPtr = (CFE_SB_Buffer_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf;
+                                CFE_MSG_SetGatewayCRC((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf);
+                                CFE_MSG_SetMsgTime((CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf, CFE_TIME_GetTime());
                                 CFE_SB_TransmitMsg(&SendPtr->Msg, true);
 
                                 HS_AppData.MsgActExec++;
