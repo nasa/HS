@@ -30,7 +30,7 @@
 ** Includes
 *************************************************************************/
 #include "hs_sysmon.h"
-#include "hs_internal_cfg.h"
+#include "hs_platform_cfg.h"
 #include "hs_app.h"
 
 #include "cfe.h"
