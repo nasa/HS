@@ -26,7 +26,7 @@
 ** Includes
 *************************************************************************/
 #include "cfe.h"
-#include "hs_platform_cfg.h"
+#include "hs_mission_cfg.h"
 #include "hs_tbl.h"
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"

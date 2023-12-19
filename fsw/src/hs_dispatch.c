@@ -199,7 +199,7 @@ void HS_SendHkVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_SendHkCmd(BufPtr);
+        HS_SendHkCmd((const HS_SendHkCmd_t *)BufPtr);
     }
 }
 
@@ -217,7 +217,7 @@ void HS_NoopVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_NoopCmd(BufPtr);
+        HS_NoopCmd((const HS_NoopCmd_t *)BufPtr);
     }
 }
 
@@ -235,7 +235,7 @@ void HS_ResetVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_ResetCmd(BufPtr);
+        HS_ResetCmd((const HS_ResetCmd_t *)BufPtr);
     }
 }
 
@@ -253,7 +253,7 @@ void HS_EnableAppMonVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_EnableAppMonCmd(BufPtr);
+        HS_EnableAppMonCmd((const HS_EnableAppMonCmd_t *)BufPtr);
     }
 }
 
@@ -271,7 +271,7 @@ void HS_DisableAppMonVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_DisableAppMonCmd(BufPtr);
+        HS_DisableAppMonCmd((const HS_DisableAppMonCmd_t *)BufPtr);
     }
 }
 
@@ -289,7 +289,7 @@ void HS_EnableEventMonVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_EnableEventMonCmd(BufPtr);
+        HS_EnableEventMonCmd((const HS_EnableEventMonCmd_t *)BufPtr);
     }
 }
 
@@ -307,7 +307,7 @@ void HS_DisableEventMonVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_DisableEventMonCmd(BufPtr);
+        HS_DisableEventMonCmd((const HS_DisableEventMonCmd_t *)BufPtr);
     }
 }
 
@@ -325,7 +325,7 @@ void HS_EnableAlivenessVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_EnableAlivenessCmd(BufPtr);
+        HS_EnableAlivenessCmd((const HS_EnableAlivenessCmd_t *)BufPtr);
     }
 }
 
@@ -343,7 +343,7 @@ void HS_DisableAlivenessVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_DisableAlivenessCmd(BufPtr);
+        HS_DisableAlivenessCmd((const HS_DisableAlivenessCmd_t *)BufPtr);
     }
 }
 
@@ -361,7 +361,7 @@ void HS_EnableCpuHogVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_EnableCpuHogCmd(BufPtr);
+        HS_EnableCpuHogCmd((const HS_EnableCpuHogCmd_t *)BufPtr);
     }
 }
 
@@ -379,7 +379,7 @@ void HS_DisableCpuHogVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_DisableCpuHogCmd(BufPtr);
+        HS_DisableCpuHogCmd((const HS_DisableCpuHogCmd_t *)BufPtr);
     }
 }
 
@@ -397,7 +397,7 @@ void HS_ResetResetsPerformedVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_ResetResetsPerformedCmd(BufPtr);
+        HS_ResetResetsPerformedCmd((const HS_ResetResetsPerformedCmd_t *)BufPtr);
     }
 }
 
@@ -415,6 +415,6 @@ void HS_SetMaxResetsVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_SetMaxResetsCmd(BufPtr);
+        HS_SetMaxResetsCmd((const HS_SetMaxResetsCmd_t *)BufPtr);
     }
 }

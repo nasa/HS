@@ -46,7 +46,7 @@
 /* Housekeeping request                                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
 {
     CFE_ES_AppId_t AppId = CFE_ES_APPID_UNDEFINED;
 
@@ -184,6 +184,8 @@ void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr)
     */
     CFE_SB_TimeStampMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader));
     CFE_SB_TransmitMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), true);
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -191,12 +193,14 @@ void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Noop command                                                    */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
 
     CFE_EVS_SendEvent(HS_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION, "No-op command: Version %d.%d.%d.%d",
                       HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -204,11 +208,12 @@ void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Reset counters command                                          */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
 {
     HS_ResetCounters();
 
     CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -229,12 +234,13 @@ void HS_ResetCounters(void)
 /* Enable applications monitor command                             */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppMonStatusRefresh();
     HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
     CFE_EVS_SendEvent(HS_ENABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Enabled");
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -242,11 +248,12 @@ void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Disable applications monitor command                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_DisableAppMonCmd(const HS_DisableAppMonCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
     CFE_EVS_SendEvent(HS_DISABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Disabled");
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -254,7 +261,7 @@ void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Enable events monitor command                                   */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
 {
     CFE_Status_t Status = CFE_SUCCESS;
 
@@ -295,6 +302,8 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
     {
         HS_AppData.CmdErrCount++;
     }
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -302,7 +311,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Disable event monitor command                                   */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
 {
     CFE_Status_t Status = CFE_SUCCESS;
 
@@ -342,6 +351,8 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
     {
         HS_AppData.CmdErrCount++;
     }
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -349,11 +360,13 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Enable aliveness indicator command                              */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
     CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Enabled");
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -361,11 +374,13 @@ void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Disable aliveness indicator command                             */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
     CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Disabled");
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -373,11 +388,13 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Enable cpu hogging indicator command                            */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
     CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Enabled");
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -385,11 +402,13 @@ void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Disable cpu hogging indicator command                           */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_DisableCpuHogCmd(const HS_DisableCpuHogCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
     CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Disabled");
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -397,12 +416,14 @@ void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Reset processor resets performed count command                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_ResetResetsPerformedCmd(const HS_ResetResetsPerformedCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
     HS_SetCDSData(0, HS_AppData.CDSData.MaxResets);
     CFE_EVS_SendEvent(HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                       "Processor Resets Performed by HS Counter has been Reset");
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -410,7 +431,7 @@ void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr)
 /* Set max processor resets command                                */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
+CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
 {
     const HS_SetMaxResets_Payload_t *CmdPtr;
 
@@ -421,6 +442,8 @@ void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr)
 
     CFE_EVS_SendEvent(HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
                       "Max Resets Performable by HS has been set to %d", HS_AppData.CDSData.MaxResets);
+
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

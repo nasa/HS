@@ -17,40 +17,47 @@
  * limitations under the License.
  ************************************************************************/
 
-/**
- * @file
- *   CFS Health and Safety (HS) Application Message IDs
- */
-#ifndef HS_MSGIDS_H
-#define HS_MSGIDS_H
-
-#include "cfe_core_api_base_msgids.h"
-#include "hs_topicids.h"
-
-/**
- * \defgroup cfshscmdmid CFS Health and Safety Command Message IDs
- * \{
+/*
+ * Includes
  */
 
-/** \brief Msg ID for cmds to HS                */
-#define HS_CMD_MID CFE_PLATFORM_CMD_TOPICID_TO_MIDV(CFE_MISSION_HS_CMD_TOPICID)
+#include "hs_cmds.h"
+#include "hs_test_utils.h"
+#include "hs_dispatch.h"
+#include "hs_msgids.h"
 
-/** \brief Msg ID to request HS housekeeping    */
-#define HS_SEND_HK_MID CFE_PLATFORM_CMD_TOPICID_TO_MIDV(CFE_MISSION_HS_SEND_HK_TOPICID)
+/* UT includes */
+#include "uttest.h"
+#include "utassert.h"
+#include "utstubs.h"
 
-/** \brief Msg ID to wake up HS                 */
-#define HS_WAKEUP_MID CFE_PLATFORM_CMD_TOPICID_TO_MIDV(CFE_MISSION_HS_WAKEUP_TOPICID)
+#include "cfe.h"
+#include "cfe_msg_dispatcher.h"
 
-/**\}*/
+/*
+**********************************************************************************
+**          TEST CASE FUNCTIONS
+**********************************************************************************
+*/
 
-/**
- * \defgroup cfshstlmmid CFS Health and Safety Telemetry Message IDs
- * \{
+void Test_HS_AppPipe(void)
+{
+    /*
+     * Test Case For:
+     * void HS_AppPipe
+     */
+    CFE_SB_Buffer_t UtBuf;
+
+    UT_SetDeferredRetcode(UT_KEY(CFE_MSG_EdsDispatch), 1, CFE_SUCCESS);
+
+    memset(&UtBuf, 0, sizeof(UtBuf));
+    UtAssert_VOIDCALL(HS_AppPipe(&UtBuf));
+}
+
+/*
+ * Register the test cases to execute with the unit test tool
  */
-
-/** \brief HS Housekeeping Telemetry            */
-#define HS_HK_TLM_MID CFE_PLATFORM_TLM_TOPICID_TO_MIDV(CFE_MISSION_HS_HK_TLM_TOPICID)
-
-/**\}*/
-
-#endif
+void UtTest_Setup(void)
+{
+    UtTest_Add(Test_HS_AppPipe, HS_Test_Setup, HS_Test_TearDown, "Test_HS_AppPipe");
+}

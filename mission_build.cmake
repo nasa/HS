@@ -22,6 +22,7 @@ set(HS_MISSION_CONFIG_FILE_LIST
   hs_tbldefs.h
   hs_tbl.h
   hs_tblstruct.h
+  hs_topicids.h
 )
 
 if (CFE_EDS_ENABLED_BUILD)

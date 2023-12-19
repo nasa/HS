@@ -28,7 +28,8 @@
 /*************************************************************************
  * Includes
  ************************************************************************/
-#include "cfe.h"
+#include "cfe_error.h"
+#include "hs_msg.h"
 
 /*************************************************************************
  * Exported Functions
@@ -74,7 +75,7 @@ void HS_AcquirePointers(void);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  */
-void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr);
 
 /**
  * \brief Noop command
@@ -89,7 +90,7 @@ void HS_SendHkCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_NOOP_CC
  */
-void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr);
 
 /**
  * \brief Reset counters command
@@ -107,7 +108,7 @@ void HS_NoopCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_RESET_CC
  */
-void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr);
 
 /**
  * \brief Process an enable critical applications monitor command
@@ -122,7 +123,7 @@ void HS_ResetCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_ENABLE_APP_MON_CC
  */
-void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr);
 
 /**
  * \brief Process a disable critical applications monitor command
@@ -137,7 +138,7 @@ void HS_EnableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_DISABLE_APP_MON_CC
  */
-void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_DisableAppMonCmd(const HS_DisableAppMonCmd_t *BufPtr);
 
 /**
  * \brief Process an enable critical events monitor command
@@ -152,7 +153,7 @@ void HS_DisableAppMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_ENABLE_EVENT_MON_CC
  */
-void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr);
 
 /**
  * \brief Process a disable critical events monitor command
@@ -167,7 +168,7 @@ void HS_EnableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_DISABLE_EVENT_MON_CC
  */
-void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr);
 
 /**
  * \brief Process an enable aliveness indicator command
@@ -182,7 +183,7 @@ void HS_DisableEventMonCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_ENABLE_ALIVENESS_CC
  */
-void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr);
 
 /**
  * \brief Process a disable aliveness indicator command
@@ -197,7 +198,7 @@ void HS_EnableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_DISABLE_ALIVENESS_CC
  */
-void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr);
 
 /**
  * \brief Process an enable CPU Hogging indicator command
@@ -212,7 +213,7 @@ void HS_DisableAlivenessCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_ENABLE_CPU_HOG_CC
  */
-void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr);
 
 /**
  * \brief Process a disable CPU Hogging indicator command
@@ -227,7 +228,7 @@ void HS_EnableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_DISABLE_CPU_HOG_CC
  */
-void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_DisableCpuHogCmd(const HS_DisableCpuHogCmd_t *BufPtr);
 
 /**
  * \brief Process a reset resets performed command
@@ -242,7 +243,7 @@ void HS_DisableCpuHogCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_SET_MAX_RESETS_CC
  */
-void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_ResetResetsPerformedCmd(const HS_ResetResetsPerformedCmd_t *BufPtr);
 
 /**
  * \brief Process a set max resets command
@@ -257,7 +258,7 @@ void HS_ResetResetsPerformedCmd(const CFE_SB_Buffer_t *BufPtr);
  *
  *  \sa #HS_RESET_RESETS_PERFORMED_CC
  */
-void HS_SetMaxResetsCmd(const CFE_SB_Buffer_t *BufPtr);
+CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr);
 
 /**
  * \brief Refresh Critical Applications Monitor Status
