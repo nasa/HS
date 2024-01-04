@@ -97,7 +97,7 @@ void HS_SendHkCmd_Test_InvalidEventMon(void)
     }
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -187,7 +187,7 @@ void HS_SendHkCmd_Test_AllFlagsEnabled(void)
     ExpectedStatusFlags |= HS_CDS_IN_USE;
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -285,7 +285,7 @@ void HS_SendHkCmd_Test_ResourceTypeAppMain(void)
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -382,7 +382,7 @@ void HS_SendHkCmd_Test_ResourceTypeAppChild(void)
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -480,7 +480,7 @@ void HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError(void)
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -574,7 +574,7 @@ void HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetTaskInfo), 1, -1);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -669,7 +669,7 @@ void HS_SendHkCmd_Test_ResourceTypeDevice(void)
     UT_SetHookFunction(UT_KEY(CFE_ES_GetTaskInfo), HS_CMDS_TEST_CFE_ES_GetTaskInfoHook, &TaskInfo);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -757,7 +757,7 @@ void HS_SendHkCmd_Test_ResourceTypeISR(void)
     HS_AppData.XCTablePtr[0].ResourceType = HS_XCT_TYPE_ISR;
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -848,7 +848,7 @@ void HS_SendHkCmd_Test_ResourceTypeISRGenCounterError(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_ES_GetGenCounterIDByName), -1);
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -941,7 +941,7 @@ void HS_SendHkCmd_Test_ResourceTypeUnknown(void)
     ExpectedStatusFlags |= HS_CDS_IN_USE;
 
     /* Execute the function being tested */
-    HS_SendHkCmd(&UT_CmdBuf.Buf);
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
 
     /* Verify results */
     PayloadPtr = &HS_AppData.HkPacket.Payload;
@@ -994,7 +994,7 @@ void HS_Noop_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_NoopCmd(&UT_CmdBuf.Buf);
+    HS_NoopCmd(&UT_CmdBuf.NoopCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1029,7 +1029,7 @@ void HS_ResetCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_ResetCmd(&UT_CmdBuf.Buf);
+    HS_ResetCmd(&UT_CmdBuf.ResetCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
@@ -1085,7 +1085,7 @@ void HS_EnableAppMonCmd_Test(void)
     HS_AppData.AMTablePtr = AMTable;
 
     /* Execute the function being tested */
-    HS_EnableAppMonCmd(&UT_CmdBuf.Buf);
+    HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1123,7 +1123,7 @@ void HS_DisableAppMonCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_DisableAppMonCmd(&UT_CmdBuf.Buf);
+    HS_DisableAppMonCmd(&UT_CmdBuf.DisableAppMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1163,7 +1163,7 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
     HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1203,7 +1203,7 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1246,7 +1246,7 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_SubscribeEx), 1, -1);
 
     /* Execute the function being tested */
-    HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
@@ -1289,7 +1289,7 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_SubscribeEx), 2, -1);
 
     /* Execute the function being tested */
-    HS_EnableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
@@ -1329,7 +1329,7 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
     HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1369,7 +1369,7 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1412,7 +1412,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_Unsubscribe), 1, -1);
 
     /* Execute the function being tested */
-    HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
@@ -1455,7 +1455,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_Unsubscribe), 2, -1);
 
     /* Execute the function being tested */
-    HS_DisableEventMonCmd(&UT_CmdBuf.Buf);
+    HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdErrCount == 1, "HS_AppData.CmdErrCount == 1");
@@ -1495,7 +1495,7 @@ void HS_EnableAlivenessCmd_Test(void)
     HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_EnableAlivenessCmd(&UT_CmdBuf.Buf);
+    HS_EnableAlivenessCmd(&UT_CmdBuf.EnableAlivenessCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1535,7 +1535,7 @@ void HS_DisableAlivenessCmd_Test(void)
     HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_DisableAlivenessCmd(&UT_CmdBuf.Buf);
+    HS_DisableAlivenessCmd(&UT_CmdBuf.DisableAlivenessCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1575,7 +1575,7 @@ void HS_EnableCpuHogCmd_Test(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
 
     /* Execute the function being tested */
-    HS_EnableCpuHogCmd(&UT_CmdBuf.Buf);
+    HS_EnableCpuHogCmd(&UT_CmdBuf.EnableCpuHogCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1615,7 +1615,7 @@ void HS_DisableCpuHogCmd_Test(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
 
     /* Execute the function being tested */
-    HS_DisableCpuHogCmd(&UT_CmdBuf.Buf);
+    HS_DisableCpuHogCmd(&UT_CmdBuf.DisableCpuHogCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1654,7 +1654,7 @@ void HS_ResetResetsPerformedCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_ResetResetsPerformedCmd(&UT_CmdBuf.Buf);
+    HS_ResetResetsPerformedCmd(&UT_CmdBuf.ResetResetsPerformedCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
@@ -1697,7 +1697,7 @@ void HS_SetMaxResetsCmd_Test(void)
     PayloadPtr->MaxResets = 5;
 
     /* Execute the function being tested */
-    HS_SetMaxResetsCmd(&UT_CmdBuf.Buf);
+    HS_SetMaxResetsCmd(&UT_CmdBuf.SetMaxResetsCmd);
 
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");

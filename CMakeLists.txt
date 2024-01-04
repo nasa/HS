@@ -3,11 +3,20 @@ project(CFS_HS C)
 set(APP_SRC_FILES
   fsw/src/hs_monitors.c
   fsw/src/hs_utils.c
-  fsw/src/hs_dispatch.c
   fsw/src/hs_sysmon.c
   fsw/src/hs_app.c
   fsw/src/hs_cmds.c
 )
+
+if (CFE_EDS_ENABLED_BUILD)
+  list(APPEND APP_SRC_FILES
+    fsw/src/hs_eds_dispatch.c
+  )
+else()
+  list(APPEND APP_SRC_FILES
+    fsw/src/hs_dispatch.c
+  )
+endif()
 
 # Create the app module
 add_cfe_app(hs ${APP_SRC_FILES})

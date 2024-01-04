@@ -34,4 +34,21 @@
 
 #include "hs_interface_cfg.h"
 
+/**
+ * \brief Application Name
+ *
+ *  \par Description:
+ *       This definition must match the name used at startup by the cFE
+ *       Executive Services when creating the HS application.  Note that
+ *       application names are also an argument to certain cFE commands.
+ *       For example, the application name is needed to access tables
+ *       via cFE Table Services commands.
+ *
+ *  \par Limits:
+ *       HS requires that this name be defined, but otherwise places
+ *       no limits on the definition.  Refer to CFE Executive Services
+ *       for specific information on limits related to application names.
+ */
+#define HS_APP_NAME "HS"
+
 #endif
