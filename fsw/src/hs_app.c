@@ -323,7 +323,7 @@ CFE_Status_t HS_AppInit(void)
     if (Status != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(HS_SYSMON_INIT_ERR_EID, CFE_EVS_EventType_ERROR,
-                          "Error in system monitor initialization, RC=0x%08X", Status);
+                          "Error in system monitor initialization, RC=0x%08X", (unsigned int)Status);
         return Status;
     }
 

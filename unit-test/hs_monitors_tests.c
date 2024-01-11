@@ -198,7 +198,7 @@ void HS_MonitorApplications_Test_ProcessorResetError(void)
     /* Verify results */
     UtAssert_True(HS_AppData.AppMonCheckInCountdown[0] == 0, "HS_AppData.AppMonCheckInCountdown[0] == 0 %u",
                   HS_AppData.AppMonCheckInCountdown[0]);
-    UtAssert_True(HS_AppData.AppMonEnables[0] == 0, "HS_AppData.AppMonEnables[0] == 0 %u", HS_AppData.AppMonEnables[0]);
+    UtAssert_UINT32_EQ(HS_AppData.AppMonEnables[0], 0);
     UtAssert_True(HS_AppData.ServiceWatchdogFlag == HS_STATE_DISABLED,
                   "HS_AppData.ServiceWatchdogFlag == HS_STATE_DISABLED");
 
@@ -1690,9 +1690,7 @@ void HS_MonitorUtilization_Test_HighCurrentUtil(void)
     HS_MonitorUtilization();
 
     /* Verify results */
-    UtAssert_True(HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_CPU_UTILIZATION_MAX,
-                  "HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1] == HS_CPU_UTILIZATION_MAX %u %u",
-                  HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1], HS_CPU_UTILIZATION_MAX);
+    UtAssert_INT32_EQ(HS_AppData.UtilizationTracker[HS_AppData.CurrentCPUUtilIndex - 1], HS_CPU_UTILIZATION_MAX);
     /* For this test case, we don't care about any messages or variables changed after this is set */
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));

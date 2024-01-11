@@ -171,7 +171,7 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
                     /* ExeCount remains HS_INVALID_EXECOUNT */
                     CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID, CFE_EVS_EventType_DEBUG,
                                       "Housekeeping req found unknown resource.  Type=0x%08X",
-                                      HS_AppData.XCTablePtr[TableIndex].ResourceType);
+                                      (unsigned int)HS_AppData.XCTablePtr[TableIndex].ResourceType);
                     break;
             } /* end ResourceType switch statement */
         }     /* end ExeCountState if statement */
