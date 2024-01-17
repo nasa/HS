@@ -35,9 +35,6 @@
 #include "cfe_es_msg.h"
 #include "cfe_msgids.h"
 
-CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_Default_MsgActs_Tbl", HS_APP_NAME ".MsgActs_Tbl", "HS MsgActs Table",
-                                     "hs_mat.tbl", (sizeof(HS_MATEntry_t) * HS_MAX_MSG_ACT_TYPES)};
-
 /* Checksum for each desired command - Note that if checksum is enabled, real values (non-zero) must be input */
 #ifndef CFE_TBL_NOOP_CKSUM
 #define CFE_TBL_NOOP_CKSUM 0x00
@@ -66,7 +63,7 @@ typedef struct
 /* Helper macro to get size of structure elements */
 #define HS_MEMBER_SIZE(member) (sizeof(((HS_Message *)0)->member))
 
-HS_MatTableEntry_t HS_Default_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
+HS_MatTableEntry_t HS_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
     /*          EnableState               Cooldown   Message */
 
     /*   0 */
@@ -103,3 +100,5 @@ HS_MatTableEntry_t HS_Default_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
      .HsMsg.cmd1  = {CFE_MSG_CMD_HDR_INIT(CFE_TBL_CMD_MID, HS_MEMBER_SIZE(cmd1), CFE_TBL_NOOP_CC, CFE_TBL_NOOP_CKSUM)}}
 
 };
+
+CFE_TBL_FILEDEF(HS_MsgActs_Tbl, HS.MsgActs_Tbl, HS MsgActs Table, hs_mat.tbl)
