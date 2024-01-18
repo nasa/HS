@@ -31,9 +31,6 @@
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 
-CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_AppMon_Tbl", HS_APP_NAME ".AppMon_Tbl", "HS AppMon Table", "hs_amt.tbl",
-                                     (sizeof(HS_AMTEntry_t) * HS_MAX_MONITORED_APPS)};
-
 HS_AMTEntry_t HS_AppMon_Tbl[HS_MAX_MONITORED_APPS] = {
     /*          AppName                    NullTerm CycleCount     ActionType */
 
@@ -70,3 +67,5 @@ HS_AMTEntry_t HS_AppMon_Tbl[HS_MAX_MONITORED_APPS] = {
     /*  30 */ {"", 0, 10, HS_AMT_ACT_NOACT},
     /*  31 */ {"", 0, 10, HS_AMT_ACT_NOACT},
 };
+
+CFE_TBL_FILEDEF(HS_AppMon_Tbl, HS.AppMon_Tbl, HS AppMon Table, hs_amt.tbl)

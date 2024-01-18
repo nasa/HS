@@ -31,9 +31,6 @@
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 
-CFE_TBL_FileDef_t CFE_TBL_FileDef = {"HS_ExeCount_Tbl", HS_APP_NAME ".ExeCount_Tbl", "HS ExeCount Table", "hs_xct.tbl",
-                                     (sizeof(HS_XCTEntry_t) * HS_MAX_EXEC_CNT_SLOTS)};
-
 HS_XCTEntry_t HS_ExeCount_Tbl[HS_MAX_EXEC_CNT_SLOTS] = {
     /*          ResourceName               NullTerm ResourceType              */
 
@@ -70,3 +67,5 @@ HS_XCTEntry_t HS_ExeCount_Tbl[HS_MAX_EXEC_CNT_SLOTS] = {
     /*  30 */ {"", 0, HS_XCT_TYPE_NOTYPE},
     /*  31 */ {"", 0, HS_XCT_TYPE_NOTYPE},
 };
+
+CFE_TBL_FILEDEF(HS_ExeCount_Tbl, HS.ExeCount_Tbl, HS ExeCount Table, hs_xct.tbl)
