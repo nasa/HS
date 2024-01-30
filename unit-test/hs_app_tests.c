@@ -1881,6 +1881,7 @@ void HS_ProcessCommands_Test(void)
     uint8         call_count_CFE_SB_ReceiveBuffer = 0;
     uint8         call_count_HS_AppPipe           = 0;
     HS_EMTEntry_t EMTable[HS_MAX_MONITORED_EVENTS];
+    uint8         call_count_HS_MonitorEvent;
 
     HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
     HS_AppData.EMTablePtr           = EMTable;
@@ -1927,7 +1928,7 @@ void HS_ProcessCommands_Test(void)
 
     UtAssert_True(call_count_HS_AppPipe == 1, "HS_AppPipe was called %u time(s), expected 1", call_count_HS_AppPipe);
 
-    uint8 call_count_HS_MonitorEvent = UT_GetStubCount(UT_KEY(HS_MonitorEvent));
+    call_count_HS_MonitorEvent = UT_GetStubCount(UT_KEY(HS_MonitorEvent));
 
     UtAssert_True(call_count_HS_MonitorEvent == 1, "HS_MonitorEvent was called %u time(s), expected 1",
                   call_count_HS_MonitorEvent);
