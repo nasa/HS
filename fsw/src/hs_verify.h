@@ -30,21 +30,12 @@
  *************************************************************************/
 
 /*
- * Idle Task Priority
- */
-#if HS_IDLE_TASK_PRIORITY < 0
-#error HS_IDLE_TASK_PRIORITY cannot be less than 0
-#elif HS_IDLE_TASK_PRIORITY > 255
-#error HS_IDLE_TASK_PRIORITY can not exceed 255
-#endif
-
-/*
  * Maximum number execution counters
  */
 #if HS_MAX_EXEC_CNT_SLOTS < 1
-#error HS_MAX_MSG_ACT_TYPES cannot be less than 1
+#error HS_MAX_EXEC_CNT_SLOTS cannot be less than 1
 #elif HS_MAX_EXEC_CNT_SLOTS > 4294967295
-#error HS_MAX_MSG_ACT_TYPES can not exceed 4294967295
+#error HS_MAX_EXEC_CNT_SLOTS can not exceed 4294967295
 #endif
 
 /*
@@ -221,20 +212,6 @@
 #endif
 
 /*
- * Utilization Calls Per Mark
- */
-#if HS_UTIL_CALLS_PER_MARK > 4294967295
-#error HS_UTIL_CALLS_PER_MARK can not exceed 4294967295
-#endif
-
-/*
- * Utilization Cycles per Interval
- */
-#if HS_UTIL_CALLS_PER_MARK > 4294967295
-#error HS_UTIL_CYCLES_PER_INTERVAL can not exceed 4294967295
-#endif
-
-/*
  * Total number of Utils per Interval
  */
 #if HS_CPU_UTILIZATION_MAX < 1
@@ -277,15 +254,6 @@
 #error HS_UTIL_AVERAGE_NUM_INTERVAL cannot be less than 1
 #elif HS_UTIL_AVERAGE_NUM_INTERVAL > HS_UTIL_PEAK_NUM_INTERVAL
 #error HS_UTIL_AVERAGE_NUM_INTERVAL can not exceed HS_UTIL_PEAK_NUM_INTERVAL
-#endif
-
-/*
- * Utilization Average Number of Intervals
- */
-#if HS_UTIL_TIME_DIAG_ARRAY_POWER < 0
-#error HS_UTIL_TIME_DIAG_ARRAY_POWER cannot be less than 0
-#elif HS_UTIL_TIME_DIAG_ARRAY_POWER > 31
-#error HS_UTIL_TIME_DIAG_ARRAY_POWER can not exceed 31
 #endif
 
 #ifndef HS_MISSION_REV
