@@ -326,7 +326,7 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
                     default:
 
                         /* Calculate the requested message action index */
-                        MsgActsIndex = ActionType - HS_AMT_ACT_LAST_NONMSG - 1;
+                        MsgActsIndex = ActionType - HS_EMT_ACT_LAST_NONMSG - 1;
 
                         /*
                         ** Check to see if this is a valid Message Action Type
