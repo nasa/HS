@@ -40,7 +40,7 @@
 /*
  * Define a lookup table for SAMPLE app command codes
  */
-static const HS_Application_Component_Telecommand_DispatchTable_t HS_TC_DISPATCH_TABLE =
+static const EdsDispatchTable_HS_Application_CFE_SB_Telecommand_t HS_TC_DISPATCH_TABLE =
 {
     .CMD =
     {
@@ -78,8 +78,7 @@ void HS_TaskPipe(const CFE_SB_Buffer_t *SBBufPtr)
     CFE_MSG_Size_t    MsgSize;
     CFE_MSG_FcnCode_t MsgFc;
 
-    Status = HS_Application_Component_Telecommand_Dispatch(CFE_SB_Telecommand_indication_Command_ID, SBBufPtr,
-                                                           &HS_TC_DISPATCH_TABLE);
+    Status = EdsDispatch_HS_Application_Telecommand(SBBufPtr, &HS_TC_DISPATCH_TABLE);
 
     if (Status != CFE_SUCCESS)
     {
