@@ -330,7 +330,7 @@ CFE_Status_t HS_AppInit(void)
     /*
     ** Application initialization event
     */
-    CFE_EVS_SendEvent(HS_INIT_EID, CFE_EVS_EventType_INFORMATION, "HS Initialized.  Version %d.%d.%d.%d",
+    CFE_EVS_SendEvent(HS_INIT_INF_EID, CFE_EVS_EventType_INFORMATION, "HS Initialized.  Version %d.%d.%d.%d",
                       HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
 
     return Status;
@@ -353,7 +353,7 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_CreatePipe(&HS_AppData.CmdPipe, HS_CMD_PIPE_DEPTH, HS_CMD_PIPE_NAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_CMD_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Command Pipe,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_CR_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Command Pipe,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }

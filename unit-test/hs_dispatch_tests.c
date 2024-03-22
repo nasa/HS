@@ -86,7 +86,7 @@ void HS_VerifyMsgLength_Test(void)
     UtAssert_BOOL_FALSE(HS_VerifyMsgLength(&UT_CmdBuf.Msg, 2));
 
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 2);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_LEN_ERR_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_CMD_LEN_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventType, CFE_EVS_EventType_ERROR);
     UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 1);
 }

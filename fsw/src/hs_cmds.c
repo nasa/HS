@@ -212,7 +212,7 @@ CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
 {
     HS_ResetCounters();
 
-    CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
+    CFE_EVS_SendEvent(HS_RESET_INF_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
     return CFE_SUCCESS;
 }
 
