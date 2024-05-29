@@ -132,10 +132,10 @@
 
 /*
  * JPH 2015-06-29 - Removed check of:
- *  HS_CMD_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
+ *  HS_CMD_PIPE_DEPTH > OS_QUEUE_MAX_DEPTH
  *
  * This is not a valid check anymore, as the HS app does not have knowledge
- * of CFE_SB_MAX_PIPE_DEPTH.  But if the configuration violates this rule it will
+ * of OS_QUEUE_MAX_DEPTH.  But if the configuration violates this rule it will
  * show up as an obvious run-time error so the compile-time check is redundant.
  */
 
@@ -145,10 +145,10 @@
 
 /*
  * JPH 2015-06-29 - Removed check of:
- *  HS_EVENT_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
+ *  HS_EVENT_PIPE_DEPTH > OS_QUEUE_MAX_DEPTH
  *
  * This is not a valid check anymore, as the HS app does not have knowledge
- * of CFE_SB_MAX_PIPE_DEPTH.  But if the configuration violates this rule it will
+ * of OS_QUEUE_MAX_DEPTH.  But if the configuration violates this rule it will
  * show up as an obvious run-time error so the compile-time check is redundant.
  */
 
@@ -158,10 +158,10 @@
 
 /*
  * JPH 2015-06-29 - Removed check of:
- *  HS_WAKEUP_PIPE_DEPTH > CFE_SB_MAX_PIPE_DEPTH
+ *  HS_WAKEUP_PIPE_DEPTH > OS_QUEUE_MAX_DEPTH
  *
  * This is not a valid check anymore, as the HS app does not have knowledge
- * of CFE_SB_MAX_PIPE_DEPTH.  But if the configuration violates this rule it will
+ * of OS_QUEUE_MAX_DEPTH.  But if the configuration violates this rule it will
  * show up as an obvious run-time error so the compile-time check is redundant.
  */
 

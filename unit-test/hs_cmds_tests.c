@@ -1034,8 +1034,8 @@ void HS_ResetCmd_Test(void)
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1084,6 +1084,9 @@ void HS_EnableAppMonCmd_Test(void)
 
     HS_AppData.AMTablePtr = AMTable;
 
+    /* Set to Disabled so the function can freshly set it to Enabled (without it already being set that way) */
+    HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
+
     /* Execute the function being tested */
     HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
 
@@ -1093,8 +1096,54 @@ void HS_EnableAppMonCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_ENABLED,
                   "HS_AppData.CurrentAppMonState == HS_STATE_ENABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_APPMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_APPMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_EnableAppMonCmd_Test_AlreadyEnabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    HS_AMTEntry_t     AMTable[HS_MAX_MONITORED_APPS];
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Application Monitoring is *already* Enabled");
+
+    memset(AMTable, 0, sizeof(AMTable));
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_ENABLE_APP_MON_CC;
+    MsgSize   = sizeof(UT_CmdBuf.EnableAppMonCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    HS_AppData.AMTablePtr = AMTable;
+
+    /* Set to Enabled to test response when already in the commanded state. */
+    HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
+
+    /* Execute the function being tested */
+    HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_ENABLED,
+                  "HS_AppData.CurrentAppMonState == HS_STATE_ENABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_APPMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1122,6 +1171,9 @@ void HS_DisableAppMonCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
+    /* Set to Enabled so the function can freshly set it to Disabled (without it already being set that way) */
+    HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
+
     /* Execute the function being tested */
     HS_DisableAppMonCmd(&UT_CmdBuf.DisableAppMonCmd);
 
@@ -1131,8 +1183,50 @@ void HS_DisableAppMonCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_DISABLED,
                   "HS_AppData.CurrentAppMonState == HS_STATE_DISABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_APPMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_APPMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_DisableAppMonCmd_Test_AlreadyDisabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+             "Application Monitoring is *already* Disabled");
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_DISABLE_APP_MON_CC;
+    MsgSize   = sizeof(UT_CmdBuf.DisableAppMonCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    /* Set to Disabled to test response when already in the commanded state. */
+    HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
+
+    /* Execute the function being tested */
+    HS_DisableAppMonCmd(&UT_CmdBuf.DisableAppMonCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentAppMonState == HS_STATE_DISABLED,
+                  "HS_AppData.CurrentAppMonState == HS_STATE_DISABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_APPMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1171,8 +1265,8 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
     UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_ENABLED,
                   "HS_AppData.CurrentEventMonState == HS_STATE_ENABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_EVENTMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_EVENTMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1191,7 +1285,7 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Event Monitoring Enabled");
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Event Monitoring is *already* Enabled");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_ENABLE_EVENT_MON_CC;
@@ -1211,8 +1305,8 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_ENABLED,
                   "HS_AppData.CurrentEventMonState == HS_STATE_ENABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_EVENTMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_EVENTMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1337,8 +1431,8 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
     UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_DISABLED,
                   "HS_AppData.CurrentEventMonState == HS_STATE_DISABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_EVENTMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_EVENTMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1357,7 +1451,7 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Event Monitoring Disabled");
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Event Monitoring is *already* Disabled");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
     FcnCode   = HS_DISABLE_EVENT_MON_CC;
@@ -1377,8 +1471,8 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     UtAssert_True(HS_AppData.CurrentEventMonState == HS_STATE_DISABLED,
                   "HS_AppData.CurrentEventMonState == HS_STATE_DISABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_EVENTMON_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_EVENTMON_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1503,8 +1597,48 @@ void HS_EnableAlivenessCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED,
                   "HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_ALIVENESS_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_ALIVENESS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_EnableAlivenessCmd_Test_AlreadyEnabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Aliveness Indicator is *already* Enabled");
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_ENABLE_ALIVENESS_CC;
+    MsgSize   = sizeof(UT_CmdBuf.EnableAlivenessCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
+
+    /* Execute the function being tested */
+    HS_EnableAlivenessCmd(&UT_CmdBuf.EnableAlivenessCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED,
+                  "HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_ALIVENESS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1543,8 +1677,48 @@ void HS_DisableAlivenessCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED,
                   "HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_ALIVENESS_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_ALIVENESS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_DisableAlivenessCmd_Test_AlreadyDisabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Aliveness Indicator is *already* Disabled");
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_DISABLE_ALIVENESS_CC;
+    MsgSize   = sizeof(UT_CmdBuf.DisableAlivenessCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
+
+    /* Execute the function being tested */
+    HS_DisableAlivenessCmd(&UT_CmdBuf.DisableAlivenessCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED,
+                  "HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_ALIVENESS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1583,8 +1757,48 @@ void HS_EnableCpuHogCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED,
                   "HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_CPUHOG_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_CPUHOG_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_EnableCpuHogCmd_Test_AlreadyEnabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CPU Hogging Indicator is *already* Enabled");
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_ENABLE_CPU_HOG_CC;
+    MsgSize   = sizeof(UT_CmdBuf.EnableCpuHogCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
+
+    /* Execute the function being tested */
+    HS_EnableCpuHogCmd(&UT_CmdBuf.EnableCpuHogCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED,
+                  "HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_ENABLE_CPUHOG_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1623,8 +1837,48 @@ void HS_DisableCpuHogCmd_Test(void)
     UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED,
                   "HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_CPUHOG_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_CPUHOG_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
+
+    strCmpResult =
+        strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
+
+    UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+                  call_count_CFE_EVS_SendEvent);
+}
+
+void HS_DisableCpuHogCmd_Test_AlreadyDisabled(void)
+{
+    CFE_SB_MsgId_t    TestMsgId;
+    CFE_MSG_FcnCode_t FcnCode;
+    size_t            MsgSize;
+    int32             strCmpResult;
+    char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "CPU Hogging Indicator is *already* Disabled");
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_DISABLE_CPU_HOG_CC;
+    MsgSize   = sizeof(UT_CmdBuf.DisableCpuHogCmd);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
+
+    /* Execute the function being tested */
+    HS_DisableCpuHogCmd(&UT_CmdBuf.DisableCpuHogCmd);
+
+    /* Verify results */
+    UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
+
+    UtAssert_True(HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED,
+                  "HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED");
+
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_DISABLE_CPUHOG_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1659,8 +1913,8 @@ void HS_ResetResetsPerformedCmd_Test(void)
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_RESETS_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_RESETS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -1702,8 +1956,8 @@ void HS_SetMaxResetsCmd_Test(void)
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 1, "HS_AppData.CmdCount == 1");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_MAX_RESETS_DBG_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_MAX_RESETS_INF_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
 
     strCmpResult =
         strncmp(ExpectedEventString[0], context_CFE_EVS_SendEvent[0].Spec, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH);
@@ -2313,7 +2567,13 @@ void UtTest_Setup(void)
 
     UtTest_Add(HS_EnableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAppMonCmd_Test");
 
+    UtTest_Add(HS_EnableAppMonCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_EnableAppMonCmd_Test_AlreadyEnabled");
+
     UtTest_Add(HS_DisableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAppMonCmd_Test");
+
+    UtTest_Add(HS_DisableAppMonCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_DisableAppMonCmd_Test_AlreadyDisabled");
 
     UtTest_Add(HS_EnableEventMonCmd_Test_Disabled, HS_Test_Setup, HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_Disabled");
@@ -2336,11 +2596,23 @@ void UtTest_Setup(void)
 
     UtTest_Add(HS_EnableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAlivenessCmd_Test");
 
+    UtTest_Add(HS_EnableAlivenessCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_EnableAlivenessCmd_Test_AlreadyEnabled");
+
     UtTest_Add(HS_DisableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAlivenessCmd_Test");
+
+    UtTest_Add(HS_DisableAlivenessCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_DisableAlivenessCmd_Test_AlreadyDisabled");
 
     UtTest_Add(HS_EnableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableCpuHogCmd_Test");
 
+    UtTest_Add(HS_EnableCpuHogCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_EnableCpuHogCmd_Test_AlreadyEnabled");
+
     UtTest_Add(HS_DisableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableCpuHogCmd_Test");
+
+    UtTest_Add(HS_DisableCpuHogCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+               "HS_DisableCpuHogCmd_Test_AlreadyDisabled");
 
     UtTest_Add(HS_ResetResetsPerformedCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetResetsPerformedCmd_Test");
 
