@@ -416,6 +416,7 @@ void HS_MonitorUtilization(void)
             HS_AppData.CurrentCPUHoggingTime = 0;
         }
 
+        /* SAD: The wrap around logic prior to index access, ensures the index stays within the bounds of the buffer */
         HS_AppData.UtilizationTracker[ThisUtilIndex] = CurrentUtil;
 
         for (UtilIndex = 0; UtilIndex < HS_UTIL_PEAK_NUM_INTERVAL; UtilIndex++)
