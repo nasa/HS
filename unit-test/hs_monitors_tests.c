@@ -1715,7 +1715,7 @@ void HS_MonitorUtilization_Test_CPUHogging(void)
     HS_AppData.CurrentCPUHogState    = HS_STATE_ENABLED;
     HS_AppData.MaxCPUHoggingTime     = 1;
     HS_AppData.CurrentCPUHoggingTime = 0;
-    HS_AppData.CurrentCPUUtilIndex   = HS_UTIL_PEAK_NUM_INTERVAL;
+    HS_AppData.CurrentCPUUtilIndex   = HS_UTIL_PEAK_NUM_INTERVAL - 1;
 
     /* test below the hogging threshold */
     UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_UTIL_PER_INTERVAL_HOGGING - 1);
@@ -1745,7 +1745,7 @@ void HS_MonitorUtilization_Test_CPUHoggingNotMax(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
     HS_AppData.MaxCPUHoggingTime  = 2;
 
-    HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL;
+    HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL - 1;
 
     UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX + 1);
 
@@ -1767,7 +1767,7 @@ void HS_MonitorUtilization_Test_CurrentCPUHogStateDisabled(void)
     HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
     HS_AppData.MaxCPUHoggingTime  = 1;
 
-    HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL;
+    HS_AppData.CurrentCPUUtilIndex = HS_UTIL_PEAK_NUM_INTERVAL - 1;
 
     UT_SetDeferredRetcode(UT_KEY(HS_SysMonGetCpuUtilization), 1, HS_CPU_UTILIZATION_MAX);
 
