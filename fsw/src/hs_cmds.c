@@ -212,7 +212,7 @@ CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
 {
     HS_ResetCounters();
 
-    CFE_EVS_SendEvent(HS_RESET_DBG_EID, CFE_EVS_EventType_DEBUG, "Reset counters command");
+    CFE_EVS_SendEvent(HS_RESET_INF_EID, CFE_EVS_EventType_INFORMATION, "Reset counters command");
     return CFE_SUCCESS;
 }
 
@@ -237,9 +237,19 @@ void HS_ResetCounters(void)
 CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppMonStatusRefresh();
-    HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
-    CFE_EVS_SendEvent(HS_ENABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Enabled");
+
+    if (HS_AppData.CurrentAppMonState == HS_STATE_ENABLED)
+    {
+        CFE_EVS_SendEvent(HS_ENABLE_APPMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Application Monitoring is *already* Enabled");
+    }
+    else
+    {
+        HS_AppMonStatusRefresh();
+        HS_AppData.CurrentAppMonState = HS_STATE_ENABLED;
+        CFE_EVS_SendEvent(HS_ENABLE_APPMON_INF_EID, CFE_EVS_EventType_INFORMATION, "Application Monitoring Enabled");
+    }
+
     return CFE_SUCCESS;
 }
 
@@ -251,8 +261,18 @@ CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
 CFE_Status_t HS_DisableAppMonCmd(const HS_DisableAppMonCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
-    CFE_EVS_SendEvent(HS_DISABLE_APPMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Application Monitoring Disabled");
+
+    if (HS_AppData.CurrentAppMonState == HS_STATE_DISABLED)
+    {
+        CFE_EVS_SendEvent(HS_DISABLE_APPMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Application Monitoring is *already* Disabled");
+    }
+    else
+    {
+        HS_AppData.CurrentAppMonState = HS_STATE_DISABLED;
+        CFE_EVS_SendEvent(HS_DISABLE_APPMON_INF_EID, CFE_EVS_EventType_INFORMATION, "Application Monitoring Disabled");
+    }
+
     return CFE_SUCCESS;
 }
 
@@ -265,10 +285,12 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
 {
     CFE_Status_t Status = CFE_SUCCESS;
 
-    /*
-    ** Subscribe to Event Messages if currently disabled
-    */
-    if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
+    if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
+    {
+        CFE_EVS_SendEvent(HS_ENABLE_EVENTMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Event Monitoring is *already* Enabled");
+    }
+    else
     {
         Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
                                     CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
@@ -277,7 +299,13 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
             Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe,
                                         CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
 
-            if (Status != CFE_SUCCESS)
+            if (Status == CFE_SUCCESS)
+            {
+                HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
+                CFE_EVS_SendEvent(HS_ENABLE_EVENTMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                                  "Event Monitoring Enabled");
+            }
+            else
             {
                 CFE_EVS_SendEvent(HS_EVENTMON_SHORT_SUB_EID, CFE_EVS_EventType_ERROR,
                                   "Event Monitor Enable: Error Subscribing to short-format Events,RC=0x%08X",
@@ -295,8 +323,6 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
     if (Status == CFE_SUCCESS)
     {
         HS_AppData.CmdCount++;
-        HS_AppData.CurrentEventMonState = HS_STATE_ENABLED;
-        CFE_EVS_SendEvent(HS_ENABLE_EVENTMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Event Monitoring Enabled");
     }
     else
     {
@@ -315,10 +341,12 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
 {
     CFE_Status_t Status = CFE_SUCCESS;
 
-    /*
-    ** Unsubscribe from Event Messages if currently enabled
-    */
-    if (HS_AppData.CurrentEventMonState == HS_STATE_ENABLED)
+    if (HS_AppData.CurrentEventMonState == HS_STATE_DISABLED)
+    {
+        CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Event Monitoring is *already* Disabled");
+    }
+    else
     {
         Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
 
@@ -326,7 +354,13 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
         {
             Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe);
 
-            if (Status != CFE_SUCCESS)
+            if (Status == CFE_SUCCESS)
+            {
+                HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
+                CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_INF_EID, CFE_EVS_EventType_INFORMATION,
+                                  "Event Monitoring Disabled");
+            }
+            else
             {
                 CFE_EVS_SendEvent(HS_EVENTMON_SHORT_UNSUB_EID, CFE_EVS_EventType_ERROR,
                                   "Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x%08X",
@@ -344,8 +378,6 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
     if (Status == CFE_SUCCESS)
     {
         HS_AppData.CmdCount++;
-        HS_AppData.CurrentEventMonState = HS_STATE_DISABLED;
-        CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_DBG_EID, CFE_EVS_EventType_DEBUG, "Event Monitoring Disabled");
     }
     else
     {
@@ -363,8 +395,17 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
 CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
-    CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Enabled");
+
+    if (HS_AppData.CurrentAlivenessState == HS_STATE_ENABLED)
+    {
+        CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Aliveness Indicator is *already* Enabled");
+    }
+    else
+    {
+        HS_AppData.CurrentAlivenessState = HS_STATE_ENABLED;
+        CFE_EVS_SendEvent(HS_ENABLE_ALIVENESS_INF_EID, CFE_EVS_EventType_INFORMATION, "Aliveness Indicator Enabled");
+    }
 
     return CFE_SUCCESS;
 }
@@ -377,8 +418,17 @@ CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr)
 CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
-    CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_DBG_EID, CFE_EVS_EventType_DEBUG, "Aliveness Indicator Disabled");
+
+    if (HS_AppData.CurrentAlivenessState == HS_STATE_DISABLED)
+    {
+        CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "Aliveness Indicator is *already* Disabled");
+    }
+    else
+    {
+        HS_AppData.CurrentAlivenessState = HS_STATE_DISABLED;
+        CFE_EVS_SendEvent(HS_DISABLE_ALIVENESS_INF_EID, CFE_EVS_EventType_INFORMATION, "Aliveness Indicator Disabled");
+    }
 
     return CFE_SUCCESS;
 }
@@ -391,8 +441,17 @@ CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr)
 CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
-    CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Enabled");
+
+    if (HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED)
+    {
+        CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "CPU Hogging Indicator is *already* Enabled");
+    }
+    else
+    {
+        HS_AppData.CurrentCPUHogState = HS_STATE_ENABLED;
+        CFE_EVS_SendEvent(HS_ENABLE_CPUHOG_INF_EID, CFE_EVS_EventType_INFORMATION, "CPU Hogging Indicator Enabled");
+    }
 
     return CFE_SUCCESS;
 }
@@ -405,8 +464,17 @@ CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr)
 CFE_Status_t HS_DisableCpuHogCmd(const HS_DisableCpuHogCmd_t *BufPtr)
 {
     HS_AppData.CmdCount++;
-    HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
-    CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_DBG_EID, CFE_EVS_EventType_DEBUG, "CPU Hogging Indicator Disabled");
+
+    if (HS_AppData.CurrentCPUHogState == HS_STATE_DISABLED)
+    {
+        CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_INF_EID, CFE_EVS_EventType_INFORMATION,
+                          "CPU Hogging Indicator is *already* Disabled");
+    }
+    else
+    {
+        HS_AppData.CurrentCPUHogState = HS_STATE_DISABLED;
+        CFE_EVS_SendEvent(HS_DISABLE_CPUHOG_INF_EID, CFE_EVS_EventType_INFORMATION, "CPU Hogging Indicator Disabled");
+    }
 
     return CFE_SUCCESS;
 }
@@ -420,7 +488,7 @@ CFE_Status_t HS_ResetResetsPerformedCmd(const HS_ResetResetsPerformedCmd_t *BufP
 {
     HS_AppData.CmdCount++;
     HS_SetCDSData(0, HS_AppData.CDSData.MaxResets);
-    CFE_EVS_SendEvent(HS_RESET_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
+    CFE_EVS_SendEvent(HS_RESET_RESETS_INF_EID, CFE_EVS_EventType_INFORMATION,
                       "Processor Resets Performed by HS Counter has been Reset");
 
     return CFE_SUCCESS;
@@ -440,7 +508,7 @@ CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
 
     HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);
 
-    CFE_EVS_SendEvent(HS_SET_MAX_RESETS_DBG_EID, CFE_EVS_EventType_DEBUG,
+    CFE_EVS_SendEvent(HS_SET_MAX_RESETS_INF_EID, CFE_EVS_EventType_INFORMATION,
                       "Max Resets Performable by HS has been set to %d", HS_AppData.CDSData.MaxResets);
 
     return CFE_SUCCESS;

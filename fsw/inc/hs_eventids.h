@@ -313,110 +313,110 @@
 /**
  * \brief HS Reset Counters Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a reset counters command has
  *  been received.
  */
-#define HS_RESET_DBG_EID 24
+#define HS_RESET_INF_EID 24
 
 /**
  * \brief HS Enable Application Monitoring Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when an enable application monitoring
  *  command has been received.
  */
-#define HS_ENABLE_APPMON_DBG_EID 25
+#define HS_ENABLE_APPMON_INF_EID 25
 
 /**
  * \brief HS Disable Application Monitoring Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a disable application monitoring
  *  command has been received.
  */
-#define HS_DISABLE_APPMON_DBG_EID 26
+#define HS_DISABLE_APPMON_INF_EID 26
 
 /**
  * \brief HS Enable Event Monitoring Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when an enable event monitoring
  *  command has been received.
  */
-#define HS_ENABLE_EVENTMON_DBG_EID 27
+#define HS_ENABLE_EVENTMON_INF_EID 27
 
 /**
  * \brief HS Disable Event Monitoring Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a disable event monitoring
  *  command has been received.
  */
-#define HS_DISABLE_EVENTMON_DBG_EID 28
+#define HS_DISABLE_EVENTMON_INF_EID 28
 
 /**
  * \brief HS Enable Aliveness Indicator Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when an enable aliveness indicator
  *  command has been received.
  */
-#define HS_ENABLE_ALIVENESS_DBG_EID 29
+#define HS_ENABLE_ALIVENESS_INF_EID 29
 
 /**
  * \brief HS Disable Aliveness Indicator Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a disable aliveness indicator
  *  command has been received.
  */
-#define HS_DISABLE_ALIVENESS_DBG_EID 30
+#define HS_DISABLE_ALIVENESS_INF_EID 30
 
 /**
  * \brief HS Reset Process Reset Counter Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a reset processor resets count
  *  command has been received.
  */
-#define HS_RESET_RESETS_DBG_EID 31
+#define HS_RESET_RESETS_INF_EID 31
 
 /**
  * \brief HS Set Max Resets Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a set max processor resets
  *  command has been received.
  */
-#define HS_SET_MAX_RESETS_DBG_EID 32
+#define HS_SET_MAX_RESETS_INF_EID 32
 
 /**
  * \brief HS AppMon Table Get Address Failed Event ID
@@ -777,26 +777,26 @@
 /**
  * \brief HS CPU Hogging Detection Enabled Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when an enable cpu hogging indicator
  *  command has been received.
  */
-#define HS_ENABLE_CPUHOG_DBG_EID 64
+#define HS_ENABLE_CPUHOG_INF_EID 64
 
 /**
  * \brief HS CPU Hogging Detection Disabled Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a disable cpu hogging indicator
  *  command has been received.
  */
-#define HS_DISABLE_CPUHOG_DBG_EID 65
+#define HS_DISABLE_CPUHOG_INF_EID 65
 
 /**
  * \brief HS Event Monitor Enable Subscribe To Long Events Failed Event ID
