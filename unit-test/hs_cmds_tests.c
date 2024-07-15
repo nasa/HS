@@ -1034,7 +1034,7 @@ void HS_ResetCmd_Test(void)
     /* Verify results */
     UtAssert_True(HS_AppData.CmdCount == 0, "HS_AppData.CmdCount == 0");
 
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_DBG_EID);
+    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
 
     strCmpResult =

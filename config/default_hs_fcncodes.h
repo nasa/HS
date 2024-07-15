@@ -60,7 +60,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -82,7 +82,7 @@
  *       Successful execution of this command may be verified with
  *       the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdCount will be cleared
- *       - The #HS_RESET_DBG_EID debug event message will be
+ *       - The #HS_RESET_INF_EID debug event message will be
  *         generated when the command is executed
  *
  *  \par Error Conditions
@@ -91,7 +91,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -123,7 +123,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -155,7 +155,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -187,7 +187,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -219,7 +219,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -251,7 +251,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -283,7 +283,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -315,7 +315,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -347,7 +347,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -379,7 +379,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
@@ -411,7 +411,7 @@
  *
  *  \par Evidence of failure may be found in the following telemetry:
  *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
- *       - Error specific event message #HS_LEN_ERR_EID
+ *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None

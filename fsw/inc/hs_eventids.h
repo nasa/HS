@@ -39,7 +39,7 @@
  *  This event message is issued when the CFS Health and Safety has
  *  completed initialization.
  */
-#define HS_INIT_EID 1
+#define HS_INIT_INF_EID 1
 
 /**
  * \brief HS Application Fatal Termination Event ID
@@ -76,7 +76,7 @@
  *  is unable to create its command pipe via the #CFE_SB_CreatePipe
  *  API
  */
-#define HS_CR_CMD_PIPE_ERR_EID 4
+#define HS_CR_PIPE_ERR_EID 4
 
 /**
  * \brief HS Create Software Bus Event Pipe Failed Event ID
@@ -297,7 +297,7 @@
  *  This event message is issued when a ground command message is received
  *  with a message length that doesn't match the expected value.
  */
-#define HS_LEN_ERR_EID 22
+#define HS_CMD_LEN_ERR_EID 22
 
 /**
  * \brief HS No-op Command Event ID
@@ -313,14 +313,14 @@
 /**
  * \brief HS Reset Counters Command Event ID
  *
- *  \par Type: DEBUG
+ *  \par Type: INFORMATIONAL
  *
  *  \par Cause:
  *
  *  This event message is issued when a reset counters command has
  *  been received.
  */
-#define HS_RESET_DBG_EID 24
+#define HS_RESET_INF_EID 24
 
 /**
  * \brief HS Enable Application Monitoring Command Event ID

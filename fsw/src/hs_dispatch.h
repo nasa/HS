@@ -67,7 +67,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr);
  *  \retval true  Length matches expected
  *  \retval false Length does not match expected
  *
- *  \sa #HS_LEN_ERR_EID
+ *  \sa #HS_CMD_LEN_ERR_EID
  */
 bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength);
 
