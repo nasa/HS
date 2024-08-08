@@ -109,7 +109,7 @@ void HS_TaskPipe(const CFE_SB_Buffer_t *SBBufPtr)
                 /*
                 ** All other cases, increment error counter
                 */
-                CFE_EVS_SendEvent(HS_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+                CFE_EVS_SendEvent(HS_CMD_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
                                   "Invalid msg length: ID = 0x%08lX, CC = %d, Len = %d",
                                   (unsigned long)CFE_SB_MsgIdToValue(MsgId), (int)MsgFc, (int)MsgSize);
                 HS_AppData.CmdErrCount++;
