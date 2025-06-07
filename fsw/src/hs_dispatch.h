@@ -173,7 +173,7 @@ void HS_DisableCpuHogVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
  *
  * Verifies and processes the received command
  *
- *  \sa #HS_SET_MAX_RESETS_CC
+ *  \sa #HS_RESET_RESETS_PERFORMED_CC
  */
 void HS_ResetResetsPerformedVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
 
@@ -182,7 +182,7 @@ void HS_ResetResetsPerformedVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
  *
  * Verifies and processes the received command
  *
- *  \sa #HS_RESET_RESETS_PERFORMED_CC
+ *  \sa #HS_SET_MAX_RESETS_CC
  */
 void HS_SetMaxResetsVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
 

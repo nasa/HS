@@ -67,7 +67,7 @@ static const EdsDispatchTable_HS_Application_CFE_SB_Telecommand_t HS_TC_DISPATCH
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 /*                                                                            */
 /*  Purpose:                                                                  */
-/*     This routine will process any packet that is received on the SAMPLE    */
+/*     This routine will process any packet that is received on the HS        */
 /*     command pipe.                                                          */
 /*                                                                            */
 /* * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * *  * *  * * * * */
