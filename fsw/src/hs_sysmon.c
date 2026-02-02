@@ -55,29 +55,33 @@ CFE_Status_t HS_SysMonInit(void)
     }
     else
     {
-        CFE_ES_WriteToSysLog("%s(): System Monitor using PSP device ID %08lx\n", __func__,
+        CFE_ES_WriteToSysLog("%s(): System Monitor using PSP device ID %08lx\n",
+                             __func__,
                              (unsigned long)HS_AppData.SysMonPspModuleId);
 
         Location.PspModuleId  = HS_AppData.SysMonPspModuleId;
         Location.SubsystemId  = 0;
         Location.SubchannelId = 0;
 
-        if (CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_SET_RUNNING, CFE_PSP_IODriver_U32ARG(1)) !=
-            CFE_PSP_SUCCESS)
+        if (CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_SET_RUNNING, CFE_PSP_IODriver_U32ARG(1))
+            != CFE_PSP_SUCCESS)
         {
-            CFE_ES_WriteToSysLog("%s(): Unable to start device %08lx\n", __func__,
+            CFE_ES_WriteToSysLog("%s(): Unable to start device %08lx\n",
+                                 __func__,
                                  (unsigned long)HS_AppData.SysMonPspModuleId);
             StatusCode = CFE_STATUS_EXTERNAL_RESOURCE_FAIL;
         }
         else
         {
             /* find the subsystem */
-            StatusCode = CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_LOOKUP_SUBSYSTEM,
+            StatusCode = CFE_PSP_IODriver_Command(&Location,
+                                                  CFE_PSP_IODriver_LOOKUP_SUBSYSTEM,
                                                   CFE_PSP_IODriver_CONST_STR(HS_SYSTEM_MONITOR_SUBSYSTEM_NAME));
 
             if (StatusCode < 0)
             {
-                CFE_ES_WriteToSysLog("%s(): Unable to find subsystem \'%s\'\n", __func__,
+                CFE_ES_WriteToSysLog("%s(): Unable to find subsystem \'%s\'\n",
+                                     __func__,
                                      HS_SYSTEM_MONITOR_SUBSYSTEM_NAME);
                 HS_AppData.SysMonSubsystemId = 0;
             }
@@ -87,12 +91,14 @@ CFE_Status_t HS_SysMonInit(void)
             }
 
             Location.SubsystemId = HS_AppData.SysMonSubsystemId;
-            StatusCode           = CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_LOOKUP_SUBCHANNEL,
+            StatusCode           = CFE_PSP_IODriver_Command(&Location,
+                                                  CFE_PSP_IODriver_LOOKUP_SUBCHANNEL,
                                                   CFE_PSP_IODriver_CONST_STR(HS_SYSTEM_MONITOR_SUBCHANNEL_NAME));
 
             if (StatusCode < 0)
             {
-                CFE_ES_WriteToSysLog("%s(): Unable to find channel \'%s\'\n", __func__,
+                CFE_ES_WriteToSysLog("%s(): Unable to find channel \'%s\'\n",
+                                     __func__,
                                      HS_SYSTEM_MONITOR_SUBCHANNEL_NAME);
                 HS_AppData.SysMonSubchannelId = 0;
             }
@@ -119,10 +125,11 @@ void HS_SysMonCleanup(void)
         Location.SubsystemId  = 0;
         Location.SubchannelId = 0;
 
-        if (CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_SET_RUNNING, CFE_PSP_IODriver_U32ARG(0)) !=
-            CFE_PSP_SUCCESS)
+        if (CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_SET_RUNNING, CFE_PSP_IODriver_U32ARG(0))
+            != CFE_PSP_SUCCESS)
         {
-            CFE_ES_WriteToSysLog("%s(): Unable to stop device %08lx\n", __func__,
+            CFE_ES_WriteToSysLog("%s(): Unable to stop device %08lx\n",
+                                 __func__,
                                  (unsigned long)HS_AppData.SysMonPspModuleId);
         }
     }
@@ -135,11 +142,11 @@ void HS_SysMonCleanup(void)
  */
 CFE_Status_t HS_SysMonGetCpuUtilization(void)
 {
-    const CFE_PSP_IODriver_Location_t Location = {.PspModuleId  = HS_AppData.SysMonPspModuleId,
-                                                  .SubsystemId  = HS_AppData.SysMonSubsystemId,
-                                                  .SubchannelId = HS_AppData.SysMonSubchannelId};
+    const CFE_PSP_IODriver_Location_t Location = { .PspModuleId  = HS_AppData.SysMonPspModuleId,
+                                                   .SubsystemId  = HS_AppData.SysMonSubsystemId,
+                                                   .SubchannelId = HS_AppData.SysMonSubchannelId };
     CFE_PSP_IODriver_AdcCode_t        Sample   = 0;
-    CFE_PSP_IODriver_AnalogRdWr_t     RdWr     = {.NumChannels = 1, .Samples = &Sample};
+    CFE_PSP_IODriver_AnalogRdWr_t     RdWr     = { .NumChannels = 1, .Samples = &Sample };
     CFE_Status_t                      StatusCode;
     int32                             Value;
 
@@ -150,7 +157,8 @@ CFE_Status_t HS_SysMonGetCpuUtilization(void)
     }
     else
     {
-        StatusCode = CFE_PSP_IODriver_Command(&Location, CFE_PSP_IODriver_ANALOG_IO_READ_CHANNELS,
+        StatusCode = CFE_PSP_IODriver_Command(&Location,
+                                              CFE_PSP_IODriver_ANALOG_IO_READ_CHANNELS,
                                               CFE_PSP_IODriver_VPARG(&RdWr));
     }
 

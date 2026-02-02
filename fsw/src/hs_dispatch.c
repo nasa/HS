@@ -60,9 +60,12 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
             ** For a bad HK request, just send the event. We only increment
             ** the error counter for ground commands and not internal messages.
             */
-            CFE_EVS_SendEvent(HS_HKREQ_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+            CFE_EVS_SendEvent(HS_HKREQ_LEN_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
                               "Invalid HK request msg length: ID = 0x%08lX, CC = %d, Len = %d, Expected = %d",
-                              (unsigned long)CFE_SB_MsgIdToValue(MessageID), (int)CommandCode, (int)ActualLength,
+                              (unsigned long)CFE_SB_MsgIdToValue(MessageID),
+                              (int)CommandCode,
+                              (int)ActualLength,
                               (int)ExpectedLength);
         }
         else
@@ -70,9 +73,12 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
             /*
             ** All other cases, increment error counter
             */
-            CFE_EVS_SendEvent(HS_CMD_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+            CFE_EVS_SendEvent(HS_CMD_LEN_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
                               "Invalid msg length: ID = 0x%08lX, CC = %d, Len = %d, Expected = %d",
-                              (unsigned long)CFE_SB_MsgIdToValue(MessageID), (int)CommandCode, (int)ActualLength,
+                              (unsigned long)CFE_SB_MsgIdToValue(MessageID),
+                              (int)CommandCode,
+                              (int)ActualLength,
                               (int)ExpectedLength);
             HS_AppData.CmdErrCount++;
         }
@@ -162,9 +168,11 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                     break;
 
                 default:
-                    CFE_EVS_SendEvent(HS_CC_ERR_EID, CFE_EVS_EventType_ERROR,
+                    CFE_EVS_SendEvent(HS_CC_ERR_EID,
+                                      CFE_EVS_EventType_ERROR,
                                       "Invalid command code: ID = 0x%08lX, CC = %d",
-                                      (unsigned long)CFE_SB_MsgIdToValue(MessageID), CommandCode);
+                                      (unsigned long)CFE_SB_MsgIdToValue(MessageID),
+                                      CommandCode);
 
                     HS_AppData.CmdErrCount++;
                     break;
@@ -177,7 +185,9 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
         */
         default:
             HS_AppData.CmdErrCount++;
-            CFE_EVS_SendEvent(HS_MID_ERR_EID, CFE_EVS_EventType_ERROR, "Invalid command pipe message ID: 0x%08lX",
+            CFE_EVS_SendEvent(HS_MID_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
+                              "Invalid command pipe message ID: 0x%08lX",
                               (unsigned long)CFE_SB_MsgIdToValue(MessageID));
             break;
 

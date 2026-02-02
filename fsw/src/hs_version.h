@@ -30,8 +30,8 @@
  * \{
  */
 
-#define HS_MAJOR_VERSION 7  /**< \brief Major version number */
-#define HS_MINOR_VERSION 0  /**< \brief Minor version number */
+#define HS_MAJOR_VERSION 7 /**< \brief Major version number */
+#define HS_MINOR_VERSION 0 /**< \brief Minor version number */
 #define HS_REVISION      0 /**< \brief Revision number */
 
 /**\}*/
