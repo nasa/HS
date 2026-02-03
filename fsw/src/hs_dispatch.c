@@ -91,107 +91,125 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
+/* Process ground commands                                         */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void HS_AppProcessGroundCmd(const CFE_SB_Buffer_t *BufPtr)
+{
+    CFE_SB_MsgId_t    MessageID   = CFE_SB_INVALID_MSG_ID; /* Init to invalid value */
+    CFE_MSG_FcnCode_t CommandCode = 0;
+
+    CFE_MSG_GetFcnCode(&BufPtr->Msg, &CommandCode);
+
+    switch (CommandCode)
+    {
+        case HS_NOOP_CC:
+            HS_NoopVerifyDispatch(BufPtr);
+            break;
+
+        case HS_RESET_CC:
+            HS_ResetVerifyDispatch(BufPtr);
+            break;
+
+        case HS_ENABLE_APP_MON_CC:
+            HS_EnableAppMonVerifyDispatch(BufPtr);
+            break;
+
+        case HS_DISABLE_APP_MON_CC:
+            HS_DisableAppMonVerifyDispatch(BufPtr);
+            break;
+
+        case HS_ENABLE_EVENT_MON_CC:
+            HS_EnableEventMonVerifyDispatch(BufPtr);
+            break;
+
+        case HS_DISABLE_EVENT_MON_CC:
+            HS_DisableEventMonVerifyDispatch(BufPtr);
+            break;
+
+        case HS_ENABLE_ALIVENESS_CC:
+            HS_EnableAlivenessVerifyDispatch(BufPtr);
+            break;
+
+        case HS_DISABLE_ALIVENESS_CC:
+            HS_DisableAlivenessVerifyDispatch(BufPtr);
+            break;
+
+        case HS_RESET_RESETS_PERFORMED_CC:
+            HS_ResetResetsPerformedVerifyDispatch(BufPtr);
+            break;
+
+        case HS_SET_MAX_RESETS_CC:
+            HS_SetMaxResetsVerifyDispatch(BufPtr);
+            break;
+
+        case HS_ENABLE_CPU_HOG_CC:
+            HS_EnableCpuHogVerifyDispatch(BufPtr);
+            break;
+
+        case HS_DISABLE_CPU_HOG_CC:
+            HS_DisableCpuHogVerifyDispatch(BufPtr);
+            break;
+
+        default:
+            CFE_EVS_SendEvent(HS_CC_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
+                              "Invalid command code: ID = 0x%08lX, CC = %d",
+                              (unsigned long)CFE_SB_MsgIdToValue(MessageID),
+                              CommandCode);
+
+            HS_AppData.CmdErrCount++;
+            break;
+
+    } /* end CommandCode switch */
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
 /* Process a command pipe message                                  */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
 {
-    CFE_MSG_FcnCode_t CommandCode = 0;
-    CFE_SB_MsgId_t    MessageID   = CFE_SB_INVALID_MSG_ID;
+    static CFE_SB_MsgId_t CMD_MID     = CFE_SB_MSGID_RESERVED;
+    static CFE_SB_MsgId_t SEND_HK_MID = CFE_SB_MSGID_RESERVED;
+
+    CFE_SB_MsgId_t MessageID = CFE_SB_INVALID_MSG_ID;
+
+    /* cache the local MID Values here, this avoids repeat lookups */
+    if (!CFE_SB_IsValidMsgId(CMD_MID))
+    {
+        CMD_MID     = CFE_SB_ValueToMsgId(HS_CMD_MID);
+        SEND_HK_MID = CFE_SB_ValueToMsgId(HS_SEND_HK_MID);
+    }
 
     CFE_MSG_GetMsgId(&BufPtr->Msg, &MessageID);
 
-    switch (CFE_SB_MsgIdToValue(MessageID))
+    if (CFE_SB_MsgId_Equal(MessageID, SEND_HK_MID))
     {
         /*
         ** Housekeeping telemetry request
         */
-        case HS_SEND_HK_MID:
-            HS_SendHkVerifyDispatch(BufPtr);
-            break;
-
+        HS_SendHkVerifyDispatch(BufPtr);
+    }
+    else if (CFE_SB_MsgId_Equal(MessageID, CMD_MID))
+    {
         /*
         ** HS application commands...
         */
-        case HS_CMD_MID:
-
-            CFE_MSG_GetFcnCode(&BufPtr->Msg, &CommandCode);
-
-            switch (CommandCode)
-            {
-                case HS_NOOP_CC:
-                    HS_NoopVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_RESET_CC:
-                    HS_ResetVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_ENABLE_APP_MON_CC:
-                    HS_EnableAppMonVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_DISABLE_APP_MON_CC:
-                    HS_DisableAppMonVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_ENABLE_EVENT_MON_CC:
-                    HS_EnableEventMonVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_DISABLE_EVENT_MON_CC:
-                    HS_DisableEventMonVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_ENABLE_ALIVENESS_CC:
-                    HS_EnableAlivenessVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_DISABLE_ALIVENESS_CC:
-                    HS_DisableAlivenessVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_RESET_RESETS_PERFORMED_CC:
-                    HS_ResetResetsPerformedVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_SET_MAX_RESETS_CC:
-                    HS_SetMaxResetsVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_ENABLE_CPU_HOG_CC:
-                    HS_EnableCpuHogVerifyDispatch(BufPtr);
-                    break;
-
-                case HS_DISABLE_CPU_HOG_CC:
-                    HS_DisableCpuHogVerifyDispatch(BufPtr);
-                    break;
-
-                default:
-                    CFE_EVS_SendEvent(HS_CC_ERR_EID,
-                                      CFE_EVS_EventType_ERROR,
-                                      "Invalid command code: ID = 0x%08lX, CC = %d",
-                                      (unsigned long)CFE_SB_MsgIdToValue(MessageID),
-                                      CommandCode);
-
-                    HS_AppData.CmdErrCount++;
-                    break;
-
-            } /* end CommandCode switch */
-            break;
-
+        HS_AppProcessGroundCmd(BufPtr);
+    }
+    else
+    {
         /*
         ** Unrecognized Message ID
         */
-        default:
-            HS_AppData.CmdErrCount++;
-            CFE_EVS_SendEvent(HS_MID_ERR_EID,
-                              CFE_EVS_EventType_ERROR,
-                              "Invalid command pipe message ID: 0x%08lX",
-                              (unsigned long)CFE_SB_MsgIdToValue(MessageID));
-            break;
-
-    } /* end MessageID switch */
+        HS_AppData.CmdErrCount++;
+        CFE_EVS_SendEvent(HS_MID_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Invalid command pipe message ID: 0x%08lX",
+                          (unsigned long)CFE_SB_MsgIdToValue(MessageID));
+    } /* end MessageID if */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
