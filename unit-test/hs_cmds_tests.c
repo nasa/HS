@@ -36,6 +36,7 @@
 
 /* hs_cmds_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
+uint8 call_count_CFE_ES_GetAppIDByName;
 
 /*
  * Function Definitions
@@ -131,6 +132,78 @@ void HS_SendHkCmd_Test_InvalidEventMon(void)
     UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
                   "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
+}
+
+void HS_SendHkCmd_Test_NullEventMonTable(void)
+{
+    CFE_SB_MsgId_t      TestMsgId;
+    CFE_MSG_FcnCode_t   FcnCode;
+    size_t              MsgSize;
+    uint32              TableIndex;
+    HS_HkTlm_Payload_t *PayloadPtr;
+
+    /* setting this to null should prevent UUT from incrementing InvalidEventMonCount */
+    HS_AppData.EMTablePtr = NULL;
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_ENABLE_EVENT_MON_CC;
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
+
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    /* Fail first, succeed on second (shouldn't get called, but set up anyway)*/
+    UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
+
+    /* initialize hk counters */
+    HS_AppData.CmdCount                = 1;
+    HS_AppData.CmdErrCount             = 2;
+    HS_AppData.CurrentAppMonState      = 3;
+    HS_AppData.CurrentEventMonState    = 4;
+    HS_AppData.CurrentAlivenessState   = 5;
+    HS_AppData.CurrentCPUHogState      = 6;
+    HS_AppData.CDSData.ResetsPerformed = 7;
+    HS_AppData.CDSData.MaxResets       = 8;
+    HS_AppData.EventsMonitoredCount    = 9;
+    HS_AppData.MsgActExec              = 10;
+
+    for (TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
+    {
+        HS_AppData.AppMonEnables[TableIndex] = TableIndex;
+    }
+
+    /* Execute the function being tested */
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
+
+    /* Verify general housekeeping fields weren't affected */
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_UINT8_EQ(PayloadPtr->CmdCount, 1);
+    UtAssert_UINT8_EQ(PayloadPtr->CmdErrCount, 2);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentAppMonState, 3);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentEventMonState, 4);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentAlivenessState, 5);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentCPUHogState, 6);
+    UtAssert_UINT16_EQ(PayloadPtr->ResetsPerformed, 7);
+    UtAssert_UINT16_EQ(PayloadPtr->MaxResets, 8);
+    UtAssert_UINT32_EQ(PayloadPtr->EventsMonitoredCount, 9);
+    UtAssert_UINT32_EQ(PayloadPtr->MsgActExec, 10);
+
+    /* if InvalidEventMonCount was incremented, we did something wrong */
+    UtAssert_UINT32_EQ(PayloadPtr->InvalidEventMonCount, 0);
+
+    /* Check first, middle, and last element */
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[0], 0);
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2],
+                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2);
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE],
+                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_UINT8_EQ(call_count_CFE_EVS_SendEvent, 0);
+
+    call_count_CFE_ES_GetAppIDByName = UT_GetStubCount(UT_KEY(CFE_ES_GetAppIDByName));
+    UtAssert_UINT8_EQ(call_count_CFE_ES_GetAppIDByName, 0);
 }
 
 void HS_SendHkCmd_Test_AllFlagsEnabled(void)
@@ -2621,6 +2694,10 @@ void HS_MsgActsStatusRefresh_Test(void)
 void UtTest_Setup(void)
 {
     UtTest_Add(HS_SendHkCmd_Test_InvalidEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_InvalidEventMon");
+    UtTest_Add(HS_SendHkCmd_Test_NullEventMonTable,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_SendHkCmd_Test_NullEventMonTable");
 
     UtTest_Add(HS_SendHkCmd_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_AllFlagsEnabled");
     UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppMain,

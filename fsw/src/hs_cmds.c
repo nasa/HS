@@ -80,16 +80,18 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     ** Calculate the current number of invalid event monitor entries
     */
     PayloadPtr->InvalidEventMonCount = 0;
-
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
+    if (HS_AppData.EMTablePtr != NULL)
     {
-        if (HS_AppData.EMTablePtr[TableIndex].ActionType != HS_EMTActType_NOACT)
+        for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
         {
-            Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
-
-            if (Status != CFE_SUCCESS)
+            if (HS_AppData.EMTablePtr[TableIndex].ActionType != HS_EMTActType_NOACT)
             {
-                PayloadPtr->InvalidEventMonCount++;
+                Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
+
+                if (Status != CFE_SUCCESS)
+                {
+                    PayloadPtr->InvalidEventMonCount++;
+                }
             }
         }
     }
