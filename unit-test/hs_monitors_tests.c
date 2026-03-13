@@ -55,6 +55,26 @@ int32 HS_MONITORS_TEST_CFE_ES_GetAppInfoHook1(void                   *UserObj,
     return CFE_SUCCESS;
 }
 
+void HS_MonitorApplications_Test_AppMonTblPtrNull(void)
+{
+    /* Execute the function being tested */
+    HS_MonitorApplications();
+
+    /*
+    ** Verify UUT exited before processing app info from the table entries
+    ** Since the UUT simply returns during this, the best thing we can do is
+    ** verify that none of the stub functions were called
+    */
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetAppIDByName)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetAppInfo)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(OS_TaskDelay)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_WriteToSysLog)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_ResetCFE)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_RestartApp)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_SB_TransmitMsg)), 0);
+}
+
 void HS_MonitorApplications_Test_AppNameNotFound(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
@@ -3009,6 +3029,10 @@ void HS_SetCDSData_Test(void)
  */
 void UtTest_Setup(void)
 {
+    UtTest_Add(HS_MonitorApplications_Test_AppMonTblPtrNull,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_MonitorApplications_Test_AppMonTblPtrNull");
     UtTest_Add(HS_MonitorApplications_Test_AppNameNotFound,
                HS_Test_Setup,
                HS_Test_TearDown,
