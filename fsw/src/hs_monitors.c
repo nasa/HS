@@ -49,6 +49,12 @@ void HS_MonitorApplications(void)
     uint16           ActionType;
     uint32           MsgActsIndex = 0;
 
+    /* Avoid accessing AMT if table pointer is invalid */
+    if (HS_AppData.AMTablePtr == NULL)
+    {
+        return;
+    }
+
     memset(&AppInfo, 0, sizeof(AppInfo));
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
@@ -237,6 +243,12 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
     uint16           ActionType;
     uint32           MsgActsIndex = 0;
     CFE_SB_Buffer_t *SendPtr      = NULL;
+
+    /* Avoid accessing EMT if table pointer is invalid */
+    if (HS_AppData.EMTablePtr == NULL)
+    {
+        return;
+    }
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
     {

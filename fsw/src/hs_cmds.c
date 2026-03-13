@@ -139,7 +139,7 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     {
         ExeCount = HS_INVALID_EXECOUNT;
 
-        if (HS_AppData.ExeCountState == HS_State_ENABLED)
+        if ((HS_AppData.ExeCountState == HS_State_ENABLED) && (HS_AppData.XCTablePtr != NULL))
         {
             switch (HS_AppData.XCTablePtr[TableIndex].ResourceType)
             {
