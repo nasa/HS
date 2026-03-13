@@ -299,6 +299,36 @@ void HS_SendHkCmd_Test_AllFlagsEnabled(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
+void HS_SendHkCmd_Test_XCTablePtrNull(void)
+{
+    int i;
+
+    /*
+    ** initialize app data to inject error scenario
+    ** normally, XCTablePtr gets iniitalized during the table load (at app init)
+    */
+    HS_AppData.XCTablePtr    = NULL;
+    HS_AppData.ExeCountState = HS_State_ENABLED;
+
+    /* Execute the function being tested */
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
+
+    /*
+    ** Check that each Execution Counter was set to invalid,
+    ** since the XCT pointer was null
+    ** If the expected UUT lines weren't executed,
+    ** these values would likely be zero from the test case setup
+    */
+    for (i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++)
+    {
+        UtAssert_UINT32_EQ(HS_AppData.HkPacket.Payload.ExeCounts[i], HS_INVALID_EXECOUNT);
+    }
+
+    /* Check that these stubs weren't called */
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetTaskInfo)), 0);
+}
+
 void HS_SendHkCmd_Test_ResourceTypeAppMain(void)
 {
     CFE_SB_MsgId_t    TestMsgId;
@@ -2700,6 +2730,7 @@ void UtTest_Setup(void)
                "HS_SendHkCmd_Test_NullEventMonTable");
 
     UtTest_Add(HS_SendHkCmd_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_AllFlagsEnabled");
+    UtTest_Add(HS_SendHkCmd_Test_XCTablePtrNull, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_XCTablePtrNull");
     UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppMain,
                HS_Test_Setup,
                HS_Test_TearDown,
