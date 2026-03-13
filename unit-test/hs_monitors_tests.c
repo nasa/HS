@@ -933,6 +933,39 @@ void HS_MonitorApplications_CheckInCountdownNotZero(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
+void HS_MonitorEvent_Test_EventMonTblPtrNull(void)
+{
+    CFE_EVS_LongEventTlm_t Packet;
+
+    /*
+    ** Initialize a basic packet dummy input.
+    ** the UUT assumes this input pointer has been checked for null
+    ** by the calling function, `HS_ProcessCommands`
+    */
+    memset(&Packet, 0, sizeof(Packet));
+    CFE_MSG_Init((CFE_MSG_Message_t *)&Packet, CFE_SB_ValueToMsgId(HS_CMD_MID), sizeof(CFE_EVS_LongEventTlm_t));
+
+    /* Initialize the EMT to null to drive our pointer check test case */
+    HS_AppData.EMTablePtr = NULL;
+
+    /* Execute the function being tested */
+    HS_MonitorEvent(&Packet);
+
+    /*
+    ** Verify UUT exited before processing info from the EMT
+    ** Since the UUT simply returns during this, the best thing we can do is
+    ** verify that none of the stub functions were called
+    */
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(OS_TaskDelay)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_WriteToSysLog)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_ResetCFE)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetAppIDByName)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_RestartApp)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_DeleteApp)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_SB_TransmitMsg)), 0);
+}
+
 void HS_MonitorEvent_Test_AppName(void)
 {
     HS_EMTEntry_t          EMTable[HS_MAX_MONITORED_APPS];
@@ -3102,6 +3135,10 @@ void UtTest_Setup(void)
                HS_Test_TearDown,
                "HS_MonitorApplications_CheckInCountdownNotZero");
 
+    UtTest_Add(HS_MonitorEvent_Test_EventMonTblPtrNull,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_MonitorEvent_Test_EventMonTblPtrNull");
     UtTest_Add(HS_MonitorEvent_Test_AppName, HS_Test_Setup, HS_Test_TearDown, "HS_MonitorEvent_Test_AppName");
     UtTest_Add(HS_MonitorEvent_Test_ProcErrorReset,
                HS_Test_Setup,
