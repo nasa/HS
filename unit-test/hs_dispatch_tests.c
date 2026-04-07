@@ -41,9 +41,9 @@
 static void HS_Dispatch_Test_SetupMsg(CFE_SB_MsgId_t MsgId, CFE_MSG_FcnCode_t FcnCode, size_t MsgSize)
 {
     /* Note some paths get the MsgId/FcnCode multiple times, so register accordingly, just in case */
-    CFE_SB_MsgId_t    RegMsgId[2]   = {MsgId, MsgId};
-    CFE_MSG_FcnCode_t RegFcnCode[2] = {FcnCode, FcnCode};
-    size_t            RegMsgSize[2] = {MsgSize, MsgSize};
+    CFE_SB_MsgId_t    RegMsgId[2]   = { MsgId, MsgId };
+    CFE_MSG_FcnCode_t RegFcnCode[2] = { FcnCode, FcnCode };
+    size_t            RegMsgSize[2] = { MsgSize, MsgSize };
 
     UT_ResetState(UT_KEY(CFE_MSG_GetMsgId));
     UT_ResetState(UT_KEY(CFE_MSG_GetFcnCode));
@@ -168,7 +168,8 @@ void HS_AppPipe_Test_EnableAppMon(void)
 
 void HS_AppPipe_Test_DisableAppMon(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_DISABLE_APP_MON_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_DISABLE_APP_MON_CC,
                               sizeof(UT_CmdBuf.DisableAppMonCmd));
 
     /* Execute the function being tested */
@@ -187,7 +188,8 @@ void HS_AppPipe_Test_DisableAppMon(void)
 
 void HS_AppPipe_Test_EnableEventMon(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_ENABLE_EVENT_MON_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_ENABLE_EVENT_MON_CC,
                               sizeof(UT_CmdBuf.EnableEventMonCmd));
 
     /* Execute the function being tested */
@@ -206,7 +208,8 @@ void HS_AppPipe_Test_EnableEventMon(void)
 
 void HS_AppPipe_Test_DisableEventMon(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_DISABLE_EVENT_MON_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_DISABLE_EVENT_MON_CC,
                               sizeof(UT_CmdBuf.DisableEventMonCmd));
 
     /* Execute the function being tested */
@@ -225,7 +228,8 @@ void HS_AppPipe_Test_DisableEventMon(void)
 
 void HS_AppPipe_Test_EnableAliveness(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_ENABLE_ALIVENESS_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_ENABLE_ALIVENESS_CC,
                               sizeof(UT_CmdBuf.EnableAlivenessCmd));
 
     /* Execute the function being tested */
@@ -244,7 +248,8 @@ void HS_AppPipe_Test_EnableAliveness(void)
 
 void HS_AppPipe_Test_DisableAliveness(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_DISABLE_ALIVENESS_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_DISABLE_ALIVENESS_CC,
                               sizeof(UT_CmdBuf.DisableAlivenessCmd));
 
     /* Execute the function being tested */
@@ -263,7 +268,8 @@ void HS_AppPipe_Test_DisableAliveness(void)
 
 void HS_AppPipe_Test_ResetResetsPerformed(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_RESETS_PERFORMED_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_RESET_RESETS_PERFORMED_CC,
                               sizeof(UT_CmdBuf.ResetResetsPerformedCmd));
 
     /* Execute the function being tested */
@@ -318,7 +324,8 @@ void HS_AppPipe_Test_EnableCPUHog(void)
 
 void HS_AppPipe_Test_DisableCPUHog(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_DISABLE_CPU_HOG_CC,
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID),
+                              HS_DISABLE_CPU_HOG_CC,
                               sizeof(UT_CmdBuf.DisableCpuHogCmd));
 
     /* Execute the function being tested */
@@ -379,7 +386,9 @@ void UtTest_Setup(void)
     UtTest_Add(HS_AppPipe_Test_DisableEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableEventMon");
     UtTest_Add(HS_AppPipe_Test_EnableAliveness, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableAliveness");
     UtTest_Add(HS_AppPipe_Test_DisableAliveness, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_DisableAliveness");
-    UtTest_Add(HS_AppPipe_Test_ResetResetsPerformed, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_AppPipe_Test_ResetResetsPerformed,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AppPipe_Test_ResetResetsPerformed");
     UtTest_Add(HS_AppPipe_Test_SetMaxResets, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_SetMaxResets");
     UtTest_Add(HS_AppPipe_Test_EnableCPUHog, HS_Test_Setup, HS_Test_TearDown, "HS_AppPipe_Test_EnableCPUHog");

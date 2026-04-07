@@ -32,7 +32,6 @@
  */
 void HS_SysMonCleanup(void)
 {
-
     UT_GenStub_Execute(HS_SysMonCleanup, Basic, NULL);
 }
 

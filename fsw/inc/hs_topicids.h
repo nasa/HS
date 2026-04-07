@@ -25,16 +25,16 @@
 
 #include "hs_topicid_values.h"
 
-#define CFE_MISSION_HS_CMD_TOPICID             CFE_MISSION_HS_TIDVAL(CMD)
-#define DEFAULT_CFE_MISSION_HS_CMD_TOPICID     0xAE /**< \brief Msg ID for cmds to HS                */
+#define CFE_MISSION_HS_CMD_TOPICID         CFE_MISSION_HS_TIDVAL(CMD)
+#define DEFAULT_CFE_MISSION_HS_CMD_TOPICID 0xAE /**< \brief Msg ID for cmds to HS                */
 
 #define CFE_MISSION_HS_SEND_HK_TOPICID         CFE_MISSION_HS_TIDVAL(SEND_HK)
 #define DEFAULT_CFE_MISSION_HS_SEND_HK_TOPICID 0xAF /**< \brief Msg ID to request HS housekeeping    */
 
-#define CFE_MISSION_HS_WAKEUP_TOPICID          CFE_MISSION_HS_TIDVAL(WAKEUP)
-#define DEFAULT_CFE_MISSION_HS_WAKEUP_TOPICID  0xB0 /**< \brief Msg ID to wake up HS                 */
+#define CFE_MISSION_HS_WAKEUP_TOPICID         CFE_MISSION_HS_TIDVAL(WAKEUP)
+#define DEFAULT_CFE_MISSION_HS_WAKEUP_TOPICID 0xB0 /**< \brief Msg ID to wake up HS                 */
 
-#define CFE_MISSION_HS_HK_TLM_TOPICID          CFE_MISSION_HS_TIDVAL(HK_TLM)
-#define DEFAULT_CFE_MISSION_HS_HK_TLM_TOPICID  0xAD /**< \brief HS Housekeeping Telemetry            */
+#define CFE_MISSION_HS_HK_TLM_TOPICID         CFE_MISSION_HS_TIDVAL(HK_TLM)
+#define DEFAULT_CFE_MISSION_HS_HK_TLM_TOPICID 0xAD /**< \brief HS Housekeeping Telemetry            */
 
 #endif

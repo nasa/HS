@@ -32,7 +32,6 @@
  */
 void HS_MonitorApplications(void)
 {
-
     UT_GenStub_Execute(HS_MonitorApplications, Basic, NULL);
 }
 
@@ -55,7 +54,6 @@ void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
  */
 void HS_MonitorUtilization(void)
 {
-
     UT_GenStub_Execute(HS_MonitorUtilization, Basic, NULL);
 }
 

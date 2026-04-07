@@ -46,7 +46,6 @@ CFE_Status_t HS_AppInit(void)
  */
 void HS_AppMain(void)
 {
-
     UT_GenStub_Execute(HS_AppMain, Basic, NULL);
 }
 
