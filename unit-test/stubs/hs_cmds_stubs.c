@@ -32,7 +32,6 @@
  */
 void HS_AcquirePointers(void)
 {
-
     UT_GenStub_Execute(HS_AcquirePointers, Basic, NULL);
 }
 
@@ -43,7 +42,6 @@ void HS_AcquirePointers(void)
  */
 void HS_AppMonStatusRefresh(void)
 {
-
     UT_GenStub_Execute(HS_AppMonStatusRefresh, Basic, NULL);
 }
 
@@ -182,7 +180,6 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
  */
 void HS_MsgActsStatusRefresh(void)
 {
-
     UT_GenStub_Execute(HS_MsgActsStatusRefresh, Basic, NULL);
 }
 
@@ -225,7 +222,6 @@ CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
  */
 void HS_ResetCounters(void)
 {
-
     UT_GenStub_Execute(HS_ResetCounters, Basic, NULL);
 }
 

@@ -36,12 +36,15 @@
 
 /* hs_cmds_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
+uint8 call_count_CFE_ES_GetAppIDByName;
 
 /*
  * Function Definitions
  */
 
-int32 HS_CMDS_TEST_CFE_ES_GetTaskInfoHook(void *UserObj, int32 StubRetcode, uint32 CallCount,
+int32 HS_CMDS_TEST_CFE_ES_GetTaskInfoHook(void                   *UserObj,
+                                          int32                   StubRetcode,
+                                          uint32                  CallCount,
                                           const UT_StubContext_t *Context)
 {
     CFE_ES_TaskInfo_t *TaskInfo = UserObj;
@@ -115,19 +118,92 @@ void HS_SendHkCmd_Test_InvalidEventMon(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
+}
+
+void HS_SendHkCmd_Test_NullEventMonTable(void)
+{
+    CFE_SB_MsgId_t      TestMsgId;
+    CFE_MSG_FcnCode_t   FcnCode;
+    size_t              MsgSize;
+    uint32              TableIndex;
+    HS_HkTlm_Payload_t *PayloadPtr;
+
+    /* setting this to null should prevent UUT from incrementing InvalidEventMonCount */
+    HS_AppData.EMTablePtr = NULL;
+
+    TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
+    FcnCode   = HS_ENABLE_EVENT_MON_CC;
+    MsgSize   = sizeof(UT_CmdBuf.EnableEventMonCmd);
+
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
+    UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
+
+    /* Fail first, succeed on second (shouldn't get called, but set up anyway)*/
+    UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
+
+    /* initialize hk counters */
+    HS_AppData.CmdCount                = 1;
+    HS_AppData.CmdErrCount             = 2;
+    HS_AppData.CurrentAppMonState      = 3;
+    HS_AppData.CurrentEventMonState    = 4;
+    HS_AppData.CurrentAlivenessState   = 5;
+    HS_AppData.CurrentCPUHogState      = 6;
+    HS_AppData.CDSData.ResetsPerformed = 7;
+    HS_AppData.CDSData.MaxResets       = 8;
+    HS_AppData.EventsMonitoredCount    = 9;
+    HS_AppData.MsgActExec              = 10;
+
+    for (TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
+    {
+        HS_AppData.AppMonEnables[TableIndex] = TableIndex;
+    }
+
+    /* Execute the function being tested */
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
+
+    /* Verify general housekeeping fields weren't affected */
+    PayloadPtr = &HS_AppData.HkPacket.Payload;
+    UtAssert_UINT8_EQ(PayloadPtr->CmdCount, 1);
+    UtAssert_UINT8_EQ(PayloadPtr->CmdErrCount, 2);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentAppMonState, 3);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentEventMonState, 4);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentAlivenessState, 5);
+    UtAssert_UINT8_EQ(PayloadPtr->CurrentCPUHogState, 6);
+    UtAssert_UINT16_EQ(PayloadPtr->ResetsPerformed, 7);
+    UtAssert_UINT16_EQ(PayloadPtr->MaxResets, 8);
+    UtAssert_UINT32_EQ(PayloadPtr->EventsMonitoredCount, 9);
+    UtAssert_UINT32_EQ(PayloadPtr->MsgActExec, 10);
+
+    /* if InvalidEventMonCount was incremented, we did something wrong */
+    UtAssert_UINT32_EQ(PayloadPtr->InvalidEventMonCount, 0);
+
+    /* Check first, middle, and last element */
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[0], 0);
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2],
+                       ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2);
+    UtAssert_UINT32_EQ(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE],
+                       (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE);
+
+    call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
+    UtAssert_UINT8_EQ(call_count_CFE_EVS_SendEvent, 0);
+
+    call_count_CFE_ES_GetAppIDByName = UT_GetStubCount(UT_KEY(CFE_ES_GetAppIDByName));
+    UtAssert_UINT8_EQ(call_count_CFE_ES_GetAppIDByName, 0);
 }
 
 void HS_SendHkCmd_Test_AllFlagsEnabled(void)
@@ -207,19 +283,81 @@ void HS_SendHkCmd_Test_AllFlagsEnabled(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
+}
+
+void HS_SendHkCmd_Test_XCTablePtrNull(void)
+{
+    int i;
+
+    /*
+    ** initialize app data to inject error scenario
+    ** normally, XCTablePtr gets iniitalized during the table load (at app init)
+    */
+    HS_AppData.XCTablePtr    = NULL;
+    HS_AppData.ExeCountState = HS_State_ENABLED;
+
+    /* Execute the function being tested */
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
+
+    /*
+    ** Check that each Execution Counter was set to invalid,
+    ** since the XCT pointer was null
+    ** If the expected UUT lines weren't executed,
+    ** these values would likely be zero from the test case setup
+    */
+    for (i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++)
+    {
+        UtAssert_UINT32_EQ(HS_AppData.HkPacket.Payload.ExeCounts[i], HS_INVALID_EXECOUNT);
+    }
+
+    /* Check that these stubs weren't called */
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetTaskInfo)), 0);
+}
+
+void HS_SendHkCmd_Test_XCTablePtrNullAndDisabled(void)
+{
+    int i;
+
+    /*
+    ** initialize app data to inject error scenario
+    ** normally, XCTablePtr gets iniitalized during the table load (at app init)
+    ** and when that's success
+    */
+    HS_AppData.XCTablePtr    = NULL;
+    HS_AppData.ExeCountState = HS_State_DISABLED;
+
+    /* Execute the function being tested */
+    HS_SendHkCmd(&UT_CmdBuf.SendHkCmd);
+
+    /*
+    ** Check that each Execution Counter was set to invalid,
+    ** since the XCT pointer was null
+    ** If the expected UUT lines weren't executed,
+    ** these values would likely be zero from the test case setup
+    */
+    for (i = 0; i < HS_MAX_EXEC_CNT_SLOTS; i++)
+    {
+        UtAssert_UINT32_EQ(HS_AppData.HkPacket.Payload.ExeCounts[i], HS_INVALID_EXECOUNT);
+    }
+
+    /* Check that these stubs weren't called */
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_GetTaskInfo)), 0);
 }
 
 void HS_SendHkCmd_Test_ResourceTypeAppMain(void)
@@ -303,20 +441,21 @@ void HS_SendHkCmd_Test_ResourceTypeAppMain(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == 5, "PayloadPtr->ExeCounts[0] == 5");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -400,20 +539,21 @@ void HS_SendHkCmd_Test_ResourceTypeAppChild(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == 5, "PayloadPtr->ExeCounts[0] == 5");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -498,20 +638,21 @@ void HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -592,20 +733,21 @@ void HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -687,20 +829,21 @@ void HS_SendHkCmd_Test_ResourceTypeDevice(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -775,20 +918,21 @@ void HS_SendHkCmd_Test_ResourceTypeISR(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -866,20 +1010,21 @@ void HS_SendHkCmd_Test_ResourceTypeISRGenCounterError(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     UtAssert_True(PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT, "PayloadPtr->ExeCounts[0] == HS_INVALID_EXECOUNT");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -961,18 +1106,19 @@ void HS_SendHkCmd_Test_ResourceTypeUnknown(void)
     /* Check first, middle, and last element */
     UtAssert_True(PayloadPtr->AppMonEnables[0] == 0, "PayloadPtr->AppMonEnables[0] == 0");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2] ==
-                      ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
+    UtAssert_True(PayloadPtr->AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2]
+                      == ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) / 2,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE) / 2] == ((HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE) / 2");
 
-    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE] ==
-                      (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
+    UtAssert_True(PayloadPtr->AppMonEnables[(HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE]
+                      == (HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE,
                   "((HS_MAX_MONITORED_APPS -1) / HS_BITS_PER_APPMON_ENABLE] == (HS_MAX_MONITORED_APPS -1) / "
                   "HS_BITS_PER_APPMON_ENABLE");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 32, "CFE_EVS_SendEvent was called %u time(s), expected 32",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 32,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 32",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1007,7 +1153,8 @@ void HS_Noop_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1042,7 +1189,8 @@ void HS_ResetCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1058,7 +1206,8 @@ void HS_ResetCounters_Test(void)
     UtAssert_True(HS_AppData.MsgActExec == 0, "HS_AppData.MsgActExec == 0");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1104,7 +1253,8 @@ void HS_EnableAppMonCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1150,7 +1300,8 @@ void HS_EnableAppMonCmd_Test_AlreadyEnabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1191,7 +1342,8 @@ void HS_DisableAppMonCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1202,7 +1354,8 @@ void HS_DisableAppMonCmd_Test_AlreadyDisabled(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Application Monitoring is *already* Disabled");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1233,7 +1386,8 @@ void HS_DisableAppMonCmd_Test_AlreadyDisabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1273,7 +1427,8 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1313,7 +1468,8 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1324,7 +1480,8 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor Enable: Error Subscribing to long-format Events,RC=0x%%08X");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1356,7 +1513,8 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1367,7 +1525,8 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor Enable: Error Subscribing to short-format Events,RC=0x%%08X");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1399,7 +1558,8 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1439,7 +1599,8 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1479,7 +1640,8 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1490,7 +1652,8 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor Disable: Error Unsubscribing from long-format Events,RC=0x%%08X");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1522,7 +1685,8 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1533,7 +1697,8 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Event Monitor Disable: Error Unsubscribing from short-format Events,RC=0x%%08X");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1565,7 +1730,8 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1605,7 +1771,8 @@ void HS_EnableAlivenessCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1645,7 +1812,8 @@ void HS_EnableAlivenessCmd_Test_AlreadyEnabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1685,7 +1853,8 @@ void HS_DisableAlivenessCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1725,7 +1894,8 @@ void HS_DisableAlivenessCmd_Test_AlreadyDisabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1765,7 +1935,8 @@ void HS_EnableCpuHogCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1805,7 +1976,8 @@ void HS_EnableCpuHogCmd_Test_AlreadyEnabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1845,7 +2017,8 @@ void HS_DisableCpuHogCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1885,7 +2058,8 @@ void HS_DisableCpuHogCmd_Test_AlreadyDisabled(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1896,7 +2070,8 @@ void HS_ResetResetsPerformedCmd_Test(void)
     size_t            MsgSize;
     int32             strCmpResult;
     char              ExpectedEventString[2][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Processor Resets Performed by HS Counter has been Reset");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1921,7 +2096,8 @@ void HS_ResetResetsPerformedCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -1935,7 +2111,8 @@ void HS_SetMaxResetsCmd_Test(void)
 
     HS_SetMaxResets_Payload_t *PayloadPtr;
 
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Max Resets Performable by HS has been set to %%d");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
@@ -1964,7 +2141,8 @@ void HS_SetMaxResetsCmd_Test(void)
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2002,7 +2180,8 @@ void HS_AcquirePointers_Test_Nominal(void)
     UtAssert_True(HS_AppData.ExeCountState == HS_State_ENABLED, "HS_AppData.ExeCountState == HS_State_ENABLED");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2010,13 +2189,17 @@ void HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled(void
 {
     int32 strCmpResult;
     char  ExpectedEventString[4][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting AppMon Table address, RC=0x%%08X, Application Monitoring Disabled");
-    snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[1],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting EventMon Table address, RC=0x%%08X, Event Monitoring Disabled");
-    snprintf(ExpectedEventString[2], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[2],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting MsgActs Table address, RC=0x%%08X");
-    snprintf(ExpectedEventString[3], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[3],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting ExeCount Table address, RC=0x%%08X");
 
     HS_AppData.AppMonLoaded         = HS_State_ENABLED;
@@ -2075,7 +2258,8 @@ void HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled(void
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[3].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 4, "CFE_EVS_SendEvent was called %u time(s), expected 4",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 4,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 4",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2083,15 +2267,20 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2(v
 {
     int32 strCmpResult;
     char  ExpectedEventString[5][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting AppMon Table address, RC=0x%%08X, Application Monitoring Disabled");
-    snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[1],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting EventMon Table address, RC=0x%%08X, Event Monitoring Disabled");
-    snprintf(ExpectedEventString[2], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[2],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error Unsubscribing from short-format Events,RC=0x%%08X");
-    snprintf(ExpectedEventString[3], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[3],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting MsgActs Table address, RC=0x%%08X");
-    snprintf(ExpectedEventString[4], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[4],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting ExeCount Table address, RC=0x%%08X");
 
     HS_AppData.AppMonLoaded         = HS_State_DISABLED;
@@ -2161,7 +2350,8 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2(v
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[4].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 5, "CFE_EVS_SendEvent was called %u time(s), expected 5",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 5,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 5",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2169,15 +2359,20 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled(vo
 {
     int32 strCmpResult;
     char  ExpectedEventString[5][CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
-    snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[0],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting AppMon Table address, RC=0x%%08X, Application Monitoring Disabled");
-    snprintf(ExpectedEventString[1], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[1],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting EventMon Table address, RC=0x%%08X, Event Monitoring Disabled");
-    snprintf(ExpectedEventString[2], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[2],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error Unsubscribing from long-format Events,RC=0x%%08X");
-    snprintf(ExpectedEventString[3], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[3],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting MsgActs Table address, RC=0x%%08X");
-    snprintf(ExpectedEventString[4], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
+    snprintf(ExpectedEventString[4],
+             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
              "Error getting ExeCount Table address, RC=0x%%08X");
 
     HS_AppData.AppMonLoaded         = HS_State_DISABLED;
@@ -2247,7 +2442,8 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled(vo
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[4].Spec);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 5, "CFE_EVS_SendEvent was called %u time(s), expected 5",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 5,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 5",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2289,7 +2485,8 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoS
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[2].EventType, CFE_EVS_EventType_ERROR);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 3, "CFE_EVS_SendEvent was called %u time(s), expected 3",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 3,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 3",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2331,7 +2528,8 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoS
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[2].EventType, CFE_EVS_EventType_ERROR);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 3, "CFE_EVS_SendEvent was called %u time(s), expected 3",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 3,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 3",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2368,7 +2566,8 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppM
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 1, "CFE_EVS_SendEvent was called %u time(s), expected 1",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 1",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2415,7 +2614,8 @@ void HS_AppMonStatusRefresh_Test_CycleCountZero(void)
     UtAssert_UINT16_EQ(HS_AppData.AppMonCheckInCountdown[HS_MAX_MONITORED_APPS - 1], 0);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2463,7 +2663,8 @@ void HS_AppMonStatusRefresh_Test_ActionTypeNOACT(void)
     UtAssert_UINT16_EQ(HS_AppData.AppMonCheckInCountdown[HS_MAX_MONITORED_APPS - 1], 0);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2514,7 +2715,8 @@ void HS_AppMonStatusRefresh_Test_ElseCase(void)
         "HS_AppData.AppMonEnables[(((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE)+1) - 1] == 0xFFFFFFFF");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2542,7 +2744,8 @@ void HS_MsgActsStatusRefresh_Test(void)
     }
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
-    UtAssert_True(call_count_CFE_EVS_SendEvent == 0, "CFE_EVS_SendEvent was called %u time(s), expected 0",
+    UtAssert_True(call_count_CFE_EVS_SendEvent == 0,
+                  "CFE_EVS_SendEvent was called %u time(s), expected 0",
                   call_count_CFE_EVS_SendEvent);
 }
 
@@ -2552,22 +2755,45 @@ void HS_MsgActsStatusRefresh_Test(void)
 void UtTest_Setup(void)
 {
     UtTest_Add(HS_SendHkCmd_Test_InvalidEventMon, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_InvalidEventMon");
+    UtTest_Add(HS_SendHkCmd_Test_NullEventMonTable,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_SendHkCmd_Test_NullEventMonTable");
 
     UtTest_Add(HS_SendHkCmd_Test_AllFlagsEnabled, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_AllFlagsEnabled");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppMain, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_XCTablePtrNull, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_XCTablePtrNull");
+    UtTest_Add(HS_SendHkCmd_Test_XCTablePtrNullAndDisabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_SendHkCmd_Test_XCTablePtrNullAndDisabled");
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppMain,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeAppMain");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChild, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChild,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeAppChild");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeAppChildTaskIdError");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeAppChildTaskInfoError");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeDevice, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeDevice,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeDevice");
     UtTest_Add(HS_SendHkCmd_Test_ResourceTypeISR, HS_Test_Setup, HS_Test_TearDown, "HS_SendHkCmd_Test_ResourceTypeISR");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeISRGenCounterError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeISRGenCounterError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeISRGenCounterError");
-    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeUnknown, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_SendHkCmd_Test_ResourceTypeUnknown,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_SendHkCmd_Test_ResourceTypeAppMain");
 
     UtTest_Add(HS_Noop_Test, HS_Test_Setup, HS_Test_TearDown, "HS_Noop_Test");
@@ -2577,51 +2803,79 @@ void UtTest_Setup(void)
 
     UtTest_Add(HS_EnableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAppMonCmd_Test");
 
-    UtTest_Add(HS_EnableAppMonCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableAppMonCmd_Test_AlreadyEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableAppMonCmd_Test_AlreadyEnabled");
 
     UtTest_Add(HS_DisableAppMonCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAppMonCmd_Test");
 
-    UtTest_Add(HS_DisableAppMonCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableAppMonCmd_Test_AlreadyDisabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableAppMonCmd_Test_AlreadyDisabled");
 
-    UtTest_Add(HS_EnableEventMonCmd_Test_Disabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableEventMonCmd_Test_Disabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_Disabled");
 
-    UtTest_Add(HS_EnableEventMonCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableEventMonCmd_Test_AlreadyEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_AlreadyEnabled");
-    UtTest_Add(HS_EnableEventMonCmd_Test_SubscribeLongError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableEventMonCmd_Test_SubscribeLongError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_SubscribeLongError");
-    UtTest_Add(HS_EnableEventMonCmd_Test_SubscribeShortError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableEventMonCmd_Test_SubscribeShortError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableEventMonCmd_Test_SubscribeShortError");
 
-    UtTest_Add(HS_DisableEventMonCmd_Test_Enabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableEventMonCmd_Test_Enabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableEventMonCmd_Test_Enabled");
-    UtTest_Add(HS_DisableEventMonCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableEventMonCmd_Test_AlreadyDisabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableEventMonCmd_Test_AlreadyDisabled");
-    UtTest_Add(HS_DisableEventMonCmd_Test_UnsubscribeLongError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableEventMonCmd_Test_UnsubscribeLongError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableEventMonCmd_Test_UnsubscribeLongError");
-    UtTest_Add(HS_DisableEventMonCmd_Test_UnsubscribeShortError, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableEventMonCmd_Test_UnsubscribeShortError,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableEventMonCmd_Test_UnsubscribeShortError");
 
     UtTest_Add(HS_EnableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableAlivenessCmd_Test");
 
-    UtTest_Add(HS_EnableAlivenessCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableAlivenessCmd_Test_AlreadyEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableAlivenessCmd_Test_AlreadyEnabled");
 
     UtTest_Add(HS_DisableAlivenessCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableAlivenessCmd_Test");
 
-    UtTest_Add(HS_DisableAlivenessCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableAlivenessCmd_Test_AlreadyDisabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableAlivenessCmd_Test_AlreadyDisabled");
 
     UtTest_Add(HS_EnableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_EnableCpuHogCmd_Test");
 
-    UtTest_Add(HS_EnableCpuHogCmd_Test_AlreadyEnabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_EnableCpuHogCmd_Test_AlreadyEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_EnableCpuHogCmd_Test_AlreadyEnabled");
 
     UtTest_Add(HS_DisableCpuHogCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_DisableCpuHogCmd_Test");
 
-    UtTest_Add(HS_DisableCpuHogCmd_Test_AlreadyDisabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_DisableCpuHogCmd_Test_AlreadyDisabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_DisableCpuHogCmd_Test_AlreadyDisabled");
 
     UtTest_Add(HS_ResetResetsPerformedCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_ResetResetsPerformedCmd_Test");
@@ -2629,24 +2883,38 @@ void UtTest_Setup(void)
     UtTest_Add(HS_SetMaxResetsCmd_Test, HS_Test_Setup, HS_Test_TearDown, "HS_SetMaxResetsCmd_Test");
 
     UtTest_Add(HS_AcquirePointers_Test_Nominal, HS_Test_Setup, HS_Test_TearDown, "HS_AcquirePointers_Test_Nominal");
-    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AcquirePointers_Test_ErrorsWithAppMonLoadedAndEventMonLoadedEnabled");
-    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled, HS_Test_Setup,
-               HS_Test_TearDown, "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled");
-    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2, HS_Test_Setup,
-               HS_Test_TearDown, "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2");
-    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError, HS_Test_Setup,
+    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled");
+    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabled2");
+    UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError,
+               HS_Test_Setup,
                HS_Test_TearDown,
                "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError");
     UtTest_Add(HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled,
-               HS_Test_Setup, HS_Test_TearDown,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled");
 
-    UtTest_Add(HS_AppMonStatusRefresh_Test_CycleCountZero, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_AppMonStatusRefresh_Test_CycleCountZero,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AppMonStatusRefresh_Test_CycleCountZero");
-    UtTest_Add(HS_AppMonStatusRefresh_Test_ActionTypeNOACT, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_AppMonStatusRefresh_Test_ActionTypeNOACT,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AppMonStatusRefresh_Test_ActionTypeNOACT");
-    UtTest_Add(HS_AppMonStatusRefresh_Test_ElseCase, HS_Test_Setup, HS_Test_TearDown,
+    UtTest_Add(HS_AppMonStatusRefresh_Test_ElseCase,
+               HS_Test_Setup,
+               HS_Test_TearDown,
                "HS_AppMonStatusRefresh_Test_ElseCase");
 
     UtTest_Add(HS_MsgActsStatusRefresh_Test, HS_Test_Setup, HS_Test_TearDown, "HS_MsgActsStatusRefresh_Test");

@@ -73,7 +73,6 @@
 #define HS_MAT_TABLENAME "MsgActs_Tbl"  /**< \brief MsgAction Table Name */
 /**\}*/
 
-
 /************************************************************************
  * Type Definitions
  ************************************************************************/
@@ -121,8 +120,8 @@ typedef struct
     uint16 MsgActCooldown[HS_MAX_MSG_ACT_TYPES];          /**< \brief Counts until Message Actions is available */
     uint16 AppMonCheckInCountdown[HS_MAX_MONITORED_APPS]; /**< \brief Counts until Application Monitor times out */
 
-    uint32 AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) +
-                         1]; /**< \brief AppMon state by monitor */
+    uint32 AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE)
+                         + 1]; /**< \brief AppMon state by monitor */
 
     uint32 AppMonLastExeCount[HS_MAX_MONITORED_APPS]; /**< \brief Last Execution Count for application being checked */
 
@@ -152,7 +151,7 @@ typedef struct
     CFE_TBL_Handle_t MATableHandle; /**< \brief Message Actions table handle */
 
     CFE_TBL_Handle_t XCTableHandle; /**< \brief Execution Counters table handle */
-    HS_XCTEntry_t *  XCTablePtr;    /**< \brief Ptr to Execution Counters table entry */
+    HS_XCTEntry_t   *XCTablePtr;    /**< \brief Ptr to Execution Counters table entry */
 
     HS_AMTEntry_t *AMTablePtr; /**< \brief Ptr to Apps Monitor table entry */
     HS_EMTEntry_t *EMTablePtr; /**< \brief Ptr to Events Monitor table entry */

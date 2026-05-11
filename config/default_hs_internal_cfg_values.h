@@ -16,7 +16,7 @@
  * limitations under the License.
  ************************************************************************/
 
- /**
+/**
  * @file
  *   CFS Health and Safety (HS) Application Private Config Definitions
  *

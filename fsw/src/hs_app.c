@@ -87,12 +87,16 @@ void HS_AppMain(void)
         */
         if (HS_AppData.CurrentEventMonState == HS_State_ENABLED)
         {
-            Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe,
-                                        CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
+            Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID),
+                                        HS_AppData.EventPipe,
+                                        CFE_SB_DEFAULT_QOS,
+                                        HS_EVENT_PIPE_DEPTH);
             if (Status != CFE_SUCCESS)
             {
-                CFE_EVS_SendEvent(HS_SUB_LONG_EVS_ERR_EID, CFE_EVS_EventType_ERROR,
-                                  "Error Subscribing to long-format Events,RC=0x%08X", (unsigned int)Status);
+                CFE_EVS_SendEvent(HS_SUB_LONG_EVS_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Error Subscribing to long-format Events,RC=0x%08X",
+                                  (unsigned int)Status);
 
                 /* Set run status to terminate main loop */
                 RunStatus = CFE_ES_RunStatus_APP_ERROR;
@@ -100,12 +104,16 @@ void HS_AppMain(void)
 
             if (Status == CFE_SUCCESS)
             {
-                Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe,
-                                            CFE_SB_DEFAULT_QOS, HS_EVENT_PIPE_DEPTH);
+                Status = CFE_SB_SubscribeEx(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID),
+                                            HS_AppData.EventPipe,
+                                            CFE_SB_DEFAULT_QOS,
+                                            HS_EVENT_PIPE_DEPTH);
                 if (Status != CFE_SUCCESS)
                 {
-                    CFE_EVS_SendEvent(HS_SUB_SHORT_EVS_ERR_EID, CFE_EVS_EventType_ERROR,
-                                      "Error Subscribing to short-format Events,RC=0x%08X", (unsigned int)Status);
+                    CFE_EVS_SendEvent(HS_SUB_SHORT_EVS_ERR_EID,
+                                      CFE_EVS_EventType_ERROR,
+                                      "Error Subscribing to short-format Events,RC=0x%08X",
+                                      (unsigned int)Status);
 
                     /* Set run status to terminate main loop */
                     RunStatus = CFE_ES_RunStatus_APP_ERROR;
@@ -171,7 +179,9 @@ void HS_AppMain(void)
         /*
         ** Send an event describing the reason for the termination
         */
-        CFE_EVS_SendEvent(HS_APP_EXIT_EID, CFE_EVS_EventType_CRITICAL, "Application Terminating, err = 0x%08X",
+        CFE_EVS_SendEvent(HS_APP_EXIT_EID,
+                          CFE_EVS_EventType_CRITICAL,
+                          "Application Terminating, err = 0x%08X",
                           (unsigned int)Status);
 
         /*
@@ -247,13 +257,14 @@ CFE_Status_t HS_AppInit(void)
 
         if (Status == CFE_SUCCESS)
         {
-            if ((HS_AppData.CDSData.ResetsPerformed != (uint16)~HS_AppData.CDSData.ResetsPerformedNot) ||
-                (HS_AppData.CDSData.MaxResets != (uint16)~HS_AppData.CDSData.MaxResetsNot))
+            if ((HS_AppData.CDSData.ResetsPerformed != (uint16)~HS_AppData.CDSData.ResetsPerformedNot)
+                || (HS_AppData.CDSData.MaxResets != (uint16)~HS_AppData.CDSData.MaxResetsNot))
             {
                 /*
                 ** Report error restoring data
                 */
-                CFE_EVS_SendEvent(HS_CDS_CORRUPT_ERR_EID, CFE_EVS_EventType_ERROR,
+                CFE_EVS_SendEvent(HS_CDS_CORRUPT_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
                                   "Data in CDS was corrupt, initializing resets data");
                 /*
                 ** If data was corrupt, initialize data
@@ -266,7 +277,8 @@ CFE_Status_t HS_AppInit(void)
             /*
             ** Report error restoring data
             */
-            CFE_EVS_SendEvent(HS_CDS_RESTORE_ERR_EID, CFE_EVS_EventType_ERROR,
+            CFE_EVS_SendEvent(HS_CDS_RESTORE_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
                               "Failed to restore data from CDS (Err=0x%08x), initializing resets data",
                               (unsigned int)Status);
             /*
@@ -321,16 +333,23 @@ CFE_Status_t HS_AppInit(void)
     Status = HS_SysMonInit();
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_SYSMON_INIT_ERR_EID, CFE_EVS_EventType_ERROR,
-                          "Error in system monitor initialization, RC=0x%08X", (unsigned int)Status);
+        CFE_EVS_SendEvent(HS_SYSMON_INIT_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error in system monitor initialization, RC=0x%08X",
+                          (unsigned int)Status);
         return Status;
     }
 
     /*
     ** Application initialization event
     */
-    CFE_EVS_SendEvent(HS_INIT_INF_EID, CFE_EVS_EventType_INFORMATION, "HS Initialized.  Version %d.%d.%d.%d",
-                      HS_MAJOR_VERSION, HS_MINOR_VERSION, HS_REVISION, HS_MISSION_REV);
+    CFE_EVS_SendEvent(HS_INIT_INF_EID,
+                      CFE_EVS_EventType_INFORMATION,
+                      "HS Initialized.  Version %d.%d.%d.%d",
+                      HS_MAJOR_VERSION,
+                      HS_MINOR_VERSION,
+                      HS_REVISION,
+                      HS_MISSION_REV);
 
     return Status;
 }
@@ -345,14 +364,17 @@ CFE_Status_t HS_SbInit(void)
     CFE_Status_t Status;
 
     /* Initialize housekeeping packet  */
-    CFE_MSG_Init(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), CFE_SB_ValueToMsgId(HS_HK_TLM_MID),
+    CFE_MSG_Init(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader),
+                 CFE_SB_ValueToMsgId(HS_HK_TLM_MID),
                  sizeof(HS_HkPacket_t));
 
     /* Create Command Pipe */
     Status = CFE_SB_CreatePipe(&HS_AppData.CmdPipe, HS_CMD_PIPE_DEPTH, HS_CMD_PIPE_NAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Command Pipe,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_CR_PIPE_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Creating SB Command Pipe,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -361,7 +383,9 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_CreatePipe(&HS_AppData.EventPipe, HS_EVENT_PIPE_DEPTH, HS_EVENT_PIPE_NAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_EVENT_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Event Pipe,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_CR_EVENT_PIPE_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Creating SB Event Pipe,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -370,7 +394,9 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_CreatePipe(&HS_AppData.WakeupPipe, HS_WAKEUP_PIPE_DEPTH, HS_WAKEUP_PIPE_NAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_CR_WAKEUP_PIPE_ERR_EID, CFE_EVS_EventType_ERROR, "Error Creating SB Wakeup Pipe,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_CR_WAKEUP_PIPE_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Creating SB Wakeup Pipe,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -379,7 +405,9 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_SEND_HK_MID), HS_AppData.CmdPipe);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_SUB_REQ_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to HK Request,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_SUB_REQ_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Subscribing to HK Request,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -388,7 +416,9 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_AppData.CmdPipe);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_SUB_CMD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Gnd Cmds,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_SUB_CMD_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Subscribing to Gnd Cmds,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -397,7 +427,9 @@ CFE_Status_t HS_SbInit(void)
     Status = CFE_SB_Subscribe(CFE_SB_ValueToMsgId(HS_WAKEUP_MID), HS_AppData.WakeupPipe);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_SUB_WAKEUP_ERR_EID, CFE_EVS_EventType_ERROR, "Error Subscribing to Wakeup,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_SUB_WAKEUP_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Subscribing to Wakeup,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -422,48 +454,68 @@ CFE_Status_t HS_TblInit(void)
 
     /* Register The HS Applications Monitor Table */
     TableSize = HS_MAX_MONITORED_APPS * sizeof(HS_AMTEntry_t);
-    Status    = CFE_TBL_Register(&HS_AppData.AMTableHandle, HS_AMT_TABLENAME, TableSize, CFE_TBL_OPT_DEFAULT,
+    Status    = CFE_TBL_Register(&HS_AppData.AMTableHandle,
+                              HS_AMT_TABLENAME,
+                              TableSize,
+                              CFE_TBL_OPT_DEFAULT,
                               HS_ValidateAMTable);
 
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_AMT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering AppMon Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_AMT_REG_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Registering AppMon Table,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
 
     /* Register The HS Events Monitor Table */
     TableSize = HS_MAX_MONITORED_EVENTS * sizeof(HS_EMTEntry_t);
-    Status    = CFE_TBL_Register(&HS_AppData.EMTableHandle, HS_EMT_TABLENAME, TableSize, CFE_TBL_OPT_DEFAULT,
+    Status    = CFE_TBL_Register(&HS_AppData.EMTableHandle,
+                              HS_EMT_TABLENAME,
+                              TableSize,
+                              CFE_TBL_OPT_DEFAULT,
                               HS_ValidateEMTable);
 
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_EMT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering EventMon Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_EMT_REG_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Registering EventMon Table,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
 
     /* Register The HS Message Actions Table */
     TableSize = HS_MAX_MSG_ACT_TYPES * sizeof(HS_MATEntry_t);
-    Status    = CFE_TBL_Register(&HS_AppData.MATableHandle, HS_MAT_TABLENAME, TableSize, CFE_TBL_OPT_DEFAULT,
+    Status    = CFE_TBL_Register(&HS_AppData.MATableHandle,
+                              HS_MAT_TABLENAME,
+                              TableSize,
+                              CFE_TBL_OPT_DEFAULT,
                               HS_ValidateMATable);
 
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_MAT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering MsgActs Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_MAT_REG_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Registering MsgActs Table,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
 
     /* Register The HS Execution Counters Table */
     TableSize = HS_MAX_EXEC_CNT_SLOTS * sizeof(HS_XCTEntry_t);
-    Status    = CFE_TBL_Register(&HS_AppData.XCTableHandle, HS_XCT_TABLENAME, TableSize, CFE_TBL_OPT_DEFAULT,
+    Status    = CFE_TBL_Register(&HS_AppData.XCTableHandle,
+                              HS_XCT_TABLENAME,
+                              TableSize,
+                              CFE_TBL_OPT_DEFAULT,
                               HS_ValidateXCTable);
 
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_XCT_REG_ERR_EID, CFE_EVS_EventType_ERROR, "Error Registering ExeCount Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_XCT_REG_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Registering ExeCount Table,RC=0x%08X",
                           (unsigned int)Status);
         return Status;
     }
@@ -472,7 +524,9 @@ CFE_Status_t HS_TblInit(void)
     Status = CFE_TBL_Load(HS_AppData.XCTableHandle, CFE_TBL_SRC_FILE, (const void *)HS_XCT_FILENAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_XCT_LD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Loading ExeCount Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_XCT_LD_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Loading ExeCount Table,RC=0x%08X",
                           (unsigned int)Status);
         HS_AppData.ExeCountState = HS_State_DISABLED;
         for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
@@ -486,10 +540,13 @@ CFE_Status_t HS_TblInit(void)
     Status = CFE_TBL_Load(HS_AppData.AMTableHandle, CFE_TBL_SRC_FILE, (const void *)HS_AMT_FILENAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_AMT_LD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Loading AppMon Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_AMT_LD_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Loading AppMon Table,RC=0x%08X",
                           (unsigned int)Status);
         HS_AppData.CurrentAppMonState = HS_State_DISABLED;
-        CFE_EVS_SendEvent(HS_DISABLE_APPMON_ERR_EID, CFE_EVS_EventType_ERROR,
+        CFE_EVS_SendEvent(HS_DISABLE_APPMON_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
                           "Application Monitoring Disabled due to Table Load Failure");
         HS_AppData.AppMonLoaded = HS_State_DISABLED;
     }
@@ -498,10 +555,13 @@ CFE_Status_t HS_TblInit(void)
     Status = CFE_TBL_Load(HS_AppData.EMTableHandle, CFE_TBL_SRC_FILE, (const void *)HS_EMT_FILENAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_EMT_LD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Loading EventMon Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_EMT_LD_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Loading EventMon Table,RC=0x%08X",
                           (unsigned int)Status);
         HS_AppData.CurrentEventMonState = HS_State_DISABLED;
-        CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_ERR_EID, CFE_EVS_EventType_ERROR,
+        CFE_EVS_SendEvent(HS_DISABLE_EVENTMON_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
                           "Event Monitoring Disabled due to Table Load Failure");
         HS_AppData.EventMonLoaded = HS_State_DISABLED;
     }
@@ -510,7 +570,9 @@ CFE_Status_t HS_TblInit(void)
     Status = CFE_TBL_Load(HS_AppData.MATableHandle, CFE_TBL_SRC_FILE, (const void *)HS_MAT_FILENAME);
     if (Status != CFE_SUCCESS)
     {
-        CFE_EVS_SendEvent(HS_MAT_LD_ERR_EID, CFE_EVS_EventType_ERROR, "Error Loading MsgActs Table,RC=0x%08X",
+        CFE_EVS_SendEvent(HS_MAT_LD_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "Error Loading MsgActs Table,RC=0x%08X",
                           (unsigned int)Status);
         HS_AppData.MsgActsState = HS_State_DISABLED;
     }
@@ -531,7 +593,7 @@ CFE_Status_t HS_TblInit(void)
 CFE_Status_t HS_ProcessMain(void)
 {
     CFE_Status_t Status      = CFE_SUCCESS;
-    const char * AliveString = HS_CPU_ALIVE_STRING;
+    const char  *AliveString = HS_CPU_ALIVE_STRING;
     uint32       i           = 0;
 
     /*
