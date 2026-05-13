@@ -456,7 +456,7 @@
  *       or equal to zero.
  */
 #define HS_MISSION_REV         HS_INTERNAL_CFGVAL(MISSION_REV)
-#define DEFAULT_HS_MISSION_REV 0
+#define DEFAULT_HS_MISSION_REV 0xFF
 
 /**\}*/
 
