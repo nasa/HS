@@ -15,6 +15,9 @@ on:
     # 9:25 PM UTC every Sunday
     - cron:  '25 21 * * 0'
 
+permissions:
+  contents: read
+
 jobs:
   unit-test-coverage:
     name: Run unit test and coverage
