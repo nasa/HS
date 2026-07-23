@@ -764,6 +764,12 @@ void HS_AppMonStatusRefresh(void)
     uint32 TableIndex  = 0;
     uint32 EnableIndex = 0;
 
+    /* Avoid accessing AMT if table pointer is invalid */
+    if (HS_AppData.AMTablePtr == NULL)
+    {
+        return;
+    }
+
     /*
     ** Clear all AppMon Enable bits
     */

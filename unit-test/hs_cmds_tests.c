@@ -2619,6 +2619,20 @@ void HS_AppMonStatusRefresh_Test_CycleCountZero(void)
                   call_count_CFE_EVS_SendEvent);
 }
 
+void HS_AppMonStatusRefresh_Test_AppMonTblPtrNull(void)
+{
+    HS_AppData.AMTablePtr = NULL;
+
+    HS_AppData.AppMonEnables[0] = 1;
+
+    /* Execute the function being tested */
+    HS_AppMonStatusRefresh();
+
+    /* Verify results */
+    /* UUT returns early without touching the enable bits when the table pointer is invalid */
+    UtAssert_True(HS_AppData.AppMonEnables[0] == 1, "HS_AppData.AppMonEnables[0] == 1");
+}
+
 void HS_AppMonStatusRefresh_Test_ActionTypeNOACT(void)
 {
     HS_AMTEntry_t AMTable[HS_MAX_MONITORED_APPS];
@@ -2908,6 +2922,10 @@ void UtTest_Setup(void)
                HS_Test_Setup,
                HS_Test_TearDown,
                "HS_AppMonStatusRefresh_Test_CycleCountZero");
+    UtTest_Add(HS_AppMonStatusRefresh_Test_AppMonTblPtrNull,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_AppMonStatusRefresh_Test_AppMonTblPtrNull");
     UtTest_Add(HS_AppMonStatusRefresh_Test_ActionTypeNOACT,
                HS_Test_Setup,
                HS_Test_TearDown,
