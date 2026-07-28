@@ -57,6 +57,9 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     uint32             TableIndex;
 
     HS_HkTlm_Payload_t *PayloadPtr;
+    HS_EMTEntry_t      *EMEntryPtr;
+    HS_XCTEntry_t      *XCEntryPtr;
+    HS_AppMonState_t   *AMStatePtr;
 
     memset(&TaskInfo, 0, sizeof(TaskInfo));
 
@@ -80,18 +83,17 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     ** Calculate the current number of invalid event monitor entries
     */
     PayloadPtr->InvalidEventMonCount = 0;
-    if (HS_AppData.EMTablePtr != NULL)
+    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
     {
-        for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
-        {
-            if (HS_AppData.EMTablePtr[TableIndex].ActionType != HS_EMTActType_NOACT)
-            {
-                Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
+        EMEntryPtr = HS_GetEMTEntryByIndex(TableIndex);
 
-                if (Status != CFE_SUCCESS)
-                {
-                    PayloadPtr->InvalidEventMonCount++;
-                }
+        if (EMEntryPtr != NULL && EMEntryPtr->ActionType != HS_EMTActType_NOACT)
+        {
+            Status = CFE_ES_GetAppIDByName(&AppId, EMEntryPtr->AppName);
+
+            if (Status != CFE_SUCCESS)
+            {
+                PayloadPtr->InvalidEventMonCount++;
             }
         }
     }
@@ -124,9 +126,15 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     /*
     ** Update the AppMon Enables
     */
-    for (TableIndex = 0; TableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); TableIndex++)
+    memset(PayloadPtr->AppMonEnables, 0, sizeof(PayloadPtr->AppMonEnables));
+    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
-        PayloadPtr->AppMonEnables[TableIndex] = HS_AppData.AppMonEnables[TableIndex];
+        AMStatePtr = HS_GetAMStateByIndex(TableIndex);
+
+        if (AMStatePtr->Enable)
+        {
+            HS_SET_TLM_ENABLE_BITMASK(PayloadPtr->AppMonEnables, TableIndex);
+        }
     }
 
     PayloadPtr->UtilCpuAvg  = HS_AppData.UtilCpuAvg;
@@ -137,15 +145,16 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
     */
     for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
     {
-        ExeCount = HS_INVALID_EXECOUNT;
+        XCEntryPtr = HS_GetXCTEntryByIndex(TableIndex);
+        ExeCount   = HS_INVALID_EXECOUNT;
 
-        if ((HS_AppData.ExeCountState == HS_State_ENABLED) && (HS_AppData.XCTablePtr != NULL))
+        if (XCEntryPtr != NULL && HS_AppData.ExeCountState == HS_State_ENABLED)
         {
-            switch (HS_AppData.XCTablePtr[TableIndex].ResourceType)
+            switch (XCEntryPtr->ResourceType)
             {
                 case HS_XCTResType_APP_MAIN:
                 case HS_XCTResType_APP_CHILD:
-                    Status = CFE_ES_GetTaskIDByName(&TaskId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
+                    Status = CFE_ES_GetTaskIDByName(&TaskId, XCEntryPtr->ResourceName);
 
                     if (Status == CFE_SUCCESS)
                     {
@@ -158,7 +167,7 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
                     break;
                 case HS_XCTResType_DEVICE:
                 case HS_XCTResType_ISR:
-                    Status = CFE_ES_GetGenCounterIDByName(&CounterId, HS_AppData.XCTablePtr[TableIndex].ResourceName);
+                    Status = CFE_ES_GetGenCounterIDByName(&CounterId, XCEntryPtr->ResourceName);
 
                     if (Status == CFE_SUCCESS)
                     {
@@ -173,7 +182,7 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
                     CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID,
                                       CFE_EVS_EventType_DEBUG,
                                       "Housekeeping req found unknown resource.  Type=0x%08X",
-                                      (unsigned int)HS_AppData.XCTablePtr[TableIndex].ResourceType);
+                                      (unsigned int)XCEntryPtr->ResourceType);
                     break;
             } /* end ResourceType switch statement */
         } /* end ExeCountState if statement */
@@ -550,6 +559,7 @@ CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
 void HS_AcquirePointers(void)
 {
     CFE_Status_t Status;
+    void        *TableTempPtr;
 
     /*
     ** Release the table (AppMon)
@@ -564,7 +574,7 @@ void HS_AcquirePointers(void)
     /*
     ** Get a pointer to the table (AppMon)
     */
-    Status = CFE_TBL_GetAddress((void *)&HS_AppData.AMTablePtr, HS_AppData.AMTableHandle);
+    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.AMTableHandle);
 
     /*
     ** If there is a new table, refresh status (AppMon)
@@ -591,6 +601,8 @@ void HS_AcquirePointers(void)
             HS_AppData.CurrentAppMonState = HS_State_DISABLED;
             HS_AppData.AppMonLoaded       = HS_State_DISABLED;
         }
+
+        TableTempPtr = NULL;
     }
     /*
     ** Otherwise, mark that the table is loaded (AppMon)
@@ -599,6 +611,8 @@ void HS_AcquirePointers(void)
     {
         HS_AppData.AppMonLoaded = HS_State_ENABLED;
     }
+
+    HS_AppData.AMTablePtr = TableTempPtr;
 
     /*
     ** Release the table (EventMon)
@@ -613,7 +627,7 @@ void HS_AcquirePointers(void)
     /*
     ** Get a pointer to the table (EventMon)
     */
-    Status = CFE_TBL_GetAddress((void *)&HS_AppData.EMTablePtr, HS_AppData.EMTableHandle);
+    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.EMTableHandle);
 
     /*
     ** If Address acquisition fails and currently enabled, report and disable (EventMon)
@@ -656,6 +670,8 @@ void HS_AcquirePointers(void)
             HS_AppData.CurrentEventMonState = HS_State_DISABLED;
             HS_AppData.EventMonLoaded       = HS_State_DISABLED;
         }
+
+        TableTempPtr = NULL;
     }
     /*
     ** Otherwise, mark that the table is loaded (EventMon)
@@ -664,6 +680,8 @@ void HS_AcquirePointers(void)
     {
         HS_AppData.EventMonLoaded = HS_State_ENABLED;
     }
+
+    HS_AppData.EMTablePtr = TableTempPtr;
 
     /*
     ** Release the table (MsgActs)
@@ -678,7 +696,7 @@ void HS_AcquirePointers(void)
     /*
     ** Get a pointer to the table (MsgActs)
     */
-    Status = CFE_TBL_GetAddress((void *)&HS_AppData.MATablePtr, HS_AppData.MATableHandle);
+    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.MATableHandle);
 
     /*
     ** If there is a new table, refresh status (MsgActs)
@@ -704,6 +722,8 @@ void HS_AcquirePointers(void)
                               (unsigned int)Status);
             HS_AppData.MsgActsState = HS_State_DISABLED;
         }
+
+        TableTempPtr = NULL;
     }
     /*
     ** Otherwise, make sure it is enabled (MsgActs)
@@ -712,6 +732,8 @@ void HS_AcquirePointers(void)
     {
         HS_AppData.MsgActsState = HS_State_ENABLED;
     }
+
+    HS_AppData.MATablePtr = TableTempPtr;
 
     /*
     ** Release the table (ExeCount)
@@ -726,7 +748,7 @@ void HS_AcquirePointers(void)
     /*
     ** Get a pointer to the table (ExeCount)
     */
-    Status = CFE_TBL_GetAddress((void *)&HS_AppData.XCTablePtr, HS_AppData.XCTableHandle);
+    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.XCTableHandle);
 
     /*
     ** If Address acquisition fails report and disable (ExeCount)
@@ -744,6 +766,8 @@ void HS_AcquirePointers(void)
                               (unsigned int)Status);
             HS_AppData.ExeCountState = HS_State_DISABLED;
         }
+
+        TableTempPtr = NULL;
     }
     /*
     ** Otherwise, make sure it is enabled (ExeCount)
@@ -752,6 +776,8 @@ void HS_AcquirePointers(void)
     {
         HS_AppData.ExeCountState = HS_State_ENABLED;
     }
+
+    HS_AppData.XCTablePtr = TableTempPtr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -761,34 +787,29 @@ void HS_AcquirePointers(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_AppMonStatusRefresh(void)
 {
-    uint32 TableIndex  = 0;
-    uint32 EnableIndex = 0;
-
-    /*
-    ** Clear all AppMon Enable bits
-    */
-    for (EnableIndex = 0; EnableIndex <= ((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE); EnableIndex++)
-    {
-        HS_AppData.AppMonEnables[EnableIndex] = 0;
-    }
+    uint32            TableIndex;
+    HS_AMTEntry_t    *AMEntryPtr;
+    HS_AppMonState_t *AMStatePtr;
 
     /*
     ** Set AppMon enable bits and reset Countups and Exec Counter comparisons
     */
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
     {
-        HS_AppData.AppMonLastExeCount[TableIndex] = 0;
+        AMEntryPtr = HS_GetAMTEntryByIndex(TableIndex);
+        AMStatePtr = HS_GetAMStateByIndex(TableIndex);
 
-        if ((HS_AppData.AMTablePtr[TableIndex].CycleCount == 0)
-            || (HS_AppData.AMTablePtr[TableIndex].ActionType == HS_AMTActType_NOACT))
+        AMStatePtr->LastExeCount = 0;
+
+        if (AMEntryPtr == NULL || AMEntryPtr->CycleCount == 0 || AMEntryPtr->ActionType == HS_AMTActType_NOACT)
         {
-            HS_AppData.AppMonCheckInCountdown[TableIndex] = 0;
+            AMStatePtr->CheckInCountdown = 0;
+            AMStatePtr->Enable           = false;
         }
         else
         {
-            HS_AppData.AppMonCheckInCountdown[TableIndex] = HS_AppData.AMTablePtr[TableIndex].CycleCount;
-            HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE] |=
-                (1 << (TableIndex % HS_BITS_PER_APPMON_ENABLE));
+            AMStatePtr->CheckInCountdown = AMEntryPtr->CycleCount;
+            AMStatePtr->Enable           = true;
         }
     }
 }
@@ -800,13 +821,16 @@ void HS_AppMonStatusRefresh(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MsgActsStatusRefresh(void)
 {
-    uint32 TableIndex = 0;
+    uint32            TableIndex;
+    HS_MsgActState_t *MAStatePtr;
 
     /*
     ** Clear all MsgActs Cooldowns
     */
     for (TableIndex = 0; TableIndex < HS_MAX_MSG_ACT_TYPES; TableIndex++)
     {
-        HS_AppData.MsgActCooldown[TableIndex] = 0;
+        MAStatePtr = HS_GetMAStateByIndex(TableIndex);
+
+        MAStatePtr->Cooldown = 0;
     }
 }

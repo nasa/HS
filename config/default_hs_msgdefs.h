@@ -28,4 +28,16 @@
 
 #include "hs_fcncodes.h"
 
+/**
+ * Macro to set single enable bit in the standard TLM data structure
+ *
+ * Each entry is a single bit so it needs to be set via a bitmask
+ * The left-most bit should be the first entry (index 0)
+ */
+#define HS_SET_TLM_ENABLE_BITMASK(arr, p)    \
+    do                                       \
+    {                                        \
+        arr[(p) / 8] |= (0x80 >> ((p) % 8)); \
+    } while (0)
+
 #endif

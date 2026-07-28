@@ -31,12 +31,6 @@
 #ifndef DEFAULT_HK_MSG_H
 #define DEFAULT_HK_MSG_H
 
-/************************************************************************
- * THIS IS RELATED TO THE DATA TYPE USED IN 'AppMonEnable' FIELD IN THE TLM STRUCTURE
- ************************************************************************/
-
-#define HS_BITS_PER_APPMON_ENABLE 32 /**< \brief HS Bits per AppMon Enable entry */
-
 #include "hs_interface_cfg.h"
 #include "hs_msgdefs.h"
 #include "hs_msgstruct.h"

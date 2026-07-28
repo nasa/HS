@@ -1759,9 +1759,9 @@ void HS_ProcessMain_Test(void)
     /* Causes HS_ProcessCommands to return CFE_SUCCESS, which is then returned from HS_ProcessMain */
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SB_NO_MESSAGE);
 
-    HS_AppData.MsgActCooldown[0]                        = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] = 2;
+    HS_AppData.MsgActState[0].Cooldown                        = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown = 2;
 
     HS_AppData.CurrentAppMonState    = HS_State_ENABLED;
     HS_AppData.CurrentAlivenessState = HS_State_ENABLED;
@@ -1775,11 +1775,11 @@ void HS_ProcessMain_Test(void)
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.MsgActCooldown[0] == 1, "HS_AppData.MsgActCooldown[0] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1");
+    UtAssert_True(HS_AppData.MsgActState[0].Cooldown == 1, "HS_AppData.MsgActState[0].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1");
     UtAssert_True(HS_AppData.AlivenessCounter == 0, "HS_AppData.AlivenessCounter == 0");
 
     /* Ensure the watchdog was serviced when flag is HS_State_ENABLED */
@@ -1806,9 +1806,9 @@ void HS_ProcessMain_Test_MonStateDisabled(void)
     /* Causes HS_ProcessCommands to return CFE_SUCCESS, which is then returned from HS_ProcessMain */
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SB_NO_MESSAGE);
 
-    HS_AppData.MsgActCooldown[0]                        = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] = 2;
+    HS_AppData.MsgActState[0].Cooldown                        = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown = 2;
 
     HS_AppData.CurrentAppMonState    = HS_State_ENABLED;
     HS_AppData.CurrentAlivenessState = HS_State_ENABLED;
@@ -1825,11 +1825,11 @@ void HS_ProcessMain_Test_MonStateDisabled(void)
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.MsgActCooldown[0] == 1, "HS_AppData.MsgActCooldown[0] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1");
+    UtAssert_True(HS_AppData.MsgActState[0].Cooldown == 1, "HS_AppData.MsgActState[0].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1");
     UtAssert_True(HS_AppData.AlivenessCounter == 0, "HS_AppData.AlivenessCounter == 0");
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
@@ -1853,9 +1853,9 @@ void HS_ProcessMain_Test_AlivenessDisabled(void)
     /* Causes HS_ProcessCommands to return CFE_SUCCESS, which is then returned from HS_ProcessMain */
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SB_NO_MESSAGE);
 
-    HS_AppData.MsgActCooldown[0]                        = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] = 2;
+    HS_AppData.MsgActState[0].Cooldown                        = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown = 2;
 
     HS_AppData.CurrentAppMonState    = HS_State_ENABLED;
     HS_AppData.CurrentAlivenessState = HS_State_ENABLED;
@@ -1870,11 +1870,11 @@ void HS_ProcessMain_Test_AlivenessDisabled(void)
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.MsgActCooldown[0] == 1, "HS_AppData.MsgActCooldown[0] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1");
+    UtAssert_True(HS_AppData.MsgActState[0].Cooldown == 1, "HS_AppData.MsgActState[0].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1");
     UtAssert_True(HS_AppData.AlivenessCounter == HS_CPU_ALIVE_PERIOD,
                   "HS_AppData.AlivenessCounter == HS_CPU_ALIVE_PERIOD");
 
@@ -1899,9 +1899,9 @@ void HS_ProcessMain_Test_WatchdogDisabled(void)
     /* Causes HS_ProcessCommands to return CFE_SUCCESS, which is then returned from HS_ProcessMain */
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SB_NO_MESSAGE);
 
-    HS_AppData.MsgActCooldown[0]                        = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] = 2;
-    HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] = 2;
+    HS_AppData.MsgActState[0].Cooldown                        = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown = 2;
+    HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown = 2;
 
     HS_AppData.CurrentAppMonState    = HS_State_ENABLED;
     HS_AppData.CurrentAlivenessState = HS_State_ENABLED;
@@ -1917,11 +1917,11 @@ void HS_ProcessMain_Test_WatchdogDisabled(void)
     UtAssert_True(Result == CFE_SUCCESS, "Result == CFE_SUCCESS");
 
     /* Check first, middle, and last element */
-    UtAssert_True(HS_AppData.MsgActCooldown[0] == 1, "HS_AppData.MsgActCooldown[0] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES / 2] == 1");
-    UtAssert_True(HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1,
-                  "HS_AppData.MsgActCooldown[HS_MAX_MSG_ACT_TYPES - 1] == 1");
+    UtAssert_True(HS_AppData.MsgActState[0].Cooldown == 1, "HS_AppData.MsgActState[0].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES / 2].Cooldown == 1");
+    UtAssert_True(HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1,
+                  "HS_AppData.MsgActState[HS_MAX_MSG_ACT_TYPES - 1].Cooldown == 1");
     UtAssert_True(HS_AppData.AlivenessCounter == 0, "HS_AppData.AlivenessCounter == 0");
 
     /* Ensure the watchdog was not serviced when flag is HS_State_DISABLED */

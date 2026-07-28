@@ -592,9 +592,10 @@ CFE_Status_t HS_TblInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ProcessMain(void)
 {
-    CFE_Status_t Status      = CFE_SUCCESS;
-    const char  *AliveString = HS_CPU_ALIVE_STRING;
-    uint32       i           = 0;
+    CFE_Status_t      Status      = CFE_SUCCESS;
+    const char       *AliveString = HS_CPU_ALIVE_STRING;
+    uint32            i           = 0;
+    HS_MsgActState_t *MAStatePtr;
 
     /*
     ** Get Tables
@@ -606,9 +607,11 @@ CFE_Status_t HS_ProcessMain(void)
     */
     for (i = 0; i < HS_MAX_MSG_ACT_TYPES; i++)
     {
-        if (HS_AppData.MsgActCooldown[i] != 0)
+        MAStatePtr = &HS_AppData.MsgActState[i];
+
+        if (MAStatePtr->Cooldown != 0)
         {
-            HS_AppData.MsgActCooldown[i]--;
+            --MAStatePtr->Cooldown;
         }
     }
 
