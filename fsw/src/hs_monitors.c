@@ -37,364 +37,370 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* Monitor Applications                                            */
+/* Helper function to implement cooldown logic for msg actions     */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_MonitorApplications(void)
+void HS_ExecuteMessageAction(uint16 ActionType, void (*SendEventCb)(uint32, const void *), const void *CbArg)
+{
+    uint32            MsgActsIndex;
+    HS_MATEntry_t    *MAEntryPtr;
+    HS_MsgActState_t *MAStatePtr;
+
+    /* Calculate the requested message action index */
+    MsgActsIndex = ActionType - HS_EMTActType_LAST_NONMSG - 1;
+
+    /*
+    ** Check to see if this is a valid Message Action Type
+    */
+    if (HS_AppData.MsgActsState == HS_State_ENABLED && MsgActsIndex < HS_MAX_MSG_ACT_TYPES)
+    {
+        MAEntryPtr = HS_GetMATEntryByIndex(MsgActsIndex);
+        MAStatePtr = HS_GetMAStateByIndex(MsgActsIndex);
+
+        /*
+        ** Send the message if off cooldown and not disabled
+        */
+        if (MAEntryPtr != NULL && MAStatePtr->Cooldown == 0 && MAEntryPtr->EnableState != HS_MATState_DISABLED)
+        {
+            CFE_SB_TransmitMsg((const CFE_MSG_Message_t *)&MAEntryPtr->MsgBuf, true);
+
+            HS_AppData.MsgActExec++;
+            MAStatePtr->Cooldown = MAEntryPtr->Cooldown;
+
+            /* Send the event via callback */
+            if (MAEntryPtr->EnableState != HS_MATState_NOEVENT)
+            {
+                SendEventCb(MsgActsIndex, CbArg);
+            }
+        }
+    }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* App Monitor Callback/helper to send message action event        */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+static void HS_AppMonActCallback(uint32 MsgActsIndex, const void *Arg)
+{
+    const HS_AMTEntry_t *AMEntryPtr = Arg;
+
+    CFE_EVS_SendEvent(HS_APPMON_MSGACTS_ERR_EID,
+                      CFE_EVS_EventType_ERROR,
+                      "App Monitor Failure: APP:(%s): Action: Message Action Index: %d",
+                      AMEntryPtr->AppName,
+                      (int)MsgActsIndex);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Monitor Application (single)                                    */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState_t *AMStatePtr)
 {
     CFE_ES_AppInfo_t AppInfo;
     CFE_ES_AppId_t   AppId = CFE_ES_APPID_UNDEFINED;
     CFE_Status_t     Status;
-    uint32           TableIndex = 0;
-    uint16           ActionType;
-    uint32           MsgActsIndex = 0;
-
-    /* Avoid accessing AMT if table pointer is invalid */
-    if (HS_AppData.AMTablePtr == NULL)
-    {
-        return;
-    }
 
     memset(&AppInfo, 0, sizeof(AppInfo));
 
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
+    Status = CFE_ES_GetAppIDByName(&AppId, AMEntryPtr->AppName);
+
+    if (Status == CFE_SUCCESS)
     {
-        ActionType = HS_AppData.AMTablePtr[TableIndex].ActionType;
+        Status = CFE_ES_GetAppInfo(&AppInfo, AppId);
+    }
+    else if (AMStatePtr->CheckInCountdown == AMEntryPtr->CycleCount)
+    {
+        /*
+        ** Only send an error event the first time the App fails to resolve
+        */
+        CFE_EVS_SendEvent(HS_APPMON_APPNAME_ERR_EID,
+                          CFE_EVS_EventType_ERROR,
+                          "App Monitor App Name not found: APP:(%s)",
+                          AMEntryPtr->AppName);
+    }
+    else
+    {
+        /* For repeated errors, send a debug event */
+        CFE_EVS_SendEvent(HS_APPMON_APPNAME_DBG_EID,
+                          CFE_EVS_EventType_DEBUG,
+                          "App Monitor App Name not found: APP:(%s)",
+                          AMEntryPtr->AppName);
+    }
+
+    /*
+    ** Failure to get an execution counter is not considered an automatic failure (or eventworthy)
+    */
+    if ((Status == CFE_SUCCESS) && (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter))
+    {
+        /*
+        ** Set the current count, and reset the timeout
+        */
+        AMStatePtr->CheckInCountdown = AMEntryPtr->CycleCount;
+        AMStatePtr->LastExeCount     = AppInfo.ExecutionCounter;
+    }
+    else
+    {
+        AMStatePtr->CheckInCountdown--;
 
         /*
-        ** Check this App if it has an action, and hasn't already expired
+        ** Take Action once the counter reaches zero
         */
-        if ((ActionType != HS_AMTActType_NOACT) && (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0))
+        if (AMStatePtr->CheckInCountdown == 0)
         {
-            Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.AMTablePtr[TableIndex].AppName);
-
-            if (Status == CFE_SUCCESS)
-            {
-                Status = CFE_ES_GetAppInfo(&AppInfo, AppId);
-            }
-            else if (HS_AppData.AppMonCheckInCountdown[TableIndex] == HS_AppData.AMTablePtr[TableIndex].CycleCount)
-            {
-                /*
-                ** Only send an error event the first time the App fails to resolve
-                */
-                CFE_EVS_SendEvent(HS_APPMON_APPNAME_ERR_EID,
-                                  CFE_EVS_EventType_ERROR,
-                                  "App Monitor App Name not found: APP:(%s)",
-                                  HS_AppData.AMTablePtr[TableIndex].AppName);
-            }
-            else
-            {
-                /* For repeated errors, send a debug event */
-                CFE_EVS_SendEvent(HS_APPMON_APPNAME_DBG_EID,
-                                  CFE_EVS_EventType_DEBUG,
-                                  "App Monitor App Name not found: APP:(%s)",
-                                  HS_AppData.AMTablePtr[TableIndex].AppName);
-            }
-
             /*
-            ** Failure to get an execution counter is not considered an automatic failure (or eventworthy)
+            ** Unset the enabled bit flag
             */
-            if ((Status == CFE_SUCCESS) && (HS_AppData.AppMonLastExeCount[TableIndex] != AppInfo.ExecutionCounter))
-            {
-                /*
-                ** Set the current count, and reset the timeout
-                */
-                HS_AppData.AppMonCheckInCountdown[TableIndex] = HS_AppData.AMTablePtr[TableIndex].CycleCount;
-                HS_AppData.AppMonLastExeCount[TableIndex]     = AppInfo.ExecutionCounter;
-            }
-            else
-            {
-                HS_AppData.AppMonCheckInCountdown[TableIndex]--;
+            AMStatePtr->Enable = false;
 
-                /*
-                ** Take Action once the counter reaches zero
-                */
-                if (HS_AppData.AppMonCheckInCountdown[TableIndex] == 0)
-                {
+            switch (AMEntryPtr->ActionType)
+            {
+                case HS_AMTActType_PROC_RESET:
+                    CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID,
+                                      CFE_EVS_EventType_ERROR,
+                                      "App Monitor Failure: APP:(%s): Action: Processor Reset",
+                                      AMEntryPtr->AppName);
+
                     /*
-                    ** Unset the enabled bit flag
+                    ** Perform a reset if we can
                     */
-                    HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE] &=
-                        ~(1 << (TableIndex % HS_BITS_PER_APPMON_ENABLE));
-                    switch (ActionType)
+                    if (HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
                     {
-                        case HS_AMTActType_PROC_RESET:
-                            CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "App Monitor Failure: APP:(%s): Action: Processor Reset",
-                                              HS_AppData.AMTablePtr[TableIndex].AppName);
+                        HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
 
-                            /*
-                            ** Perform a reset if we can
-                            */
-                            if (HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
-                            {
-                                HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
+                        OS_TaskDelay(HS_RESET_TASK_DELAY);
+                        CFE_ES_WriteToSysLog("HS App: App Monitor Failure: APP:(%s): Action: Processor Reset\n",
+                                             AMEntryPtr->AppName);
+                        HS_AppData.ServiceWatchdogFlag = HS_State_DISABLED;
+                        CFE_ES_ResetCFE(CFE_PSP_RST_TYPE_PROCESSOR);
+                    }
+                    else
+                    {
+                        CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID,
+                                          CFE_EVS_EventType_ERROR,
+                                          "Processor Reset Action Limit Reached: No Reset Performed");
+                    }
 
-                                OS_TaskDelay(HS_RESET_TASK_DELAY);
-                                CFE_ES_WriteToSysLog("HS App: App Monitor Failure: APP:(%s): Action: Processor Reset\n",
-                                                     HS_AppData.AMTablePtr[TableIndex].AppName);
-                                HS_AppData.ServiceWatchdogFlag = HS_State_DISABLED;
-                                CFE_ES_ResetCFE(CFE_PSP_RST_TYPE_PROCESSOR);
-                            }
-                            else
-                            {
-                                CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID,
-                                                  CFE_EVS_EventType_ERROR,
-                                                  "Processor Reset Action Limit Reached: No Reset Performed");
-                            }
+                    break;
 
-                            break;
+                case HS_AMTActType_APP_RESTART:
+                    CFE_EVS_SendEvent(HS_APPMON_RESTART_ERR_EID,
+                                      CFE_EVS_EventType_ERROR,
+                                      "App Monitor Failure: APP:(%s) Action: Restart Application",
+                                      AMEntryPtr->AppName);
+                    /*
+                    ** Attempt to restart the App if we resolved the AppId
+                    */
+                    if (Status == CFE_SUCCESS)
+                    {
+                        Status = CFE_ES_RestartApp(AppId);
+                    }
 
-                        case HS_AMTActType_APP_RESTART:
-                            CFE_EVS_SendEvent(HS_APPMON_RESTART_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "App Monitor Failure: APP:(%s) Action: Restart Application",
-                                              HS_AppData.AMTablePtr[TableIndex].AppName);
-                            /*
-                            ** Attempt to restart the App if we resolved the AppId
-                            */
-                            if (Status == CFE_SUCCESS)
-                            {
-                                Status = CFE_ES_RestartApp(AppId);
-                            }
+                    /*
+                    ** Report an error; either no valid AppId, or RestartApp failed
+                    */
+                    if (Status != CFE_SUCCESS)
+                    {
+                        CFE_EVS_SendEvent(HS_APPMON_NOT_RESTARTED_ERR_EID,
+                                          CFE_EVS_EventType_ERROR,
+                                          "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
+                                          AMEntryPtr->AppName,
+                                          (unsigned int)Status);
+                    }
 
-                            /*
-                            ** Report an error; either no valid AppId, or RestartApp failed
-                            */
-                            if (Status != CFE_SUCCESS)
-                            {
-                                CFE_EVS_SendEvent(HS_APPMON_NOT_RESTARTED_ERR_EID,
-                                                  CFE_EVS_EventType_ERROR,
-                                                  "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
-                                                  HS_AppData.AMTablePtr[TableIndex].AppName,
-                                                  (unsigned int)Status);
-                            }
+                    break;
 
-                            break;
+                case HS_AMTActType_EVENT:
+                    CFE_EVS_SendEvent(HS_APPMON_FAIL_ERR_EID,
+                                      CFE_EVS_EventType_ERROR,
+                                      "App Monitor Failure: APP:(%s): Action: Event Only",
+                                      AMEntryPtr->AppName);
+                    break;
 
-                        case HS_AMTActType_EVENT:
-                            CFE_EVS_SendEvent(HS_APPMON_FAIL_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "App Monitor Failure: APP:(%s): Action: Event Only",
-                                              HS_AppData.AMTablePtr[TableIndex].AppName);
-                            break;
+                /*
+                ** Message Action types processing (invalid will be skipped)
+                */
+                default:
+                    HS_ExecuteMessageAction(AMEntryPtr->ActionType, HS_AppMonActCallback, AMEntryPtr);
+                    break;
+            } /* end switch */
 
-                        /*
-                        ** Message Action types processing (invalid will be skipped)
-                        */
-                        default:
+        } /* end (AMStatePtr->CheckInCountdown == 0) if */
+    }
+}
 
-                            /* Calculate the requested message action index */
-                            MsgActsIndex = ActionType - HS_AMTActType_LAST_NONMSG - 1;
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Monitor Applications (global)                                   */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void HS_MonitorApplications(void)
+{
+    uint32            TableIndex;
+    HS_AMTEntry_t    *AMEntryPtr;
+    HS_AppMonState_t *AMStatePtr;
 
-                            /*
-                            ** Check to see if this is a valid Message Action Type
-                            */
-                            if ((HS_AppData.MsgActsState == HS_State_ENABLED) && (MsgActsIndex < HS_MAX_MSG_ACT_TYPES))
-                            {
-                                /*
-                                ** Send the message if off cooldown and not disabled
-                                */
-                                if ((HS_AppData.MsgActCooldown[MsgActsIndex] == 0)
-                                    && (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MATState_DISABLED))
-                                {
-                                    CFE_SB_TransmitMsg(
-                                        (const CFE_MSG_Message_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf,
-                                        true);
-                                    HS_AppData.MsgActExec++;
-                                    HS_AppData.MsgActCooldown[MsgActsIndex] =
-                                        HS_AppData.MATablePtr[MsgActsIndex].Cooldown;
-                                    if (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MATState_NOEVENT)
-                                    {
-                                        CFE_EVS_SendEvent(
-                                            HS_APPMON_MSGACTS_ERR_EID,
-                                            CFE_EVS_EventType_ERROR,
-                                            "App Monitor Failure: APP:(%s): Action: Message Action Index: %d",
-                                            HS_AppData.AMTablePtr[TableIndex].AppName,
-                                            (int)MsgActsIndex);
-                                    }
-                                }
-                            }
+    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
+    {
+        AMEntryPtr = HS_GetAMTEntryByIndex(TableIndex);
+        AMStatePtr = HS_GetAMStateByIndex(TableIndex);
 
-                            /* Otherwise, Take No Action */
-                            break;
-                    } /* end switch */
-
-                } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] == 0) if */
-
-            } /* end "failed to update counter" else */
-
-        } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0) if */
+        if (AMEntryPtr != NULL && AMEntryPtr->ActionType != HS_AMTActType_NOACT && AMStatePtr->CheckInCountdown != 0)
+        {
+            HS_MonitorSingleApplication(AMEntryPtr, AMStatePtr);
+        }
 
     } /* end for loop */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
-/* Monitor Events                                                  */
+/* Event Monitor Callback/helper to send message action event      */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+static void HS_EventMonActCallback(uint32 MsgActsIndex, const void *Arg)
+{
+    const HS_EMTEntry_t *EMEntryPtr = Arg;
+
+    CFE_EVS_SendEvent(HS_EVENTMON_MSGACTS_ERR_EID,
+                      CFE_EVS_EventType_ERROR,
+                      "Event Monitor: APP:(%s) EID:(%d): Action: Message Action Index: %d",
+                      EMEntryPtr->AppName,
+                      EMEntryPtr->EventID,
+                      (int)MsgActsIndex);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Monitor Events (single)                                         */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void HS_MonitorSingleEvent(const HS_EMTEntry_t *EMEntryPtr)
+{
+    CFE_Status_t   Status = CFE_SUCCESS;
+    CFE_ES_AppId_t AppId  = CFE_ES_APPID_UNDEFINED;
+
+    /*
+    ** Perform the action if the strings also match
+    */
+    switch (EMEntryPtr->ActionType)
+    {
+        case HS_EMTActType_PROC_RESET:
+            CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
+                              "Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset",
+                              EMEntryPtr->AppName,
+                              EMEntryPtr->EventID);
+
+            /*
+            ** Perform a reset if we can
+            */
+            if (HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
+            {
+                HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
+
+                OS_TaskDelay(HS_RESET_TASK_DELAY);
+                CFE_ES_WriteToSysLog("HS App: Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset\n",
+                                     EMEntryPtr->AppName,
+                                     (int)EMEntryPtr->EventID);
+                HS_AppData.ServiceWatchdogFlag = HS_State_DISABLED;
+                CFE_ES_ResetCFE(CFE_PSP_RST_TYPE_PROCESSOR);
+            }
+            else
+            {
+                CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Processor Reset Action Limit Reached: No Reset Performed");
+            }
+
+            break;
+
+        case HS_EMTActType_APP_RESTART:
+            /*
+            ** Check to see if the App is still there, and try to restart if it is
+            */
+            Status = CFE_ES_GetAppIDByName(&AppId, EMEntryPtr->AppName);
+            if (Status == CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_RESTART_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Event Monitor: APP:(%s) EID:(%d): Action: Restart Application",
+                                  EMEntryPtr->AppName,
+                                  EMEntryPtr->EventID);
+                Status = CFE_ES_RestartApp(AppId);
+            }
+
+            if (Status != CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_NOT_RESTARTED_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
+                                  EMEntryPtr->AppName,
+                                  (unsigned int)Status);
+            }
+
+            break;
+
+        case HS_EMTActType_APP_DELETE:
+            /*
+            ** Check to see if the App is still there, and try to delete if it is
+            */
+            Status = CFE_ES_GetAppIDByName(&AppId, EMEntryPtr->AppName);
+            if (Status == CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_DELETE_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Event Monitor: APP:(%s) EID:(%d): Action: Delete Application",
+                                  EMEntryPtr->AppName,
+                                  EMEntryPtr->EventID);
+                Status = CFE_ES_DeleteApp(AppId);
+            }
+
+            if (Status != CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(HS_EVENTMON_NOT_DELETED_ERR_EID,
+                                  CFE_EVS_EventType_ERROR,
+                                  "Call to Delete App Failed: APP:(%s) ERR: 0x%08X",
+                                  EMEntryPtr->AppName,
+                                  (unsigned int)Status);
+            }
+
+            break;
+
+        /*
+        ** Message Action types processing (invalid will be skipped)
+        */
+        default:
+            HS_ExecuteMessageAction(EMEntryPtr->ActionType, HS_EventMonActCallback, EMEntryPtr);
+            break;
+    } /* end switch */
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* Monitor Events (global)                                         */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_MonitorEvent(const CFE_EVS_LongEventTlm_t *EventPtr)
 {
-    uint32           TableIndex = 0;
-    CFE_Status_t     Status     = CFE_SUCCESS;
-    CFE_ES_AppId_t   AppId      = CFE_ES_APPID_UNDEFINED;
-    uint16           ActionType;
-    uint32           MsgActsIndex = 0;
-    CFE_SB_Buffer_t *SendPtr      = NULL;
-
-    /* Avoid accessing EMT if table pointer is invalid */
-    if (HS_AppData.EMTablePtr == NULL)
-    {
-        return;
-    }
+    uint32         TableIndex = 0;
+    HS_EMTEntry_t *EMEntryPtr;
 
     for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
     {
-        ActionType = HS_AppData.EMTablePtr[TableIndex].ActionType;
+        EMEntryPtr = HS_GetEMTEntryByIndex(TableIndex);
 
         /*
         ** Check this Event Monitor if it has an action, and the event IDs match
         */
-        if ((ActionType != HS_EMTActType_NOACT)
-            && (HS_AppData.EMTablePtr[TableIndex].EventID == EventPtr->Payload.PacketID.EventID))
+        if (EMEntryPtr != NULL && EMEntryPtr->ActionType != HS_EMTActType_NOACT
+            && EMEntryPtr->EventID == EventPtr->Payload.PacketID.EventID
+            && strncmp(EMEntryPtr->AppName, EventPtr->Payload.PacketID.AppName, sizeof(EMEntryPtr->AppName)) == 0)
         {
-            if (strncmp(HS_AppData.EMTablePtr[TableIndex].AppName, EventPtr->Payload.PacketID.AppName, OS_MAX_API_NAME)
-                == 0)
-            {
-                /*
-                ** Perform the action if the strings also match
-                */
-                switch (ActionType)
-                {
-                    case HS_EMTActType_PROC_RESET:
-                        CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID,
-                                          CFE_EVS_EventType_ERROR,
-                                          "Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset",
-                                          HS_AppData.EMTablePtr[TableIndex].AppName,
-                                          HS_AppData.EMTablePtr[TableIndex].EventID);
-
-                        /*
-                        ** Perform a reset if we can
-                        */
-                        if (HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
-                        {
-                            HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
-
-                            OS_TaskDelay(HS_RESET_TASK_DELAY);
-                            CFE_ES_WriteToSysLog("HS App: Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset\n",
-                                                 HS_AppData.EMTablePtr[TableIndex].AppName,
-                                                 (int)HS_AppData.EMTablePtr[TableIndex].EventID);
-                            HS_AppData.ServiceWatchdogFlag = HS_State_DISABLED;
-                            CFE_ES_ResetCFE(CFE_PSP_RST_TYPE_PROCESSOR);
-                        }
-                        else
-                        {
-                            CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "Processor Reset Action Limit Reached: No Reset Performed");
-                        }
-
-                        break;
-
-                    case HS_EMTActType_APP_RESTART:
-                        /*
-                        ** Check to see if the App is still there, and try to restart if it is
-                        */
-                        Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
-                        if (Status == CFE_SUCCESS)
-                        {
-                            CFE_EVS_SendEvent(HS_EVENTMON_RESTART_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "Event Monitor: APP:(%s) EID:(%d): Action: Restart Application",
-                                              HS_AppData.EMTablePtr[TableIndex].AppName,
-                                              HS_AppData.EMTablePtr[TableIndex].EventID);
-                            Status = CFE_ES_RestartApp(AppId);
-                        }
-
-                        if (Status != CFE_SUCCESS)
-                        {
-                            CFE_EVS_SendEvent(HS_EVENTMON_NOT_RESTARTED_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
-                                              HS_AppData.EMTablePtr[TableIndex].AppName,
-                                              (unsigned int)Status);
-                        }
-
-                        break;
-
-                    case HS_EMTActType_APP_DELETE:
-                        /*
-                        ** Check to see if the App is still there, and try to delete if it is
-                        */
-                        Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
-                        if (Status == CFE_SUCCESS)
-                        {
-                            CFE_EVS_SendEvent(HS_EVENTMON_DELETE_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "Event Monitor: APP:(%s) EID:(%d): Action: Delete Application",
-                                              HS_AppData.EMTablePtr[TableIndex].AppName,
-                                              HS_AppData.EMTablePtr[TableIndex].EventID);
-                            Status = CFE_ES_DeleteApp(AppId);
-                        }
-
-                        if (Status != CFE_SUCCESS)
-                        {
-                            CFE_EVS_SendEvent(HS_EVENTMON_NOT_DELETED_ERR_EID,
-                                              CFE_EVS_EventType_ERROR,
-                                              "Call to Delete App Failed: APP:(%s) ERR: 0x%08X",
-                                              HS_AppData.EMTablePtr[TableIndex].AppName,
-                                              (unsigned int)Status);
-                        }
-
-                        break;
-
-                    /*
-                    ** Message Action types processing (invalid will be skipped)
-                    */
-                    default:
-
-                        /* Calculate the requested message action index */
-                        MsgActsIndex = ActionType - HS_EMTActType_LAST_NONMSG - 1;
-
-                        /*
-                        ** Check to see if this is a valid Message Action Type
-                        */
-                        if ((HS_AppData.MsgActsState == HS_State_ENABLED) && (MsgActsIndex < HS_MAX_MSG_ACT_TYPES))
-                        {
-                            /*
-                            ** Send the message if off cooldown and not disabled
-                            */
-                            if ((HS_AppData.MsgActCooldown[MsgActsIndex] == 0)
-                                && (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MATState_DISABLED))
-                            {
-                                SendPtr = (CFE_SB_Buffer_t *)&HS_AppData.MATablePtr[MsgActsIndex].MsgBuf;
-                                CFE_SB_TransmitMsg(&SendPtr->Msg, true);
-
-                                HS_AppData.MsgActExec++;
-                                HS_AppData.MsgActCooldown[MsgActsIndex] = HS_AppData.MATablePtr[MsgActsIndex].Cooldown;
-                                if (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MATState_NOEVENT)
-                                {
-                                    CFE_EVS_SendEvent(
-                                        HS_EVENTMON_MSGACTS_ERR_EID,
-                                        CFE_EVS_EventType_ERROR,
-                                        "Event Monitor: APP:(%s) EID:(%d): Action: Message Action Index: %d",
-                                        HS_AppData.EMTablePtr[TableIndex].AppName,
-                                        HS_AppData.EMTablePtr[TableIndex].EventID,
-                                        (int)MsgActsIndex);
-                                }
-                            }
-                        }
-
-                        /* Otherwise, Take No Action */
-                        break;
-                } /* end switch */
-
-            } /* end AppName comparison */
-
-        } /* end EventID comparison */
-
+            HS_MonitorSingleEvent(EMEntryPtr);
+        }
     } /* end for loop */
 }
 

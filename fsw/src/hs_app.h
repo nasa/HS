@@ -88,6 +88,18 @@ typedef struct
     uint16 MaxResetsNot;       /**< \brief Inverted Max Number of Resets Allowed for validation */
 } HS_CDSData_t;
 
+typedef struct
+{
+    bool   Enable;
+    uint16 CheckInCountdown; /**< \brief Counts until Application Monitor times out */
+    uint32 LastExeCount;     /**< \brief Last Execution Count for application being checked */
+} HS_AppMonState_t;
+
+typedef struct
+{
+    uint16 Cooldown; /**< \brief Counts until Message Actions is available */
+} HS_MsgActState_t;
+
 /**
  *  \brief HS Global Data Structure
  */
@@ -117,13 +129,8 @@ typedef struct
 
     uint32 EventsMonitoredCount; /**< \brief Total count of event messages monitored */
 
-    uint16 MsgActCooldown[HS_MAX_MSG_ACT_TYPES];          /**< \brief Counts until Message Actions is available */
-    uint16 AppMonCheckInCountdown[HS_MAX_MONITORED_APPS]; /**< \brief Counts until Application Monitor times out */
-
-    uint32 AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE)
-                         + 1]; /**< \brief AppMon state by monitor */
-
-    uint32 AppMonLastExeCount[HS_MAX_MONITORED_APPS]; /**< \brief Last Execution Count for application being checked */
+    HS_MsgActState_t MsgActState[HS_MAX_MSG_ACT_TYPES]; /**< \brief Counts until Message Actions is available */
+    HS_AppMonState_t AppMonState[HS_MAX_MONITORED_APPS];
 
     uint32 AlivenessCounter; /**< \brief Current Count towards the CPU Aliveness output period */
 
@@ -149,10 +156,9 @@ typedef struct
     CFE_TBL_Handle_t AMTableHandle; /**< \brief Apps Monitor table handle */
     CFE_TBL_Handle_t EMTableHandle; /**< \brief Events Monitor table handle */
     CFE_TBL_Handle_t MATableHandle; /**< \brief Message Actions table handle */
-
     CFE_TBL_Handle_t XCTableHandle; /**< \brief Execution Counters table handle */
-    HS_XCTEntry_t   *XCTablePtr;    /**< \brief Ptr to Execution Counters table entry */
 
+    HS_XCTEntry_t *XCTablePtr; /**< \brief Ptr to Execution Counters table entry */
     HS_AMTEntry_t *AMTablePtr; /**< \brief Ptr to Apps Monitor table entry */
     HS_EMTEntry_t *EMTablePtr; /**< \brief Ptr to Events Monitor table entry */
     HS_MATEntry_t *MATablePtr; /**< \brief Ptr to Message Actions table entry */
@@ -171,6 +177,72 @@ extern HS_AppData_t HS_AppData;
 /************************************************************************
  * Exported Functions
  ************************************************************************/
+
+static inline HS_AppMonState_t *HS_GetAMStateByIndex(uint32 TableIndex)
+{
+    return &HS_AppData.AppMonState[TableIndex];
+}
+
+static inline HS_MsgActState_t *HS_GetMAStateByIndex(uint32 TableIndex)
+{
+    return &HS_AppData.MsgActState[TableIndex];
+}
+
+static inline HS_AMTEntry_t *HS_GetAMTEntryByIndex(uint32 TableIndex)
+{
+    HS_AMTEntry_t *AMTEntryPtr;
+
+    AMTEntryPtr = HS_AppData.AMTablePtr;
+
+    if (AMTEntryPtr)
+    {
+        AMTEntryPtr += TableIndex;
+    }
+
+    return AMTEntryPtr;
+}
+
+static inline HS_EMTEntry_t *HS_GetEMTEntryByIndex(uint32 TableIndex)
+{
+    HS_EMTEntry_t *EMTEntryPtr;
+
+    EMTEntryPtr = HS_AppData.EMTablePtr;
+
+    if (EMTEntryPtr)
+    {
+        EMTEntryPtr += TableIndex;
+    }
+
+    return EMTEntryPtr;
+}
+
+static inline HS_MATEntry_t *HS_GetMATEntryByIndex(uint32 TableIndex)
+{
+    HS_MATEntry_t *MATEntryPtr;
+
+    MATEntryPtr = HS_AppData.MATablePtr;
+
+    if (MATEntryPtr)
+    {
+        MATEntryPtr += TableIndex;
+    }
+
+    return MATEntryPtr;
+}
+
+static inline HS_XCTEntry_t *HS_GetXCTEntryByIndex(uint32 TableIndex)
+{
+    HS_XCTEntry_t *XCTEntryPtr;
+
+    XCTEntryPtr = HS_AppData.XCTablePtr;
+
+    if (XCTEntryPtr)
+    {
+        XCTEntryPtr += TableIndex;
+    }
+
+    return XCTEntryPtr;
+}
 
 /**
  * \brief CFS Health and Safety (HS) application entry point

@@ -88,8 +88,9 @@ typedef struct
  */
 typedef union
 {
-    uint8           Message[HS_MAX_MSG_ACT_SIZE]; /**< \brief Raw message array for sizing */
-    CFE_SB_Buffer_t Buffer;                       /**< \brief Message Buffer for alignment */
+    uint8         Message[HS_MAX_MSG_ACT_SIZE]; /**< \brief Raw message array for sizing */
+    long long int LongInt;                      /**< \brief Align to support Long Integer */
+    double        Dbl;                          /**< \brief Align to support Double */
 } HS_MATMsgBuf_t;
 
 /**

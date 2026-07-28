@@ -210,7 +210,7 @@ typedef struct
     uint32 EventsMonitoredCount;  /**< \brief Total count of Event Messages Monitored */
     uint32 InvalidEventMonCount;  /**< \brief Total count of Invalid Event Monitors */
 
-    uint32 AppMonEnables[((HS_MAX_MONITORED_APPS - 1) / HS_BITS_PER_APPMON_ENABLE) + 1];
+    uint8 AppMonEnables[(HS_MAX_MONITORED_APPS + 7) / 8];
     /**< \brief Enable states of App Monitor Entries */
 
     uint32 MsgActExec;  /**< \brief Number of Software Bus Message Actions Executed */

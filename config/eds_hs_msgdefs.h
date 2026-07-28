@@ -29,4 +29,15 @@
 #include "hs_eds_typedefs.h"
 #include "hs_fcncodes.h"
 
+/**
+ * Macro to set single enable bit in the EDS data structure
+ *
+ * In EDS each entry gets its own bool so access is very simple
+ */
+#define HS_SET_TLM_ENABLE_BITMASK(arr, p) \
+    do                                    \
+    {                                     \
+        arr[p] = true;                    \
+    } while (0)
+
 #endif
