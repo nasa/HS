@@ -47,7 +47,6 @@ typedef struct
 /* hs_app_tests globals */
 uint8 call_count_CFE_EVS_SendEvent;
 
-uint16 HS_APP_TEST_CFE_SB_RcvMsgHookCount;
 uint32 UT_WaitForStartupSyncTimeout;
 
 void UT_UpdatedDefaultHandler_CFE_SB_ReceiveBuffer(void                   *UserObj,
@@ -55,33 +54,6 @@ void UT_UpdatedDefaultHandler_CFE_SB_ReceiveBuffer(void                   *UserO
                                                    const UT_StubContext_t *Context)
 {
     CFE_SB_Buffer_t **BufPtr = UT_Hook_GetArgValueByName(Context, "BufPtr", CFE_SB_Buffer_t **);
-    UT_Stub_CopyToLocal(UT_KEY(CFE_SB_ReceiveBuffer), BufPtr, sizeof(*BufPtr));
-}
-
-int32 HS_APP_TEST_CFE_SB_RcvMsgHook(void *UserObj, int32 StubRetcode, uint32 CallCount, const UT_StubContext_t *Context)
-{
-    HS_APP_TEST_CFE_SB_RcvMsgHookCount++;
-
-    if (HS_APP_TEST_CFE_SB_RcvMsgHookCount % 2 == 1)
-        return CFE_SUCCESS;
-    else
-        return CFE_SB_NO_MESSAGE;
-}
-
-void HS_APP_TEST_CFE_RcvBufferHandler(void *UserObj, UT_EntryKey_t FuncKey, const UT_StubContext_t *Context)
-{
-    CFE_SB_Buffer_t **BufPtr = UT_Hook_GetArgValueByName(Context, "BufPtr", CFE_SB_Buffer_t **);
-
-    CFE_Status_t status;
-    HS_APP_TEST_CFE_SB_RcvMsgHookCount++;
-
-    if (HS_APP_TEST_CFE_SB_RcvMsgHookCount % 2 == 1)
-        status = CFE_SUCCESS;
-    else
-        status = CFE_SB_NO_MESSAGE;
-
-    UT_Stub_GetInt32StatusCode(Context, &status);
-
     UT_Stub_CopyToLocal(UT_KEY(CFE_SB_ReceiveBuffer), BufPtr, sizeof(*BufPtr));
 }
 
@@ -1955,7 +1927,6 @@ void HS_ProcessCommands_Test(void)
     }
 
     /* Causes CFE_SB_RcvMsg to alternate returning CFE_SUCCESS and CFE_SB_NO_MESSAGE, to reach all code branches. */
-    HS_APP_TEST_CFE_SB_RcvMsgHookCount = 0;
     CFE_SB_Buffer_t *dummy_BufPtr[4];
     CFE_SB_Buffer_t  dummy_Buf[4];
     dummy_BufPtr[0] = &dummy_Buf[0];
@@ -1967,10 +1938,6 @@ void HS_ProcessCommands_Test(void)
     UT_SetDefaultReturnValue(UT_KEY(CFE_SB_ReceiveBuffer), CFE_SUCCESS);
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_ReceiveBuffer), 2, CFE_SB_NO_MESSAGE);
     UT_SetDeferredRetcode(UT_KEY(CFE_SB_ReceiveBuffer), 2, CFE_SB_NO_MESSAGE);
-    /* UT_SetHookFunction(UT_KEY(CFE_SB_ReceiveBuffer), HS_APP_TEST_CFE_SB_RcvMsgHook, NULL); */
-
-    /* Causes check for non-null buffer pointer to succeed */
-    /* UT_SetDataBuffer(UT_KEY(CFE_SB_ReceiveBuffer), &Packet, sizeof(Packet), false); */
 
     /* Execute the function being tested */
     Result = HS_ProcessCommands();

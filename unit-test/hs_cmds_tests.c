@@ -2436,46 +2436,6 @@ void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoS
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 3);
 }
 
-void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonAndCurrentEventMonEnabledNoSubscribeError2(void)
-{
-    HS_AppData.AppMonLoaded         = HS_State_DISABLED;
-    HS_AppData.EventMonLoaded       = HS_State_DISABLED;
-    HS_AppData.CurrentAppMonState   = HS_State_ENABLED;
-    HS_AppData.CurrentEventMonState = HS_State_DISABLED;
-    HS_AppData.MsgActsState         = HS_State_ENABLED;
-    HS_AppData.ExeCountState        = HS_State_ENABLED;
-
-    /* Causes to enter all (Status < CFE_SUCCESS) blocks */
-    UT_SetDefaultReturnValue(UT_KEY(CFE_TBL_GetAddress), -1);
-
-    /* Causes event message HS_BADEMT_UNSUB_EID to not be generated */
-    UT_SetDeferredRetcode(UT_KEY(CFE_SB_Unsubscribe), 2, -1);
-
-    /* Execute the function being tested */
-    HS_AcquirePointers();
-
-    /* Verify results */
-    UtAssert_True(HS_AppData.CurrentAppMonState == HS_State_DISABLED,
-                  "HS_AppData.CurrentAppMonState == HS_State_DISABLED");
-    UtAssert_True(HS_AppData.AppMonLoaded == HS_State_DISABLED, "HS_AppData.AppMonLoaded == HS_State_DISABLED");
-    UtAssert_True(HS_AppData.CurrentEventMonState == HS_State_DISABLED,
-                  "HS_AppData.CurrentEventMonState == HS_State_DISABLED");
-    UtAssert_True(HS_AppData.EventMonLoaded == HS_State_DISABLED, "HS_AppData.EventMonLoaded == HS_State_DISABLED");
-    UtAssert_True(HS_AppData.MsgActsState == HS_State_DISABLED, "HS_AppData.MsgActsState == HS_State_DISABLED");
-    UtAssert_True(HS_AppData.ExeCountState == HS_State_DISABLED, "HS_AppData.ExeCountState == HS_State_DISABLED");
-
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_APPMON_GETADDR_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_MSGACTS_GETADDR_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventType, CFE_EVS_EventType_ERROR);
-
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[2].EventID, HS_EXECOUNT_GETADDR_ERR_EID);
-    UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[2].EventType, CFE_EVS_EventType_ERROR);
-
-    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 3);
-}
-
 void HS_AcquirePointers_Test_ErrorsWithCurrentAppMonLoadedDisabledAndCurrentAppMonStateDisabled(void)
 {
     HS_AppData.AppMonLoaded         = HS_State_DISABLED;
