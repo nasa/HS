@@ -60,7 +60,7 @@ typedef struct
 } HS_MatTableEntry_t;
 
 /* Helper macro to get size of structure elements */
-#define HS_MEMBER_SIZE(member) (sizeof(((HS_Message *)0)->member))
+#define HS_MEMBER_SIZE(member) (sizeof(((HS_Message *)NULL)->member))
 
 HS_MatTableEntry_t HS_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES] = {
     /*          EnableState               Cooldown   Message */
