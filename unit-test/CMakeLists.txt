@@ -10,11 +10,15 @@
 add_cfe_coverage_stubs("hs_internal"
   utilities/hs_test_utils.c
   stubs/hs_global_stubs.c
+  stubs/hs_app_handlers.c
   stubs/hs_app_stubs.c
   stubs/hs_cmds_stubs.c
   stubs/hs_dispatch_stubs.c
-  stubs/hs_monitors_stubs.c
-  stubs/hs_utils_stubs.c
+  stubs/hs_app_monitor_stubs.c
+  stubs/hs_event_monitor_stubs.c
+  stubs/hs_exec_monitor_handlers.c
+  stubs/hs_exec_monitor_stubs.c
+  stubs/hs_msg_action_stubs.c
   stubs/hs_sysmon_stubs.c
 )
 
