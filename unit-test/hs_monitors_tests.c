@@ -111,6 +111,9 @@ void HS_MonitorApplications_Test_AppNameNotFound(void)
 
     UtAssert_True(strCmpResult == 0, "Event string matched expected result, '%s'", context_CFE_EVS_SendEvent[0].Spec);
 
+    /* New branch: nonexistent app must not decrement countdown */
+    UtAssert_UINT32_EQ(HS_AppData.AppMonState[0].CheckInCountdown, 1);
+
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1,
                   "CFE_EVS_SendEvent was called %u time(s), expected 1",
@@ -140,6 +143,9 @@ void HS_MonitorApplications_Test_AppNameNotFoundDebugEvent(void)
     /* Verify results */
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_APPMON_APPNAME_DBG_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_DEBUG);
+
+    /* New branch: debug path also must not decrement and must stay enabled */
+    UtAssert_UINT32_EQ(HS_AppData.AppMonState[0].CheckInCountdown, 1);
 
     call_count_CFE_EVS_SendEvent = UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent));
     UtAssert_True(call_count_CFE_EVS_SendEvent == 1,

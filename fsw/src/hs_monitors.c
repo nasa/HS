@@ -102,10 +102,12 @@ void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState
     CFE_ES_AppInfo_t AppInfo;
     CFE_ES_AppId_t   AppId = CFE_ES_APPID_UNDEFINED;
     CFE_Status_t     Status;
+    CFE_Status_t     GetAppIdStatus;
 
     memset(&AppInfo, 0, sizeof(AppInfo));
 
-    Status = CFE_ES_GetAppIDByName(&AppId, AMEntryPtr->AppName);
+    GetAppIdStatus = CFE_ES_GetAppIDByName(&AppId, AMEntryPtr->AppName);
+    Status         = GetAppIdStatus;
 
     if (Status == CFE_SUCCESS)
     {
@@ -131,9 +133,17 @@ void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState
     }
 
     /*
-    ** Failure to get an execution counter is not considered an automatic failure (or eventworthy)
+    ** If the app name did not resolve, do not count it as a missed check-in.
+    ** Only decrement the countdown when the app exists but has not executed.
+    ** Note: GetAppInfo failure is not an app-name failure, so countdown still
+    ** decrements in that case to preserve existing restart-error behavior.
     */
-    if ((Status == CFE_SUCCESS) && (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter))
+    if (GetAppIdStatus != CFE_SUCCESS)
+    {
+        return;
+    }
+
+    if (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter)
     {
         /*
         ** Set the current count, and reset the timeout
