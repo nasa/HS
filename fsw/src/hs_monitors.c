@@ -131,9 +131,15 @@ void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState
     }
 
     /*
-    ** Failure to get an execution counter is not considered an automatic failure (or eventworthy)
+    ** If the app name did not resolve, do not count it as a missed check-in.
+    ** Only decrement the countdown when the app exists but has not executed.
     */
-    if ((Status == CFE_SUCCESS) && (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter))
+    if (Status != CFE_SUCCESS)
+    {
+        return;
+    }
+
+    if (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter)
     {
         /*
         ** Set the current count, and reset the timeout
