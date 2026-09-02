@@ -143,7 +143,7 @@ void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState
         return;
     }
 
-    if (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter)
+    if ((Status == CFE_SUCCESS) && (AMStatePtr->LastExeCount != AppInfo.ExecutionCounter))
     {
         /*
         ** Set the current count, and reset the timeout
