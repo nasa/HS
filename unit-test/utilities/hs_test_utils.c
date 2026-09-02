@@ -32,9 +32,7 @@
 #include "hs_msgdefs.h"
 #include "hs_version.h"
 #include "hs_eventids.h"
-#include "hs_utils.h"
 #include "hs_cmds.h"
-#include "hs_monitors.h"
 #include "hs_msg.h"
 
 #include "hs_test_utils.h"
@@ -85,6 +83,16 @@ void UT_Handler_CFE_ES_WriteToSysLog(void *UserObj, UT_EntryKey_t FuncKey, const
             UT_Hook_GetArgValueByName(Context, "SpecStringPtr", const char *),
             CFE_MISSION_EVS_MAX_MESSAGE_LENGTH - 1);
     context_CFE_ES_WriteToSysLog.Spec[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH - 1] = '\0';
+}
+
+void UT_Handler_HS_MsgAct_TriggerAction(void *UserObj, UT_EntryKey_t FuncKey, const UT_StubContext_t *Context)
+{
+    HS_MsgAct_Callback_t SendEventCb = UT_Hook_GetArgValueByName(Context, "SendEventCb", HS_MsgAct_Callback_t);
+
+    if (SendEventCb != NULL)
+    {
+        SendEventCb(UT_GetStubCount(FuncKey), UserObj);
+    }
 }
 
 void CFE_PSP_WatchdogEnable(void)

@@ -32,6 +32,7 @@
 #define DEFAULT_HK_MSG_H
 
 #include "hs_interface_cfg.h"
+#include "hs_fcncodes.h"
 #include "hs_msgdefs.h"
 #include "hs_msgstruct.h"
 

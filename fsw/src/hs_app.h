@@ -28,9 +28,12 @@
  * Includes
  ************************************************************************/
 #include "hs_msg.h"
-#include "hs_tbldefs.h"
 #include "hs_tbl.h"
 #include "hs_platform_cfg.h"
+#include "hs_app_monitor.h"
+#include "hs_event_monitor.h"
+#include "hs_exec_monitor.h"
+#include "hs_msg_action.h"
 #include "cfe.h"
 #include "cfe_msgids.h"
 
@@ -88,18 +91,6 @@ typedef struct
     uint16 MaxResetsNot;       /**< \brief Inverted Max Number of Resets Allowed for validation */
 } HS_CDSData_t;
 
-typedef struct
-{
-    bool   Enable;
-    uint16 CheckInCountdown; /**< \brief Counts until Application Monitor times out */
-    uint32 LastExeCount;     /**< \brief Last Execution Count for application being checked */
-} HS_AppMonState_t;
-
-typedef struct
-{
-    uint16 Cooldown; /**< \brief Counts until Message Actions is available */
-} HS_MsgActState_t;
-
 /**
  *  \brief HS Global Data Structure
  */
@@ -109,34 +100,35 @@ typedef struct
     CFE_SB_PipeId_t WakeupPipe; /**< \brief Pipe Id for HS wakeup pipe */
     CFE_SB_PipeId_t EventPipe;  /**< \brief Pipe Id for HK event pipe */
 
-    uint8 ServiceWatchdogFlag; /**< \brief Flag of current watchdog servicing state */
+    HS_State_Enum_t ServiceWatchdogFlag;   /**< \brief Flag of current watchdog servicing state */
+    HS_State_Enum_t CurrentAppMonState;    /**< \brief Status of HS Application Monitor */
+    HS_State_Enum_t CurrentEventMonState;  /**< \brief Status of HS Events Monitor */
+    HS_State_Enum_t CurrentAlivenessState; /**< \brief Status of HS Aliveness Indicator */
 
-    uint8 CurrentAppMonState;    /**< \brief Status of HS Application Monitor */
-    uint8 CurrentEventMonState;  /**< \brief Status of HS Events Monitor */
-    uint8 CurrentAlivenessState; /**< \brief Status of HS Aliveness Indicator */
-    uint8 ExeCountState;         /**< \brief Status of Execution Counter Table */
+    HS_State_Enum_t ExecMonLoaded;      /**< \brief Status of Execution Counter Table */
+    HS_State_Enum_t MsgActsLoaded;      /**< \brief Status of Message Actions Table */
+    HS_State_Enum_t CDSState;           /**< \brief Status of Critical Data Storing */
+    HS_State_Enum_t AppMonLoaded;       /**< \brief If AppMon Table is loaded */
+    HS_State_Enum_t EventMonLoaded;     /**< \brief If EventMon Table is loaded */
+    HS_State_Enum_t CurrentCPUHogState; /**< \brief Status of HS CPU Hogging Indicator */
 
-    uint8 MsgActsState;   /**< \brief Status of Message Actions Table */
-    uint8 CDSState;       /**< \brief Status of Critical Data Storing */
-    uint8 AppMonLoaded;   /**< \brief If AppMon Table is loaded */
-    uint8 EventMonLoaded; /**< \brief If EventMon Table is loaded */
-
-    uint8 CurrentCPUHogState; /**< \brief Status of HS CPU Hogging Indicator */
-    uint8 SpareBytes[3];      /**< \brief Spare bytes for 32 bit alignment padding */
+    uint8 SpareBytes[3]; /**< \brief Spare bytes for 32 bit alignment padding */
 
     uint8 CmdCount;    /**< \brief Number of valid commands received */
     uint8 CmdErrCount; /**< \brief Number of invalid commands received */
 
-    uint32 EventsMonitoredCount; /**< \brief Total count of event messages monitored */
+    uint32 EventsMonitoredCount;     /**< \brief Total count of event messages monitored */
+    uint32 InactiveEventMonCount;    /**< \brief Count of event monitors for which the target is not active */
+    uint32 InactiveExecMonitorCount; /**< \brief Count of execution monitors for which the target is not active */
 
-    HS_MsgActState_t MsgActState[HS_MAX_MSG_ACT_TYPES]; /**< \brief Counts until Message Actions is available */
-    HS_AppMonState_t AppMonState[HS_MAX_MONITORED_APPS];
+    HS_MsgActState_t    MsgActState[HS_MAX_MSG_ACT_TYPES]; /**< \brief Counts until Message Actions is available */
+    HS_AppMon_State_t   AppMonState[HS_MAX_MONITORED_APPS];
+    HS_EventMon_State_t EventMonState[HS_MAX_MONITORED_EVENTS];
+    HS_ExecMon_State_t  ExecMonState[HS_MAX_EXEC_CNT_SLOTS];
 
     uint32 AlivenessCounter; /**< \brief Current Count towards the CPU Aliveness output period */
 
     uint32 MsgActExec; /**< \brief Number of Software Bus Message Actions Executed */
-
-    uint32 RunStatus; /**< \brief HS App run status */
 
     uint32 SysMonPspModuleId;  /**< \brief PSP module to track system health, cpu utilization */
     uint16 SysMonSubsystemId;  /**< \brief Subsystem ID for cpu utilization function */
@@ -166,7 +158,6 @@ typedef struct
     CFE_ES_CDSHandle_t MyCDSHandle; /* \brief Handle to CDS memory block */
     HS_CDSData_t       CDSData;     /* \brief Copy of Critical Data */
 
-    HS_HkPacket_t HkPacket; /**< \brief HK Housekeeping Packet */
 } HS_AppData_t;
 
 /************************************************************************
@@ -178,21 +169,103 @@ extern HS_AppData_t HS_AppData;
  * Exported Functions
  ************************************************************************/
 
-static inline HS_AppMonState_t *HS_GetAMStateByIndex(uint32 TableIndex)
+/**
+ * \brief Obtain AM state entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given state entry
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       No error checking is performed here.  States cannot be used without
+ *       the associated configuration, so this should not be used unless
+ *       HS_GetAMTEntryByIndex() returns non-NULL for the same index.
+ *
+ * \returns pointer to entry
+ */
+static inline HS_AppMon_State_t *HS_GetAMStateByIndex(uint32 TableIndex)
 {
     return &HS_AppData.AppMonState[TableIndex];
 }
 
+/**
+ * \brief Obtain EM state entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given state entry
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       No error checking is performed here.  States cannot be used without
+ *       the associated configuration, so this should not be used unless
+ *       HS_GetEMTEntryByIndex() returns non-NULL for the same index.
+ *
+ * \returns pointer to entry
+ */
+static inline HS_EventMon_State_t *HS_GetEMStateByIndex(uint32 TableIndex)
+{
+    return &HS_AppData.EventMonState[TableIndex];
+}
+
+/**
+ * \brief Obtain MA state entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given state entry
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       No error checking is performed here.  States cannot be used without
+ *       the associated configuration, so this should not be used unless
+ *       HS_GetMATEntryByIndex() returns non-NULL for the same index.
+ *
+ * \returns pointer to entry
+ */
 static inline HS_MsgActState_t *HS_GetMAStateByIndex(uint32 TableIndex)
 {
     return &HS_AppData.MsgActState[TableIndex];
 }
 
+/**
+ * \brief Obtain XC state entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given state entry
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       No error checking is performed here.  States cannot be used without
+ *       the associated configuration, so this should not be used unless
+ *       HS_GetXCTEntryByIndex() returns non-NULL for the same index.
+ *
+ * \returns pointer to entry
+ */
+static inline HS_ExecMon_State_t *HS_GetXCStateByIndex(uint32 TableIndex)
+{
+    return &HS_AppData.ExecMonState[TableIndex];
+}
+
+/**
+ * \brief Safely obtain AM table entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given table entry, if the table is
+ *       loaded and the entry is valid.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ * \retval  NULL if index is invalid or table not loaded
+ * \returns pointer to entry if successful
+ */
 static inline HS_AMTEntry_t *HS_GetAMTEntryByIndex(uint32 TableIndex)
 {
     HS_AMTEntry_t *AMTEntryPtr;
 
-    AMTEntryPtr = HS_AppData.AMTablePtr;
+    if (TableIndex < HS_MAX_MONITORED_APPS)
+    {
+        AMTEntryPtr = HS_AppData.AMTablePtr;
+    }
+    else
+    {
+        AMTEntryPtr = NULL;
+    }
 
     if (AMTEntryPtr)
     {
@@ -202,11 +275,31 @@ static inline HS_AMTEntry_t *HS_GetAMTEntryByIndex(uint32 TableIndex)
     return AMTEntryPtr;
 }
 
+/**
+ * \brief Safely obtain EM table entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given table entry, if the table is
+ *       loaded and the entry is valid.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ * \retval  NULL if index is invalid or table not loaded
+ * \returns pointer to entry if successful
+ */
 static inline HS_EMTEntry_t *HS_GetEMTEntryByIndex(uint32 TableIndex)
 {
     HS_EMTEntry_t *EMTEntryPtr;
 
-    EMTEntryPtr = HS_AppData.EMTablePtr;
+    if (TableIndex < HS_MAX_MONITORED_EVENTS)
+    {
+        EMTEntryPtr = HS_AppData.EMTablePtr;
+    }
+    else
+    {
+        EMTEntryPtr = NULL;
+    }
 
     if (EMTEntryPtr)
     {
@@ -216,11 +309,31 @@ static inline HS_EMTEntry_t *HS_GetEMTEntryByIndex(uint32 TableIndex)
     return EMTEntryPtr;
 }
 
+/**
+ * \brief Safely obtain MA table entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given table entry, if the table is
+ *       loaded and the entry is valid.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ * \retval  NULL if index is invalid or table not loaded
+ * \returns pointer to entry if successful
+ */
 static inline HS_MATEntry_t *HS_GetMATEntryByIndex(uint32 TableIndex)
 {
     HS_MATEntry_t *MATEntryPtr;
 
-    MATEntryPtr = HS_AppData.MATablePtr;
+    if (TableIndex < HS_MAX_MSG_ACT_TYPES)
+    {
+        MATEntryPtr = HS_AppData.MATablePtr;
+    }
+    else
+    {
+        MATEntryPtr = NULL;
+    }
 
     if (MATEntryPtr)
     {
@@ -230,11 +343,31 @@ static inline HS_MATEntry_t *HS_GetMATEntryByIndex(uint32 TableIndex)
     return MATEntryPtr;
 }
 
+/**
+ * \brief Safely obtain XC table entry
+ *
+ *  \par Description
+ *       Returns a pointer to the given table entry, if the table is
+ *       loaded and the entry is valid.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ * \retval  NULL if index is invalid or table not loaded
+ * \returns pointer to entry if successful
+ */
 static inline HS_XCTEntry_t *HS_GetXCTEntryByIndex(uint32 TableIndex)
 {
     HS_XCTEntry_t *XCTEntryPtr;
 
-    XCTEntryPtr = HS_AppData.XCTablePtr;
+    if (TableIndex < HS_MAX_EXEC_CNT_SLOTS)
+    {
+        XCTEntryPtr = HS_AppData.XCTablePtr;
+    }
+    else
+    {
+        XCTEntryPtr = NULL;
+    }
 
     if (XCTEntryPtr)
     {
@@ -334,5 +467,35 @@ CFE_Status_t HS_ProcessMain(void);
  *  \retval #CFE_SUCCESS \copybrief CFE_SUCCESS
  */
 CFE_Status_t HS_ProcessCommands(void);
+
+/**
+ * \brief Update and store CDS data
+ *
+ *  \par Description
+ *       This function is called to update and then store the data in the
+ *       critical data store.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ *  \param [in]   ResetsPerformed     Number of HS caused processor resets
+ *  \param [in]   MaxResets           Max number of resets allowed
+ */
+void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets);
+
+/**
+ * \brief Compute status flags for telemetry reporting
+ *
+ *  \par Description
+ *       The Housekeeping data includes a field containing binary
+ *       flags indicating whether the tables are loaded.  This function
+ *       computes those flags from the internal runtime status info.
+ *
+ *  \par Assumptions, External Events, and Notes:
+ *       None
+ *
+ *  \param [out]  StatusFlagsOut   Status flag buffer, will be set
+ */
+void HS_ComputeStatusFlags(uint8 *StatusFlagsOut);
 
 #endif
