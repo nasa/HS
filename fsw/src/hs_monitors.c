@@ -157,6 +157,9 @@ void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState
 
             switch (AMEntryPtr->ActionType)
             {
+                case HS_AMTActType_NOACT:
+                    break;
+
                 case HS_AMTActType_PROC_RESET:
                     CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID,
                                       CFE_EVS_EventType_ERROR,
@@ -287,6 +290,9 @@ void HS_MonitorSingleEvent(const HS_EMTEntry_t *EMEntryPtr)
     */
     switch (EMEntryPtr->ActionType)
     {
+        case HS_EMTActType_NOACT:
+            break;
+
         case HS_EMTActType_PROC_RESET:
             CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID,
                               CFE_EVS_EventType_ERROR,
