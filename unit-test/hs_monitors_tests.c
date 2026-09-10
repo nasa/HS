@@ -43,6 +43,60 @@ uint8 call_count_CFE_EVS_SendEvent;
  * Function Definitions
  */
 
+/* These internal action dispatchers are reached after the table-entry filters.
+ */
+void HS_MonitorSingleApplication(const HS_AMTEntry_t *AMEntryPtr, HS_AppMonState_t *AMStatePtr);
+void HS_MonitorSingleEvent(const HS_EMTEntry_t *EMEntryPtr);
+
+static void HS_NoAction_CheckSideEffects(void)
+{
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(HS_GetMATEntryByIndex)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(HS_GetMAStateByIndex)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_SB_TransmitMsg)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_EVS_SendEvent)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_ResetCFE)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_RestartApp)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_DeleteApp)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(CFE_ES_WriteToSysLog)), 0);
+    UtAssert_UINT32_EQ(UT_GetStubCount(UT_KEY(OS_TaskDelay)), 0);
+    UtAssert_UINT32_EQ(HS_AppData.MsgActExec, 0);
+}
+
+void HS_MonitorSingleApplication_Test_NoAction(void)
+{
+    HS_AMTEntry_t    Entry;
+    HS_AppMonState_t State;
+
+    memset(&Entry, 0, sizeof(Entry));
+    memset(&State, 0, sizeof(State));
+    Entry.ActionType        = HS_AMTActType_NOACT;
+    Entry.CycleCount        = 2;
+    State.Enable            = true;
+    State.CheckInCountdown  = 1;
+    HS_AppData.MsgActsState = HS_State_ENABLED;
+    UT_SetDefaultReturnValue(UT_KEY(CFE_ES_GetAppIDByName), CFE_SUCCESS);
+    UT_SetDefaultReturnValue(UT_KEY(CFE_ES_GetAppInfo), CFE_SUCCESS);
+
+    HS_MonitorSingleApplication(&Entry, &State);
+
+    UtAssert_UINT32_EQ(State.CheckInCountdown, 0);
+    UtAssert_True(!State.Enable, "Expired monitor is disabled without an action");
+    HS_NoAction_CheckSideEffects();
+}
+
+void HS_MonitorSingleEvent_Test_NoAction(void)
+{
+    HS_EMTEntry_t Entry;
+
+    memset(&Entry, 0, sizeof(Entry));
+    Entry.ActionType        = HS_EMTActType_NOACT;
+    HS_AppData.MsgActsState = HS_State_ENABLED;
+
+    HS_MonitorSingleEvent(&Entry);
+
+    HS_NoAction_CheckSideEffects();
+}
+
 int32 HS_MONITORS_TEST_CFE_ES_GetAppInfoHook1(void                   *UserObj,
                                               int32                   StubRetcode,
                                               uint32                  CallCount,
@@ -3143,6 +3197,14 @@ void HS_SetCDSData_Test(void)
  */
 void UtTest_Setup(void)
 {
+    UtTest_Add(HS_MonitorSingleApplication_Test_NoAction,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_MonitorSingleApplication_Test_NoAction");
+    UtTest_Add(HS_MonitorSingleEvent_Test_NoAction,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_MonitorSingleEvent_Test_NoAction");
     UtTest_Add(HS_MonitorApplications_Test_AppMonTblPtrNull,
                HS_Test_Setup,
                HS_Test_TearDown,
