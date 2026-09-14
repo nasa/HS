@@ -392,7 +392,7 @@ void HS_ExecMon_StatusRefresh(void)
     /*
     ** Clear all MsgActs Cooldowns
     */
-    for (TableIndex = 0; TableIndex < HS_MAX_MSG_ACT_TYPES; ++TableIndex)
+    for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; ++TableIndex)
     {
         XCEntryPtr = HS_GetXCTEntryByIndex(TableIndex);
         XCStatePtr = HS_GetXCStateByIndex(TableIndex);

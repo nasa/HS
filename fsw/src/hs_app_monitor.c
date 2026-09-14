@@ -45,7 +45,7 @@ static bool HS_AppMon_ActionIsValid(uint16 ActionType)
     {
         IsValid = false;
     }
-    else if (ActionType >= (HS_AMTActType_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES))
+    else if (ActionType > (HS_AMTActType_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES))
     {
         /* HS allows for HS_AMTActType_LAST_NONMSG actions by default and
            HS_MAX_MSG_ACT_TYPES message actions defined in the Message
