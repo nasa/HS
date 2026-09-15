@@ -34,10 +34,10 @@
  *
  * In EDS each entry gets its own bool so access is very simple
  */
-#define HS_SET_TLM_ENABLE_BITMASK(arr, p) \
-    do                                    \
-    {                                     \
-        arr[p] = true;                    \
+#define HS_SET_TLM_ENABLE_BITMASK(arr, p)                        \
+    do                                                           \
+    {                                                            \
+        ((EdsDataType_BASE_TYPES_StatusBit_t *)(arr))[p] = true; \
     } while (0)
 
 #endif

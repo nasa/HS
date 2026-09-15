@@ -26,10 +26,11 @@
 *************************************************************************/
 #include "hs_app.h"
 #include "hs_cmds.h"
-#include "hs_monitors.h"
+#include "hs_app_monitor.h"
+#include "hs_event_monitor.h"
+#include "hs_exec_monitor.h"
 #include "hs_msgids.h"
 #include "hs_eventids.h"
-#include "hs_utils.h"
 #include "hs_version.h"
 
 /**
@@ -38,7 +39,7 @@
  * This is done as a macro so it can be applied consistently to all
  * message processing functions, based on the way FM defines its messages.
  */
-#define HS_GET_CMD_PAYLOAD(ptr, type) (&((const type *)(ptr))->Payload)
+#define HS_GET_PAYLOAD(ptr, type) (&((type *)(ptr))->Payload)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -47,156 +48,61 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
 {
-    CFE_ES_AppId_t AppId = CFE_ES_APPID_UNDEFINED;
-
-    uint32             ExeCount;
-    CFE_ES_TaskId_t    TaskId;
-    CFE_ES_CounterId_t CounterId;
-    CFE_ES_TaskInfo_t  TaskInfo;
-    int32              Status;
-    uint32             TableIndex;
-
+    CFE_SB_Buffer_t    *Buf;
+    CFE_Status_t        Status;
     HS_HkTlm_Payload_t *PayloadPtr;
-    HS_EMTEntry_t      *EMEntryPtr;
-    HS_XCTEntry_t      *XCEntryPtr;
-    HS_AppMonState_t   *AMStatePtr;
 
-    memset(&TaskInfo, 0, sizeof(TaskInfo));
-
-    PayloadPtr = &HS_AppData.HkPacket.Payload;
-
-    /*
-    ** Update HK variables
-    */
-    PayloadPtr->CmdCount              = HS_AppData.CmdCount;
-    PayloadPtr->CmdErrCount           = HS_AppData.CmdErrCount;
-    PayloadPtr->CurrentAppMonState    = HS_AppData.CurrentAppMonState;
-    PayloadPtr->CurrentEventMonState  = HS_AppData.CurrentEventMonState;
-    PayloadPtr->CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
-    PayloadPtr->CurrentCPUHogState    = HS_AppData.CurrentCPUHogState;
-    PayloadPtr->ResetsPerformed       = HS_AppData.CDSData.ResetsPerformed;
-    PayloadPtr->MaxResets             = HS_AppData.CDSData.MaxResets;
-    PayloadPtr->EventsMonitoredCount  = HS_AppData.EventsMonitoredCount;
-    PayloadPtr->MsgActExec            = HS_AppData.MsgActExec;
-
-    /*
-    ** Calculate the current number of invalid event monitor entries
-    */
-    PayloadPtr->InvalidEventMonCount = 0;
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
+    /* start by getting a buffer to populate */
+    Buf = CFE_SB_AllocateMessageBuffer(sizeof(HS_HkPacket_t));
+    if (Buf == NULL)
     {
-        EMEntryPtr = HS_GetEMTEntryByIndex(TableIndex);
+        Status = CFE_STATUS_EXTERNAL_RESOURCE_FAIL;
+    }
+    else
+    {
+        CFE_MSG_Init(&Buf->Msg, CFE_SB_ValueToMsgId(HS_HK_TLM_MID), sizeof(HS_HkPacket_t));
+        PayloadPtr = HS_GET_PAYLOAD(Buf, HS_HkPacket_t);
 
-        if (EMEntryPtr != NULL && EMEntryPtr->ActionType != HS_EMTActType_NOACT)
-        {
-            Status = CFE_ES_GetAppIDByName(&AppId, EMEntryPtr->AppName);
+        /*
+        ** Update HK variables
+        */
+        PayloadPtr->CmdCount              = HS_AppData.CmdCount;
+        PayloadPtr->CmdErrCount           = HS_AppData.CmdErrCount;
+        PayloadPtr->CurrentAppMonState    = HS_AppData.CurrentAppMonState;
+        PayloadPtr->CurrentEventMonState  = HS_AppData.CurrentEventMonState;
+        PayloadPtr->CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
+        PayloadPtr->CurrentCPUHogState    = HS_AppData.CurrentCPUHogState;
+        PayloadPtr->ResetsPerformed       = HS_AppData.CDSData.ResetsPerformed;
+        PayloadPtr->MaxResets             = HS_AppData.CDSData.MaxResets;
+        PayloadPtr->EventsMonitoredCount  = HS_AppData.EventsMonitoredCount;
+        PayloadPtr->MsgActExec            = HS_AppData.MsgActExec;
+        PayloadPtr->UtilCpuAvg            = HS_AppData.UtilCpuAvg;
+        PayloadPtr->UtilCpuPeak           = HS_AppData.UtilCpuPeak;
+        PayloadPtr->InactiveEventMonCount = HS_AppData.InactiveEventMonCount;
 
-            if (Status != CFE_SUCCESS)
-            {
-                PayloadPtr->InvalidEventMonCount++;
-            }
-        }
+        /*
+        ** Build the HK status flags byte
+        */
+        HS_ComputeStatusFlags(&PayloadPtr->StatusFlags);
+
+        /*
+        ** Update the AppMon Enables
+        */
+        memset(PayloadPtr->AppMonEnables, 0, sizeof(PayloadPtr->AppMonEnables));
+        HS_AppMon_ComputeEnableBits(PayloadPtr->AppMonEnables);
+
+        /*
+        ** Add the execution counters
+        */
+        HS_ExecMon_GetCounters(PayloadPtr->ExeCounts);
+
+        /*
+        ** Timestamp and send housekeeping packet
+        */
+        Status = CFE_SB_TransmitBuffer(Buf, true);
     }
 
-    /*
-    ** Build the HK status flags byte
-    */
-    PayloadPtr->StatusFlags = 0;
-    if (HS_AppData.ExeCountState == HS_State_ENABLED)
-    {
-        PayloadPtr->StatusFlags |= HS_StatusFlag_LOADED_XCT;
-    }
-    if (HS_AppData.MsgActsState == HS_State_ENABLED)
-    {
-        PayloadPtr->StatusFlags |= HS_StatusFlag_LOADED_MAT;
-    }
-    if (HS_AppData.AppMonLoaded == HS_State_ENABLED)
-    {
-        PayloadPtr->StatusFlags |= HS_StatusFlag_LOADED_AMT;
-    }
-    if (HS_AppData.EventMonLoaded == HS_State_ENABLED)
-    {
-        PayloadPtr->StatusFlags |= HS_StatusFlag_LOADED_EMT;
-    }
-    if (HS_AppData.CDSState == HS_State_ENABLED)
-    {
-        PayloadPtr->StatusFlags |= HS_StatusFlag_CDS_IN_USE;
-    }
-
-    /*
-    ** Update the AppMon Enables
-    */
-    memset(PayloadPtr->AppMonEnables, 0, sizeof(PayloadPtr->AppMonEnables));
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
-    {
-        AMStatePtr = HS_GetAMStateByIndex(TableIndex);
-
-        if (AMStatePtr->Enable)
-        {
-            HS_SET_TLM_ENABLE_BITMASK(PayloadPtr->AppMonEnables, TableIndex);
-        }
-    }
-
-    PayloadPtr->UtilCpuAvg  = HS_AppData.UtilCpuAvg;
-    PayloadPtr->UtilCpuPeak = HS_AppData.UtilCpuPeak;
-
-    /*
-    ** Add the execution counters
-    */
-    for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
-    {
-        XCEntryPtr = HS_GetXCTEntryByIndex(TableIndex);
-        ExeCount   = HS_INVALID_EXECOUNT;
-
-        if (XCEntryPtr != NULL && HS_AppData.ExeCountState == HS_State_ENABLED)
-        {
-            switch (XCEntryPtr->ResourceType)
-            {
-                case HS_XCTResType_APP_MAIN:
-                case HS_XCTResType_APP_CHILD:
-                    Status = CFE_ES_GetTaskIDByName(&TaskId, XCEntryPtr->ResourceName);
-
-                    if (Status == CFE_SUCCESS)
-                    {
-                        Status = CFE_ES_GetTaskInfo(&TaskInfo, TaskId);
-                        if (Status == CFE_SUCCESS)
-                        {
-                            ExeCount = TaskInfo.ExecutionCounter;
-                        }
-                    }
-                    break;
-                case HS_XCTResType_DEVICE:
-                case HS_XCTResType_ISR:
-                    Status = CFE_ES_GetGenCounterIDByName(&CounterId, XCEntryPtr->ResourceName);
-
-                    if (Status == CFE_SUCCESS)
-                    {
-                        CFE_ES_GetGenCount(CounterId, &ExeCount);
-                    }
-                    break;
-                case HS_XCTResType_NOTYPE:
-                    /* no action - ExeCount remains HS_INVALID_EXECOUNT */
-                    break;
-                default:
-                    /* ExeCount remains HS_INVALID_EXECOUNT */
-                    CFE_EVS_SendEvent(HS_HKREQ_RESOURCE_DBG_EID,
-                                      CFE_EVS_EventType_DEBUG,
-                                      "Housekeeping req found unknown resource.  Type=0x%08X",
-                                      (unsigned int)XCEntryPtr->ResourceType);
-                    break;
-            } /* end ResourceType switch statement */
-        } /* end ExeCountState if statement */
-
-        PayloadPtr->ExeCounts[TableIndex] = ExeCount;
-    }
-
-    /*
-    ** Timestamp and send housekeeping packet
-    */
-    CFE_SB_TimeStampMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader));
-    CFE_SB_TransmitMsg(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader), true);
-
-    return CFE_SUCCESS;
+    return Status;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -226,23 +132,13 @@ CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
 {
-    HS_ResetCounters();
-
-    CFE_EVS_SendEvent(HS_RESET_INF_EID, CFE_EVS_EventType_INFORMATION, "Reset counters command");
-    return CFE_SUCCESS;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* Reset housekeeping counters                                     */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_ResetCounters(void)
-{
     HS_AppData.CmdCount             = 0;
     HS_AppData.CmdErrCount          = 0;
     HS_AppData.EventsMonitoredCount = 0;
     HS_AppData.MsgActExec           = 0;
+
+    CFE_EVS_SendEvent(HS_RESET_INF_EID, CFE_EVS_EventType_INFORMATION, "Reset counters command");
+    return CFE_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -262,7 +158,7 @@ CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
     }
     else
     {
-        HS_AppMonStatusRefresh();
+        HS_AppMon_StatusRefresh();
         HS_AppData.CurrentAppMonState = HS_State_ENABLED;
         CFE_EVS_SendEvent(HS_ENABLE_APPMON_INF_EID, CFE_EVS_EventType_INFORMATION, "Application Monitoring Enabled");
     }
@@ -539,7 +435,7 @@ CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
     const HS_SetMaxResets_Payload_t *CmdPtr;
 
     HS_AppData.CmdCount++;
-    CmdPtr = HS_GET_CMD_PAYLOAD(BufPtr, HS_SetMaxResetsCmd_t);
+    CmdPtr = HS_GET_PAYLOAD(BufPtr, const HS_SetMaxResetsCmd_t);
 
     HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);
 
@@ -549,288 +445,4 @@ CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
                       HS_AppData.CDSData.MaxResets);
 
     return CFE_SUCCESS;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* Acquire table pointers                                          */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_AcquirePointers(void)
-{
-    CFE_Status_t Status;
-    void        *TableTempPtr;
-
-    /*
-    ** Release the table (AppMon)
-    */
-    CFE_TBL_ReleaseAddress(HS_AppData.AMTableHandle);
-
-    /*
-    ** Manage the table (AppMon)
-    */
-    CFE_TBL_Manage(HS_AppData.AMTableHandle);
-
-    /*
-    ** Get a pointer to the table (AppMon)
-    */
-    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.AMTableHandle);
-
-    /*
-    ** If there is a new table, refresh status (AppMon)
-    */
-    if (Status == CFE_TBL_INFO_UPDATED)
-    {
-        HS_AppMonStatusRefresh();
-    }
-
-    /*
-    ** If Address acquisition fails and currently enabled, report and disable (AppMon)
-    */
-    if (Status < CFE_SUCCESS)
-    {
-        /*
-        ** Only report and disable if enabled or the table was previously loaded (AppMon)
-        */
-        if ((HS_AppData.AppMonLoaded == HS_State_ENABLED) || (HS_AppData.CurrentAppMonState == HS_State_ENABLED))
-        {
-            CFE_EVS_SendEvent(HS_APPMON_GETADDR_ERR_EID,
-                              CFE_EVS_EventType_ERROR,
-                              "Error getting AppMon Table address, RC=0x%08X, Application Monitoring Disabled",
-                              (unsigned int)Status);
-            HS_AppData.CurrentAppMonState = HS_State_DISABLED;
-            HS_AppData.AppMonLoaded       = HS_State_DISABLED;
-        }
-
-        TableTempPtr = NULL;
-    }
-    /*
-    ** Otherwise, mark that the table is loaded (AppMon)
-    */
-    else
-    {
-        HS_AppData.AppMonLoaded = HS_State_ENABLED;
-    }
-
-    HS_AppData.AMTablePtr = TableTempPtr;
-
-    /*
-    ** Release the table (EventMon)
-    */
-    CFE_TBL_ReleaseAddress(HS_AppData.EMTableHandle);
-
-    /*
-    ** Manage the table (EventMon)
-    */
-    CFE_TBL_Manage(HS_AppData.EMTableHandle);
-
-    /*
-    ** Get a pointer to the table (EventMon)
-    */
-    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.EMTableHandle);
-
-    /*
-    ** If Address acquisition fails and currently enabled, report and disable (EventMon)
-    */
-    if (Status < CFE_SUCCESS)
-    {
-        /*
-        ** Only report and disable if enabled or the table was previously loaded (EventMon)
-        */
-        if ((HS_AppData.EventMonLoaded == HS_State_ENABLED) || (HS_AppData.CurrentEventMonState == HS_State_ENABLED))
-        {
-            CFE_EVS_SendEvent(HS_EVENTMON_GETADDR_ERR_EID,
-                              CFE_EVS_EventType_ERROR,
-                              "Error getting EventMon Table address, RC=0x%08X, Event Monitoring Disabled",
-                              (unsigned int)Status);
-
-            if (HS_AppData.CurrentEventMonState == HS_State_ENABLED)
-            {
-                Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_LONG_EVENT_MSG_MID), HS_AppData.EventPipe);
-
-                if (Status != CFE_SUCCESS)
-                {
-                    CFE_EVS_SendEvent(HS_BADEMT_LONG_UNSUB_EID,
-                                      CFE_EVS_EventType_ERROR,
-                                      "Error Unsubscribing from long-format Events,RC=0x%08X",
-                                      (unsigned int)Status);
-                }
-
-                Status = CFE_SB_Unsubscribe(CFE_SB_ValueToMsgId(CFE_EVS_SHORT_EVENT_MSG_MID), HS_AppData.EventPipe);
-
-                if (Status != CFE_SUCCESS)
-                {
-                    CFE_EVS_SendEvent(HS_BADEMT_SHORT_UNSUB_EID,
-                                      CFE_EVS_EventType_ERROR,
-                                      "Error Unsubscribing from short-format Events,RC=0x%08X",
-                                      (unsigned int)Status);
-                }
-            }
-
-            HS_AppData.CurrentEventMonState = HS_State_DISABLED;
-            HS_AppData.EventMonLoaded       = HS_State_DISABLED;
-        }
-
-        TableTempPtr = NULL;
-    }
-    /*
-    ** Otherwise, mark that the table is loaded (EventMon)
-    */
-    else
-    {
-        HS_AppData.EventMonLoaded = HS_State_ENABLED;
-    }
-
-    HS_AppData.EMTablePtr = TableTempPtr;
-
-    /*
-    ** Release the table (MsgActs)
-    */
-    CFE_TBL_ReleaseAddress(HS_AppData.MATableHandle);
-
-    /*
-    ** Manage the table (MsgActs)
-    */
-    CFE_TBL_Manage(HS_AppData.MATableHandle);
-
-    /*
-    ** Get a pointer to the table (MsgActs)
-    */
-    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.MATableHandle);
-
-    /*
-    ** If there is a new table, refresh status (MsgActs)
-    */
-    if (Status == CFE_TBL_INFO_UPDATED)
-    {
-        HS_MsgActsStatusRefresh();
-    }
-
-    /*
-    ** If Address acquisition fails report and disable (MsgActs)
-    */
-    if (Status < CFE_SUCCESS)
-    {
-        /*
-        ** To prevent redundant reporting, only report if enabled (MsgActs)
-        */
-        if (HS_AppData.MsgActsState == HS_State_ENABLED)
-        {
-            CFE_EVS_SendEvent(HS_MSGACTS_GETADDR_ERR_EID,
-                              CFE_EVS_EventType_ERROR,
-                              "Error getting MsgActs Table address, RC=0x%08X",
-                              (unsigned int)Status);
-            HS_AppData.MsgActsState = HS_State_DISABLED;
-        }
-
-        TableTempPtr = NULL;
-    }
-    /*
-    ** Otherwise, make sure it is enabled (MsgActs)
-    */
-    else
-    {
-        HS_AppData.MsgActsState = HS_State_ENABLED;
-    }
-
-    HS_AppData.MATablePtr = TableTempPtr;
-
-    /*
-    ** Release the table (ExeCount)
-    */
-    CFE_TBL_ReleaseAddress(HS_AppData.XCTableHandle);
-
-    /*
-    ** Manage the table (ExeCount)
-    */
-    CFE_TBL_Manage(HS_AppData.XCTableHandle);
-
-    /*
-    ** Get a pointer to the table (ExeCount)
-    */
-    Status = CFE_TBL_GetAddress(&TableTempPtr, HS_AppData.XCTableHandle);
-
-    /*
-    ** If Address acquisition fails report and disable (ExeCount)
-    */
-    if (Status < CFE_SUCCESS)
-    {
-        /*
-        ** To prevent redundant reporting, only report if enabled (ExeCount)
-        */
-        if (HS_AppData.ExeCountState == HS_State_ENABLED)
-        {
-            CFE_EVS_SendEvent(HS_EXECOUNT_GETADDR_ERR_EID,
-                              CFE_EVS_EventType_ERROR,
-                              "Error getting ExeCount Table address, RC=0x%08X",
-                              (unsigned int)Status);
-            HS_AppData.ExeCountState = HS_State_DISABLED;
-        }
-
-        TableTempPtr = NULL;
-    }
-    /*
-    ** Otherwise, make sure it is enabled (ExeCount)
-    */
-    else
-    {
-        HS_AppData.ExeCountState = HS_State_ENABLED;
-    }
-
-    HS_AppData.XCTablePtr = TableTempPtr;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* Refresh AppMon Status (on Table Update or Enable)               */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_AppMonStatusRefresh(void)
-{
-    uint32            TableIndex;
-    HS_AMTEntry_t    *AMEntryPtr;
-    HS_AppMonState_t *AMStatePtr;
-
-    /*
-    ** Set AppMon enable bits and reset Countups and Exec Counter comparisons
-    */
-    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
-    {
-        AMEntryPtr = HS_GetAMTEntryByIndex(TableIndex);
-        AMStatePtr = HS_GetAMStateByIndex(TableIndex);
-
-        AMStatePtr->LastExeCount = 0;
-
-        if (AMEntryPtr == NULL || AMEntryPtr->CycleCount == 0 || AMEntryPtr->ActionType == HS_AMTActType_NOACT)
-        {
-            AMStatePtr->CheckInCountdown = 0;
-            AMStatePtr->Enable           = false;
-        }
-        else
-        {
-            AMStatePtr->CheckInCountdown = AMEntryPtr->CycleCount;
-            AMStatePtr->Enable           = true;
-        }
-    }
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* Refresh MsgActs Status (on Table Update or Enable)              */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HS_MsgActsStatusRefresh(void)
-{
-    uint32            TableIndex;
-    HS_MsgActState_t *MAStatePtr;
-
-    /*
-    ** Clear all MsgActs Cooldowns
-    */
-    for (TableIndex = 0; TableIndex < HS_MAX_MSG_ACT_TYPES; TableIndex++)
-    {
-        MAStatePtr = HS_GetMAStateByIndex(TableIndex);
-
-        MAStatePtr->Cooldown = 0;
-    }
 }

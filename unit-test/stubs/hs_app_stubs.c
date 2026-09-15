@@ -25,6 +25,8 @@
 #include "hs_app.h"
 #include "utgenstub.h"
 
+void UT_DefaultHandler_HS_ComputeStatusFlags(void *, UT_EntryKey_t, const UT_StubContext_t *);
+
 /*
  * ----------------------------------------------------
  * Generated stub function for HS_AppInit()
@@ -47,6 +49,18 @@ CFE_Status_t HS_AppInit(void)
 void HS_AppMain(void)
 {
     UT_GenStub_Execute(HS_AppMain, Basic, NULL);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_ComputeStatusFlags()
+ * ----------------------------------------------------
+ */
+void HS_ComputeStatusFlags(uint8 *StatusFlagsOut)
+{
+    UT_GenStub_AddParam(HS_ComputeStatusFlags, uint8 *, StatusFlagsOut);
+
+    UT_GenStub_Execute(HS_ComputeStatusFlags, Basic, UT_DefaultHandler_HS_ComputeStatusFlags);
 }
 
 /*
@@ -89,6 +103,19 @@ CFE_Status_t HS_SbInit(void)
     UT_GenStub_Execute(HS_SbInit, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(HS_SbInit, CFE_Status_t);
+}
+
+/*
+ * ----------------------------------------------------
+ * Generated stub function for HS_SetCDSData()
+ * ----------------------------------------------------
+ */
+void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets)
+{
+    UT_GenStub_AddParam(HS_SetCDSData, uint16, ResetsPerformed);
+    UT_GenStub_AddParam(HS_SetCDSData, uint16, MaxResets);
+
+    UT_GenStub_Execute(HS_SetCDSData, Basic, NULL);
 }
 
 /*

@@ -35,9 +35,7 @@
 #include "hs_msgdefs.h"
 #include "hs_version.h"
 #include "hs_eventids.h"
-#include "hs_utils.h"
 #include "hs_cmds.h"
-#include "hs_monitors.h"
 #include "hs_msg.h"
 #include "utstubs.h"
 #include <time.h>
@@ -94,5 +92,7 @@ extern UT_CmdBuf_t UT_CmdBuf;
 
 void HS_Test_Setup(void);
 void HS_Test_TearDown(void);
+
+void UT_Handler_HS_MsgAct_TriggerAction(void *UserObj, UT_EntryKey_t FuncKey, const UT_StubContext_t *Context);
 
 #endif

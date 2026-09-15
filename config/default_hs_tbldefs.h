@@ -30,6 +30,8 @@
 #ifndef DEFAULT_HS_TBLDEFS_H
 #define DEFAULT_HS_TBLDEFS_H
 
+#include "common_types.h"
+
 /************************************************************************
  * Macro Definitions
  ************************************************************************/
@@ -40,8 +42,29 @@
  * \name HS Switch States (AppMon, EventMon, Aliveness)
  * \{
  */
-#define HS_State_DISABLED 0
-#define HS_State_ENABLED  1
+/**
+ * @brief Label definitions associated with HS_State_t
+ */
+enum HS_State
+{
+
+    /**
+     * @brief HS Switch States (AppMon, EventMon, Aliveness) Disabled
+     */
+    HS_State_DISABLED = 0,
+
+    /**
+     * @brief HS Switch States (AppMon, EventMon, Aliveness) Enabled
+     */
+    HS_State_ENABLED = 1
+};
+
+/**
+ *
+ * @sa enum HS_State
+ */
+typedef uint8 HS_State_Enum_t;
+
 /**\}*/
 
 /**

@@ -33,6 +33,25 @@
 
     <DataTypeSet>
 
+      <EnumeratedDataType name="State">
+        <EnumerationList>
+          <Enumeration label="DISABLED" value="0" shortDescription="HS Switch States (AppMon, EventMon, Aliveness) Disabled" />
+          <Enumeration label="ENABLED" value="1" shortDescription="HS Switch States (AppMon, EventMon, Aliveness) Enabled" />
+        </EnumerationList>
+        <IntegerDataEncoding sizeInBits="8" encoding="unsigned" />
+      </EnumeratedDataType>
+
+      <EnumeratedDataType name="StatusFlag">
+        <EnumerationList>
+          <Enumeration label="LOADED_XCT" value="0x01" shortDescription="Execution Counter Table Loaded" />
+          <Enumeration label="LOADED_MAT" value="0x02" shortDescription="Message Actions Table Loaded" />
+          <Enumeration label="LOADED_AMT" value="0x04" shortDescription="Application Monitor Table Loaded" />
+          <Enumeration label="LOADED_EMT" value="0x08" shortDescription="Event Monitor Table Loaded" />
+          <Enumeration label="CDS_IN_USE" value="0x10" shortDescription="Critical Data Store In Use" />
+        </EnumerationList>
+        <IntegerDataEncoding sizeInBits="8" encoding="unsigned" />
+      </EnumeratedDataType>
+
       <ContainerDataType name="CMD" baseType="CFE_HDR/CommandHeader">
       </ContainerDataType>
 
@@ -57,16 +76,16 @@
           <Entry name="CmdCount" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
           <Entry name="CmdErrCount" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
 
-          <Entry name="CurrentAppMonState" type="BASE_TYPES/uint8" />
-          <Entry name="CurrentEventMonState" type="BASE_TYPES/uint8" />
-          <Entry name="CurrentAlivenessState" type="BASE_TYPES/uint8" />
-          <Entry name="CurrentCPUHogState" type="BASE_TYPES/uint8" />
+          <Entry name="CurrentAppMonState" type="State" />
+          <Entry name="CurrentEventMonState" type="State" />
+          <Entry name="CurrentAlivenessState" type="State" />
+          <Entry name="CurrentCPUHogState" type="State" />
           <Entry name="StatusFlags" type="BASE_TYPES/uint8" />
           <Entry name="SpareBytes" type="BASE_TYPES/uint8" />
           <Entry name="ResetsPerformed" type="BASE_TYPES/uint16" />
           <Entry name="MaxResets" type="BASE_TYPES/uint16" />
           <Entry name="EventsMonitoredCount" type="BASE_TYPES/uint32" />
-          <Entry name="InvalidEventMonCount" type="BASE_TYPES/uint32" />
+          <Entry name="InactiveEventMonCount" type="BASE_TYPES/uint32" />
 
           <Entry name="AppMonEnables" type="AppMonEnables" />
 
@@ -157,29 +176,6 @@
         </ConstraintSet>
       </ContainerDataType>
 
-
-     <EnumeratedDataType name="State">
-          <EnumerationList>
-            <Enumeration label="DISABLED" value="0" shortDescription="HS Switch States (AppMon, EventMon, Aliveness) Disabled" />
-            <Enumeration label="ENABLED" value="1" shortDescription="HS Switch States (AppMon, EventMon, Aliveness) Enabled" />
-          </EnumerationList>
-       <IntegerDataEncoding sizeInBits="8" encoding="unsigned" />
-     </EnumeratedDataType>
-
-     <IntegerDataType name="INVALID_EXECOUNT">
-         <IntegerDataEncoding sizeInBits="32" encoding="unsigned" />
-     </IntegerDataType>
-
-     <EnumeratedDataType name="StatusFlag">
-         <EnumerationList>
-             <Enumeration label="LOADED_XCT" value="0x01" shortDescription="Execution Counter Table Loaded" />
-             <Enumeration label="LOADED_MAT" value="0x02" shortDescription="Message Actions Table Loaded" />
-             <Enumeration label="LOADED_AMT" value="0x04" shortDescription="Application Monitor Table Loaded" />
-             <Enumeration label="LOADED_EMT" value="0x08" shortDescription="Event Monitor Table Loaded" />
-             <Enumeration label="CDS_IN_USE" value="0x10" shortDescription="Critical Data Store In Use" />
-         </EnumerationList>
-         <IntegerDataEncoding sizeInBits="8" encoding="unsigned" />
-     </EnumeratedDataType>
 
      <EnumeratedDataType name="AMTActType">
          <EnumerationList>

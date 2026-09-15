@@ -486,7 +486,7 @@
  *
  *  This event message is issued when an application name cannot be resolved
  *  into an application ID by the OS.  This event is sent the first time this
- *  error occurs in the HS_MonitorApplications function.  Subsequent
+ *  error occurs in the HS_AppMon_CheckAllApps function.  Subsequent
  *  occurrences are captured with a corresponding debug event.
  */
 #define HS_APPMON_APPNAME_ERR_EID 38
@@ -884,7 +884,7 @@
  *
  *  This event message is issued when an application name cannot be resolved
  *  into an application ID by the OS.  This event is sent if this error
- *  occurs repeatedly in the HS_MonitorApplications function.  The first such
+ *  occurs repeatedly in the HS_AppMon_CheckAllApps function.  The first such
  *  occurrence is captured with a corresponding error event.
  */
 #define HS_APPMON_APPNAME_DBG_EID 72
@@ -922,7 +922,7 @@
  *  \par Cause:
  *
  *  This event message is issued if the TableData pointer passed to
- *  HS_ValidateAMTable is null.
+ *  HS_AppMon_ValidateTable is null.
  */
 #define HS_AM_TBL_NULL_ERR_EID 75
 
@@ -934,7 +934,7 @@
  *  \par Cause:
  *
  *  This event message is issued if the TableData pointer passed to
- *  HS_ValidateEMTable is null.
+ *  HS_EventMon_ValidateTable is null.
  */
 #define HS_EM_TBL_NULL_ERR_EID 76
 
@@ -946,7 +946,7 @@
  *  \par Cause:
  *
  *  This event message is issued if the TableData pointer passed to
- *  HS_ValidateXCTable is null.
+ *  HS_ExecMon_ValidateTable is null.
  */
 #define HS_XC_TBL_NULL_ERR_EID 77
 
@@ -958,7 +958,7 @@
  *  \par Cause:
  *
  *  This event message is issued if the TableData pointer passed to
- *  HS_ValidateMATable is null.
+ *  HS_MsgAct_ValidateTable is null.
  */
 #define HS_MA_TBL_NULL_ERR_EID 78
 

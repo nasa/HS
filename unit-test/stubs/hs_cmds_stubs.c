@@ -27,26 +27,6 @@
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_AcquirePointers()
- * ----------------------------------------------------
- */
-void HS_AcquirePointers(void)
-{
-    UT_GenStub_Execute(HS_AcquirePointers, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for HS_AppMonStatusRefresh()
- * ----------------------------------------------------
- */
-void HS_AppMonStatusRefresh(void)
-{
-    UT_GenStub_Execute(HS_AppMonStatusRefresh, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for HS_DisableAlivenessCmd()
  * ----------------------------------------------------
  */
@@ -175,16 +155,6 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
 
 /*
  * ----------------------------------------------------
- * Generated stub function for HS_MsgActsStatusRefresh()
- * ----------------------------------------------------
- */
-void HS_MsgActsStatusRefresh(void)
-{
-    UT_GenStub_Execute(HS_MsgActsStatusRefresh, Basic, NULL);
-}
-
-/*
- * ----------------------------------------------------
  * Generated stub function for HS_NoopCmd()
  * ----------------------------------------------------
  */
@@ -213,16 +183,6 @@ CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr)
     UT_GenStub_Execute(HS_ResetCmd, Basic, NULL);
 
     return UT_GenStub_GetReturnValue(HS_ResetCmd, CFE_Status_t);
-}
-
-/*
- * ----------------------------------------------------
- * Generated stub function for HS_ResetCounters()
- * ----------------------------------------------------
- */
-void HS_ResetCounters(void)
-{
-    UT_GenStub_Execute(HS_ResetCounters, Basic, NULL);
 }
 
 /*

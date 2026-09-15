@@ -1,8 +1,10 @@
 project(CFS_HS C)
 
 set(APP_SRC_FILES
-  fsw/src/hs_monitors.c
-  fsw/src/hs_utils.c
+  fsw/src/hs_app_monitor.c
+  fsw/src/hs_event_monitor.c
+  fsw/src/hs_exec_monitor.c
+  fsw/src/hs_msg_action.c
   fsw/src/hs_sysmon.c
   fsw/src/hs_app.c
   fsw/src/hs_cmds.c

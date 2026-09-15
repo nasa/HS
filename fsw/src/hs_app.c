@@ -30,12 +30,21 @@
 #include "hs_eventids.h"
 #include "hs_msgids.h"
 #include "hs_perfids.h"
-#include "hs_monitors.h"
+#include "hs_app_monitor.h"
+#include "hs_event_monitor.h"
+#include "hs_exec_monitor.h"
+#include "hs_msg_action.h"
 #include "hs_sysmon.h"
 #include "hs_version.h"
 #include "hs_cmds.h"
 #include "hs_dispatch.h"
 #include "hs_verify.h"
+
+typedef struct
+{
+    HS_State_Enum_t *LocalRef;
+    uint8            Flag;
+} HS_StatusFlag_Conv_t;
 
 /************************************************************************
 ** Macro Definitions
@@ -217,15 +226,14 @@ CFE_Status_t HS_AppInit(void)
     */
     memset(&HS_AppData, 0, sizeof(HS_AppData));
     HS_AppData.ServiceWatchdogFlag = HS_State_ENABLED;
-    HS_AppData.RunStatus           = CFE_ES_RunStatus_APP_RUN;
 
     HS_AppData.CurrentAppMonState    = HS_APPMON_DEFAULT_STATE;
     HS_AppData.CurrentEventMonState  = HS_EVENTMON_DEFAULT_STATE;
     HS_AppData.CurrentAlivenessState = HS_ALIVENESS_DEFAULT_STATE;
     HS_AppData.CurrentCPUHogState    = HS_CPUHOG_DEFAULT_STATE;
 
-    HS_AppData.ExeCountState  = HS_State_ENABLED;
-    HS_AppData.MsgActsState   = HS_State_ENABLED;
+    HS_AppData.ExecMonLoaded  = HS_State_ENABLED;
+    HS_AppData.MsgActsLoaded  = HS_State_ENABLED;
     HS_AppData.AppMonLoaded   = HS_State_ENABLED;
     HS_AppData.EventMonLoaded = HS_State_ENABLED;
     HS_AppData.CDSState       = HS_State_ENABLED;
@@ -363,11 +371,6 @@ CFE_Status_t HS_SbInit(void)
 {
     CFE_Status_t Status;
 
-    /* Initialize housekeeping packet  */
-    CFE_MSG_Init(CFE_MSG_PTR(HS_AppData.HkPacket.TelemetryHeader),
-                 CFE_SB_ValueToMsgId(HS_HK_TLM_MID),
-                 sizeof(HS_HkPacket_t));
-
     /* Create Command Pipe */
     Status = CFE_SB_CreatePipe(&HS_AppData.CmdPipe, HS_CMD_PIPE_DEPTH, HS_CMD_PIPE_NAME);
     if (Status != CFE_SUCCESS)
@@ -448,8 +451,7 @@ CFE_Status_t HS_SbInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_TblInit(void)
 {
-    uint32       TableSize  = 0;
-    uint32       TableIndex = 0;
+    size_t       TableSize = 0;
     CFE_Status_t Status;
 
     /* Register The HS Applications Monitor Table */
@@ -458,7 +460,7 @@ CFE_Status_t HS_TblInit(void)
                               HS_AMT_TABLENAME,
                               TableSize,
                               CFE_TBL_OPT_DEFAULT,
-                              HS_ValidateAMTable);
+                              HS_AppMon_ValidateTable);
 
     if (Status != CFE_SUCCESS)
     {
@@ -475,7 +477,7 @@ CFE_Status_t HS_TblInit(void)
                               HS_EMT_TABLENAME,
                               TableSize,
                               CFE_TBL_OPT_DEFAULT,
-                              HS_ValidateEMTable);
+                              HS_EventMon_ValidateTable);
 
     if (Status != CFE_SUCCESS)
     {
@@ -492,7 +494,7 @@ CFE_Status_t HS_TblInit(void)
                               HS_MAT_TABLENAME,
                               TableSize,
                               CFE_TBL_OPT_DEFAULT,
-                              HS_ValidateMATable);
+                              HS_MsgAct_ValidateTable);
 
     if (Status != CFE_SUCCESS)
     {
@@ -509,7 +511,7 @@ CFE_Status_t HS_TblInit(void)
                               HS_XCT_TABLENAME,
                               TableSize,
                               CFE_TBL_OPT_DEFAULT,
-                              HS_ValidateXCTable);
+                              HS_ExecMon_ValidateTable);
 
     if (Status != CFE_SUCCESS)
     {
@@ -528,12 +530,7 @@ CFE_Status_t HS_TblInit(void)
                           CFE_EVS_EventType_ERROR,
                           "Error Loading ExeCount Table,RC=0x%08X",
                           (unsigned int)Status);
-        HS_AppData.ExeCountState = HS_State_DISABLED;
-        for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++)
-        {
-            /* HS 8005.1 Report 0xFFFFFFFF for all entries */
-            HS_AppData.HkPacket.Payload.ExeCounts[TableIndex] = HS_INVALID_EXECOUNT;
-        }
+        HS_AppData.ExecMonLoaded = HS_State_DISABLED;
     }
 
     /* Load the HS Applications Monitor Table */
@@ -574,13 +571,16 @@ CFE_Status_t HS_TblInit(void)
                           CFE_EVS_EventType_ERROR,
                           "Error Loading MsgActs Table,RC=0x%08X",
                           (unsigned int)Status);
-        HS_AppData.MsgActsState = HS_State_DISABLED;
+        HS_AppData.MsgActsLoaded = HS_State_DISABLED;
     }
 
     /*
     ** Get pointers to table data
     */
-    HS_AcquirePointers();
+    HS_AppMon_AcquirePointers();
+    HS_EventMon_AcquirePointers();
+    HS_MsgAct_AcquirePointers();
+    HS_ExecMon_AcquirePointers();
 
     return CFE_SUCCESS;
 }
@@ -592,32 +592,25 @@ CFE_Status_t HS_TblInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ProcessMain(void)
 {
-    CFE_Status_t      Status      = CFE_SUCCESS;
-    const char       *AliveString = HS_CPU_ALIVE_STRING;
-    uint32            i           = 0;
-    HS_MsgActState_t *MAStatePtr;
+    CFE_Status_t Status      = CFE_SUCCESS;
+    const char  *AliveString = HS_CPU_ALIVE_STRING;
 
     /*
     ** Get Tables
     */
-    HS_AcquirePointers();
+    HS_AppMon_AcquirePointers();
+    HS_EventMon_AcquirePointers();
+    HS_MsgAct_AcquirePointers();
+    HS_ExecMon_AcquirePointers();
 
     /*
     ** Decrement Cooldowns for Message Actions
     */
-    for (i = 0; i < HS_MAX_MSG_ACT_TYPES; i++)
-    {
-        MAStatePtr = &HS_AppData.MsgActState[i];
-
-        if (MAStatePtr->Cooldown != 0)
-        {
-            --MAStatePtr->Cooldown;
-        }
-    }
+    HS_MsgAct_Cooldown();
 
     if (HS_AppData.UtilizationCycleCounter == 0)
     {
-        HS_MonitorUtilization();
+        HS_ExecMon_CheckUtilization();
         HS_AppData.UtilizationCycleCounter = HS_CPU_UTILIZATION_CYCLES_PER_INTERVAL;
     }
     --HS_AppData.UtilizationCycleCounter;
@@ -627,7 +620,7 @@ CFE_Status_t HS_ProcessMain(void)
     */
     if (HS_AppData.CurrentAppMonState == HS_State_ENABLED)
     {
-        HS_MonitorApplications();
+        HS_AppMon_CheckAllApps();
     }
 
     /*
@@ -685,7 +678,7 @@ CFE_Status_t HS_ProcessCommands(void)
                 ** Pass Events to Event Monitor
                 */
                 HS_AppData.EventsMonitoredCount++;
-                HS_MonitorEvent((CFE_EVS_LongEventTlm_t *)BufPtr);
+                HS_EventMon_Check((CFE_EVS_LongEventTlm_t *)BufPtr);
             }
         }
     }
@@ -725,4 +718,65 @@ CFE_Status_t HS_ProcessCommands(void)
     }
 
     return Status;
+}
+
+/*----------------------------------------------------------------
+ *
+ * Application-scope internal function
+ * See description in header file for argument/return detail
+ *
+ *-----------------------------------------------------------------*/
+void HS_ComputeStatusFlags(uint8 *StatusFlagsOut)
+{
+    uint32                      TableIndex;
+    uint8                       StatusFlags;
+    const HS_StatusFlag_Conv_t *StatusEntry;
+
+    static const HS_StatusFlag_Conv_t HS_STATUSFLAG_LOOKUP[] = {
+        { &HS_AppData.ExecMonLoaded,  HS_StatusFlag_LOADED_XCT },
+        { &HS_AppData.MsgActsLoaded,  HS_StatusFlag_LOADED_MAT },
+        { &HS_AppData.AppMonLoaded,   HS_StatusFlag_LOADED_AMT },
+        { &HS_AppData.EventMonLoaded, HS_StatusFlag_LOADED_EMT },
+        { &HS_AppData.CDSState,       HS_StatusFlag_CDS_IN_USE },
+    };
+
+    /*
+    ** Build the HK status flags byte
+    */
+    StatusFlags = 0;
+    StatusEntry = HS_STATUSFLAG_LOOKUP;
+    for (TableIndex = 0; TableIndex < (sizeof(HS_STATUSFLAG_LOOKUP) / sizeof(HS_StatusFlag_Conv_t)); ++TableIndex)
+    {
+        if (*(StatusEntry->LocalRef) == HS_State_ENABLED)
+        {
+            StatusFlags |= StatusEntry->Flag;
+        }
+        ++StatusEntry;
+    }
+
+    *StatusFlagsOut = StatusFlags;
+}
+
+/*----------------------------------------------------------------
+ *
+ * Application-scope internal function
+ * See description in header file for argument/return detail
+ *
+ *-----------------------------------------------------------------*/
+void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets)
+{
+    /*
+    ** Set CDS data and verification inverses
+    */
+    HS_AppData.CDSData.ResetsPerformed    = ResetsPerformed;
+    HS_AppData.CDSData.ResetsPerformedNot = ~HS_AppData.CDSData.ResetsPerformed;
+    HS_AppData.CDSData.MaxResets          = MaxResets;
+    HS_AppData.CDSData.MaxResetsNot       = ~HS_AppData.CDSData.MaxResets;
+    /*
+    ** Copy the data to the CDS if CDS Creation was successful
+    */
+    if (HS_AppData.CDSState == HS_State_ENABLED)
+    {
+        CFE_ES_CopyToCDS(HS_AppData.MyCDSHandle, &HS_AppData.CDSData);
+    }
 }
