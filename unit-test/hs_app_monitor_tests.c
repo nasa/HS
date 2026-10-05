@@ -52,6 +52,32 @@ int32 HS_MONITORS_TEST_CFE_ES_GetAppInfoHook1(void                   *UserObj,
     return CFE_SUCCESS;
 }
 
+void HS_AppMon_CheckApp_Test_NoAction(void)
+{
+    HS_AMTEntry_t     Entry;
+    HS_AppMon_State_t State;
+
+    memset(&Entry, 0, sizeof(Entry));
+    memset(&State, 0, sizeof(State));
+    Entry.ActionType       = HS_AMTActType_NOACT;
+    Entry.CycleCount       = 1;
+    State.Enable           = true;
+    State.CheckInCountdown = 1;
+    State.AppId            = CFE_ES_APPID_C(CFE_ResourceId_FromInteger(111));
+
+    HS_AppMon_CheckApp(&Entry, &State);
+
+    UtAssert_UINT32_EQ(State.CheckInCountdown, 0);
+    UtAssert_BOOL_FALSE(State.Enable);
+    UtAssert_STUB_COUNT(HS_MsgAct_TriggerAction, 0);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
+    UtAssert_STUB_COUNT(OS_TaskDelay, 0);
+    UtAssert_STUB_COUNT(CFE_ES_WriteToSysLog, 0);
+    UtAssert_STUB_COUNT(CFE_ES_ResetCFE, 0);
+    UtAssert_STUB_COUNT(CFE_ES_RestartApp, 0);
+    UtAssert_STUB_COUNT(CFE_SB_TransmitMsg, 0);
+}
+
 void HS_AppMon_CheckAllApps_Test_AppMonTblPtrNull(void)
 {
     /* Execute the function being tested */
@@ -1249,6 +1275,7 @@ void HS_AppMon_StatusRefresh_Test_ElseCase(void)
  */
 void UtTest_Setup(void)
 {
+    UtTest_Add(HS_AppMon_CheckApp_Test_NoAction, HS_Test_Setup, HS_Test_TearDown, "HS_AppMon_CheckApp_Test_NoAction");
     UtTest_Add(HS_AppMon_CheckAllApps_Test_AppMonTblPtrNull,
                HS_Test_Setup,
                HS_Test_TearDown,

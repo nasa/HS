@@ -90,6 +90,9 @@ void HS_EventMon_TriggerAction(const HS_EMTEntry_t *EMEntryPtr)
     */
     switch (EMEntryPtr->ActionType)
     {
+        case HS_EMTActType_NOACT:
+            break;
+
         case HS_EMTActType_PROC_RESET:
             CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID,
                               CFE_EVS_EventType_ERROR,
