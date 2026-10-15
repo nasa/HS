@@ -115,6 +115,11 @@ CFE_Status_t HS_SysMonInit(void)
     return StatusCode;
 }
 
+/*
+ * --------------------------------------------------------
+ * Clean up the system monitor resources
+ * --------------------------------------------------------
+ */
 void HS_SysMonCleanup(void)
 {
     CFE_PSP_IODriver_Location_t Location;

@@ -35,35 +35,6 @@
  ************************************************************************/
 
 /**
- * \brief Reset counters
- *
- *  \par Description
- *       Utility function that resets housekeeping counters to zero
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \sa #HS_ResetCmd
- */
-void HS_ResetCounters(void);
-
-/**
- * \brief Manages HS tables
- *
- *  \par Description
- *       Manages load requests for the AppMon, EventMon, ExeCount and MsgActs
- *       tables and update notification for the AppMon and MsgActs tables.
- *       Also releases and acquires table addresses. Gets called at the start
- *       of each processing cycle and on initialization.
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- *
- *  \sa #CFE_TBL_Manage
- */
-void HS_AcquirePointers(void);
-
-/**
  * \brief Housekeeping request
  *
  *  \par Description
@@ -258,32 +229,5 @@ CFE_Status_t HS_ResetResetsPerformedCmd(const HS_ResetResetsPerformedCmd_t *BufP
  *  \sa #HS_RESET_RESETS_PERFORMED_CC
  */
 CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr);
-
-/**
- * \brief Refresh Critical Applications Monitor Status
- *
- *  \par Description
- *       This function gets called when HS detects that a new critical
- *       applications monitor table has been loaded or when a command
- *       to enable the critical applications monitor is received: it then
- *       refreshes the timeouts for application being monitored
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- */
-void HS_AppMonStatusRefresh(void);
-
-/**
- * \brief Refresh Message Actions Status
- *
- *  \par Description
- *       This function gets called when HS detects that a new
- *       message actions table has been loaded: it then
- *       resets the cooldowns for all actions.
- *
- *  \par Assumptions, External Events, and Notes:
- *       None
- */
-void HS_MsgActsStatusRefresh(void);
 
 #endif
