@@ -294,8 +294,6 @@ CFE_Status_t HS_AppInit(void)
             */
             HS_SetCDSData(0, HS_MAX_RESTART_ACTIONS);
         }
-
-        Status = CFE_SUCCESS;
     }
     else if (Status == CFE_SUCCESS)
     {
@@ -451,7 +449,7 @@ CFE_Status_t HS_SbInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_TblInit(void)
 {
-    size_t       TableSize = 0;
+    size_t       TableSize;
     CFE_Status_t Status;
 
     /* Register The HS Applications Monitor Table */
@@ -592,7 +590,7 @@ CFE_Status_t HS_TblInit(void)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ProcessMain(void)
 {
-    CFE_Status_t Status      = CFE_SUCCESS;
+    CFE_Status_t Status;
     const char  *AliveString = HS_CPU_ALIVE_STRING;
 
     /*

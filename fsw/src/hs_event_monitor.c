@@ -82,8 +82,8 @@ static void HS_EventMon_FailCallback(uint32 MsgActsIndex, const void *Arg)
  *-----------------------------------------------------------------*/
 void HS_EventMon_TriggerAction(const HS_EMTEntry_t *EMEntryPtr)
 {
-    CFE_Status_t   Status = CFE_SUCCESS;
-    CFE_ES_AppId_t AppId  = CFE_ES_APPID_UNDEFINED;
+    CFE_Status_t   Status;
+    CFE_ES_AppId_t AppId = CFE_ES_APPID_UNDEFINED;
 
     /*
     ** Perform the action if the strings also match
@@ -191,7 +191,7 @@ void HS_EventMon_TriggerAction(const HS_EMTEntry_t *EMEntryPtr)
  *-----------------------------------------------------------------*/
 void HS_EventMon_Check(const CFE_EVS_LongEventTlm_t *EventPtr)
 {
-    uint32         TableIndex = 0;
+    uint32         TableIndex;
     HS_EMTEntry_t *EMEntryPtr;
 
     for (TableIndex = 0;; ++TableIndex)
@@ -225,7 +225,7 @@ int32 HS_EventMon_ValidateTable(void *TableData)
     HS_EMTEntry_t *TableArray = (HS_EMTEntry_t *)TableData;
 
     int32  TableResult = CFE_SUCCESS;
-    uint32 TableIndex  = 0;
+    uint32 TableIndex;
     int32  EntryResult;
 
     uint16 ActionType;
