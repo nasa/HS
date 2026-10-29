@@ -87,13 +87,13 @@ int32 HS_MsgAct_ValidateTable(void *TableData)
     HS_MATEntry_t *TableArray = (HS_MATEntry_t *)TableData;
 
     int32  TableResult = CFE_SUCCESS;
-    uint32 TableIndex  = 0;
-    size_t Length      = 0;
+    uint32 TableIndex;
+    size_t Length = 0;
     uint16 EnableState;
     int32  EntryResult;
 
     CFE_SB_MsgId_t           MessageID = CFE_SB_INVALID_MSG_ID;
-    const CFE_MSG_Message_t *MsgPtr    = NULL;
+    const CFE_MSG_Message_t *MsgPtr;
 
     uint32 GoodCount   = 0;
     uint32 BadCount    = 0;
@@ -281,7 +281,7 @@ void HS_MsgAct_AcquirePointers(void)
  *-----------------------------------------------------------------*/
 void HS_MsgAct_Cooldown(void)
 {
-    uint32            i = 0;
+    uint32            i;
     HS_MsgActState_t *MAStatePtr;
 
     /*

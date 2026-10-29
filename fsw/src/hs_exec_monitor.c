@@ -529,7 +529,6 @@ void HS_ExecMon_CheckEntries(void)
             break;
         }
 
-        Status     = CFE_STATUS_NOT_IMPLEMENTED; /* placeholder*/
         XCStatePtr = HS_GetXCStateByIndex(TableIndex);
         if (XCStatePtr->Enable)
         {

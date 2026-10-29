@@ -309,7 +309,7 @@ int32 HS_AppMon_ValidateTable(void *TableData)
     HS_AMTEntry_t *TableArray = (HS_AMTEntry_t *)TableData;
 
     int32  TableResult = CFE_SUCCESS;
-    uint32 TableIndex  = 0;
+    uint32 TableIndex;
     int32  EntryResult;
 
     uint16 ActionType;
