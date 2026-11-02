@@ -52,7 +52,7 @@ static const EdsDispatchTable_EdsComponent_HS_Application_CFE_SB_Telecommand_t H
         .EnableCpuHogCmd_indication = HS_EnableCpuHogCmd,
         .EnableEventMonCmd_indication = HS_EnableEventMonCmd,
         .NoopCmd_indication = HS_NoopCmd,
-        .ResetCmd_indication = HS_ResetCmd,
+        .ResetCmd_indication = HS_ResetCountersCmd,
         .ResetResetsPerformedCmd_indication = HS_ResetResetsPerformedCmd,
         .SetMaxResetsCmd_indication = HS_SetMaxResetsCmd,
     },
