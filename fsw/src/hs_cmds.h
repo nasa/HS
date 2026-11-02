@@ -78,7 +78,7 @@ CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr);
  *
  *  \sa #HS_RESET_CC
  */
-CFE_Status_t HS_ResetCmd(const HS_ResetCmd_t *BufPtr);
+CFE_Status_t HS_ResetCountersCmd(const HS_ResetCmd_t *BufPtr);
 
 /**
  * \brief Process an enable critical applications monitor command

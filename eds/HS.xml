@@ -116,7 +116,7 @@
         </ConstraintSet>
       </ContainerDataType>
 
-      <ContainerDataType name="ResetCmd" baseType="CMD">
+      <ContainerDataType name="ResetCountersCmd" baseType="CMD">
         <ConstraintSet>
           <ValueConstraint entry="Sec.FunctionCode" value="1" />
         </ConstraintSet>
