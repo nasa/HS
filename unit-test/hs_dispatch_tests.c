@@ -136,7 +136,7 @@ void HS_AppPipe_Test_Reset(void)
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);
-    UtAssert_STUB_COUNT(HS_ResetCmd, 1);
+    UtAssert_STUB_COUNT(HS_ResetCountersCmd, 1);
 
     /* Now with an invalid size */
     HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_CC, 1);
@@ -145,7 +145,7 @@ void HS_AppPipe_Test_Reset(void)
     HS_AppPipe(&UT_CmdBuf.Buf);
 
     /* Should NOT have invoked the handler */
-    UtAssert_STUB_COUNT(HS_ResetCmd, 1);
+    UtAssert_STUB_COUNT(HS_ResetCountersCmd, 1);
 }
 
 void HS_AppPipe_Test_EnableAppMon(void)

@@ -344,7 +344,7 @@ void HS_ResetCmd_Test(void)
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_ResetCmd(&UT_CmdBuf.ResetCmd);
+    HS_ResetCountersCmd(&UT_CmdBuf.ResetCmd);
 
     /* Verify results */
     UtAssert_UINT32_EQ(HS_AppData.CmdCount, 0);

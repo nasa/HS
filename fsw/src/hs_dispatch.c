@@ -262,7 +262,7 @@ void HS_ResetVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_ResetCmd((const HS_ResetCmd_t *)BufPtr);
+        HS_ResetCountersCmd((const HS_ResetCmd_t *)BufPtr);
     }
 }
 
