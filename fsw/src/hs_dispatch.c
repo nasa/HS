@@ -80,7 +80,7 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
                               (int)CommandCode,
                               (int)ActualLength,
                               (int)ExpectedLength);
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
         }
 
         result = false;
@@ -158,7 +158,7 @@ void HS_AppProcessGroundCmd(const CFE_SB_Buffer_t *BufPtr)
                               (unsigned long)CFE_SB_MsgIdToValue(MessageID),
                               CommandCode);
 
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
             break;
 
     } /* end CommandCode switch */
@@ -204,7 +204,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
         /*
         ** Unrecognized Message ID
         */
-        HS_AppData.CmdErrCount++;
+        HS_AppData.CommandErrCounter++;
         CFE_EVS_SendEvent(HS_MID_ERR_EID,
                           CFE_EVS_EventType_ERROR,
                           "Invalid command pipe message ID: 0x%08lX",

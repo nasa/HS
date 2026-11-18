@@ -66,8 +66,8 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
         /*
         ** Update HK variables
         */
-        PayloadPtr->CmdCount              = HS_AppData.CmdCount;
-        PayloadPtr->CmdErrCount           = HS_AppData.CmdErrCount;
+        PayloadPtr->CommandCounter        = HS_AppData.CommandCounter;
+        PayloadPtr->CommandErrCounter     = HS_AppData.CommandErrCounter;
         PayloadPtr->CurrentAppMonState    = HS_AppData.CurrentAppMonState;
         PayloadPtr->CurrentEventMonState  = HS_AppData.CurrentEventMonState;
         PayloadPtr->CurrentAlivenessState = HS_AppData.CurrentAlivenessState;
@@ -112,7 +112,7 @@ CFE_Status_t HS_SendHkCmd(const HS_SendHkCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     CFE_EVS_SendEvent(HS_NOOP_INF_EID,
                       CFE_EVS_EventType_INFORMATION,
@@ -132,8 +132,8 @@ CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ResetCountersCmd(const HS_ResetCountersCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount             = 0;
-    HS_AppData.CmdErrCount          = 0;
+    HS_AppData.CommandCounter       = 0;
+    HS_AppData.CommandErrCounter    = 0;
     HS_AppData.EventsMonitoredCount = 0;
     HS_AppData.MsgActExec           = 0;
 
@@ -148,7 +148,7 @@ CFE_Status_t HS_ResetCountersCmd(const HS_ResetCountersCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentAppMonState == HS_State_ENABLED)
     {
@@ -173,7 +173,7 @@ CFE_Status_t HS_EnableAppMonCmd(const HS_EnableAppMonCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_DisableAppMonCmd(const HS_DisableAppMonCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentAppMonState == HS_State_DISABLED)
     {
@@ -244,11 +244,11 @@ CFE_Status_t HS_EnableEventMonCmd(const HS_EnableEventMonCmd_t *BufPtr)
 
     if (Status == CFE_SUCCESS)
     {
-        HS_AppData.CmdCount++;
+        HS_AppData.CommandCounter++;
     }
     else
     {
-        HS_AppData.CmdErrCount++;
+        HS_AppData.CommandErrCounter++;
     }
 
     return CFE_SUCCESS;
@@ -303,11 +303,11 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
 
     if (Status == CFE_SUCCESS)
     {
-        HS_AppData.CmdCount++;
+        HS_AppData.CommandCounter++;
     }
     else
     {
-        HS_AppData.CmdErrCount++;
+        HS_AppData.CommandErrCounter++;
     }
 
     return CFE_SUCCESS;
@@ -320,7 +320,7 @@ CFE_Status_t HS_DisableEventMonCmd(const HS_DisableEventMonCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentAlivenessState == HS_State_ENABLED)
     {
@@ -344,7 +344,7 @@ CFE_Status_t HS_EnableAlivenessCmd(const HS_EnableAlivenessCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentAlivenessState == HS_State_DISABLED)
     {
@@ -368,7 +368,7 @@ CFE_Status_t HS_DisableAlivenessCmd(const HS_DisableAlivenessCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentCPUHogState == HS_State_ENABLED)
     {
@@ -392,7 +392,7 @@ CFE_Status_t HS_EnableCpuHogCmd(const HS_EnableCpuHogCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_DisableCpuHogCmd(const HS_DisableCpuHogCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
 
     if (HS_AppData.CurrentCPUHogState == HS_State_DISABLED)
     {
@@ -416,7 +416,7 @@ CFE_Status_t HS_DisableCpuHogCmd(const HS_DisableCpuHogCmd_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 CFE_Status_t HS_ResetResetsPerformedCmd(const HS_ResetResetsPerformedCmd_t *BufPtr)
 {
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
     HS_SetCDSData(0, HS_AppData.CDSData.MaxResets);
     CFE_EVS_SendEvent(HS_RESET_RESETS_INF_EID,
                       CFE_EVS_EventType_INFORMATION,
@@ -434,7 +434,7 @@ CFE_Status_t HS_SetMaxResetsCmd(const HS_SetMaxResetsCmd_t *BufPtr)
 {
     const HS_SetMaxResets_Payload_t *CmdPtr;
 
-    HS_AppData.CmdCount++;
+    HS_AppData.CommandCounter++;
     CmdPtr = HS_GET_PAYLOAD(BufPtr, const HS_SetMaxResetsCmd_t);
 
     HS_SetCDSData(HS_AppData.CDSData.ResetsPerformed, CmdPtr->MaxResets);

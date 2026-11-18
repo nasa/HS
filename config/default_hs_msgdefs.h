@@ -43,8 +43,8 @@ typedef struct
  */
 typedef struct
 {
-    uint8  CmdCount;              /**< \brief HS Application Command Counter */
-    uint8  CmdErrCount;           /**< \brief HS Application Command Error Counter */
+    uint8  CommandCounter;        /**< \brief HS Application Command Counter */
+    uint8  CommandErrCounter;     /**< \brief HS Application Command Error Counter */
     uint8  CurrentAppMonState;    /**< \brief Status of HS Application Monitor */
     uint8  CurrentEventMonState;  /**< \brief Status of HS Event Monitor */
     uint8  CurrentAlivenessState; /**< \brief Status of HS Aliveness Indicator */

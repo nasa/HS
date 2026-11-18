@@ -73,8 +73,8 @@
 
        <ContainerDataType name="HkTlm_Payload" shortDescription="HK housekeeping">
         <EntryList>
-          <Entry name="CmdCount" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
-          <Entry name="CmdErrCount" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
+          <Entry name="CommandCounter" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
+          <Entry name="CommandErrCounter" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
 
           <Entry name="CurrentAppMonState" type="State" />
           <Entry name="CurrentEventMonState" type="State" />

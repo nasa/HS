@@ -114,8 +114,8 @@ typedef struct
 
     uint8 SpareBytes[3]; /**< \brief Spare bytes for 32 bit alignment padding */
 
-    uint8 CmdCount;    /**< \brief Number of valid commands received */
-    uint8 CmdErrCount; /**< \brief Number of invalid commands received */
+    uint8 CommandCounter;    /**< \brief Number of valid commands received */
+    uint8 CommandErrCounter; /**< \brief Number of invalid commands received */
 
     uint32 EventsMonitoredCount;     /**< \brief Total count of event messages monitored */
     uint32 InactiveEventMonCount;    /**< \brief Count of event monitors for which the target is not active */

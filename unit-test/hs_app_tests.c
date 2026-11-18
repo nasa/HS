@@ -540,8 +540,8 @@ void HS_AppInit_Test_Nominal(void)
     HS_AppData.CurrentEventMonState  = 99;
     HS_AppData.CurrentAlivenessState = 99;
     HS_AppData.CurrentCPUHogState    = 99;
-    HS_AppData.CmdCount              = 99;
-    HS_AppData.CmdErrCount           = 99;
+    HS_AppData.CommandCounter        = 99;
+    HS_AppData.CommandErrCounter     = 99;
     HS_AppData.UtilCpuPeak           = 99;
     HS_AppData.UtilCpuAvg            = 99;
 
@@ -564,8 +564,8 @@ void HS_AppInit_Test_Nominal(void)
      * subfunction that we don't care about here */
     UtAssert_UINT32_EQ(HS_AppData.CurrentAlivenessState, HS_ALIVENESS_DEFAULT_STATE);
     UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHogState, HS_CPUHOG_DEFAULT_STATE);
-    UtAssert_UINT8_EQ(HS_AppData.CmdCount, 0);
-    UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 0);
+    UtAssert_UINT8_EQ(HS_AppData.CommandCounter, 0);
+    UtAssert_UINT8_EQ(HS_AppData.CommandErrCounter, 0);
     UtAssert_UINT32_EQ(HS_AppData.UtilCpuPeak, 0);
     UtAssert_UINT32_EQ(HS_AppData.UtilCpuAvg, 0);
 
@@ -1741,7 +1741,7 @@ void HS_ProcessCommands_Test(void)
     UtAssert_STUB_COUNT(HS_AppPipe, 1);
     UtAssert_STUB_COUNT(HS_EventMon_Check, 1);
 
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 0);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 0);
 }
 
 void HS_ProcessCommands_Test_NullMsgPtr(void)
@@ -1777,7 +1777,7 @@ void HS_ProcessCommands_Test_NullMsgPtr(void)
     UtAssert_STUB_COUNT(CFE_SB_ReceiveBuffer, 4);
     UtAssert_STUB_COUNT(HS_AppPipe, 0);
 
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 0);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 0);
 }
 
 void HS_ComputeStatusFlags_Test(void)
