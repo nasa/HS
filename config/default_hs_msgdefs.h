@@ -50,7 +50,7 @@ typedef struct
     uint8  CurrentAlivenessState; /**< \brief Status of HS Aliveness Indicator */
     uint8  CurrentCPUHogState;    /**< \brief Status of HS Hogging Indicator */
     uint8  StatusFlags;           /**< \brief Internal HS Error States */
-    uint8  SpareBytes;            /**< \brief Alignment Spares */
+    uint8  Padding;               /**< \brief Alignment Spares */
     uint16 ResetsPerformed;       /**< \brief HS Performed Processor Reset Count */
     uint16 MaxResets;             /**< \brief HS Maximum Processor Reset Count */
     uint32 EventsMonitoredCount;  /**< \brief Total count of Event Messages Monitored */
