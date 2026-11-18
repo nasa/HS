@@ -174,11 +174,11 @@ CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr)
  * Generated stub function for HS_ResetCmd()
  * ----------------------------------------------------
  */
-CFE_Status_t HS_ResetCountersCmd(const HS_ResetCmd_t *BufPtr)
+CFE_Status_t HS_ResetCountersCmd(const HS_ResetCountersCmd_t *BufPtr)
 {
     UT_GenStub_SetupReturnBuffer(HS_ResetCountersCmd, CFE_Status_t);
 
-    UT_GenStub_AddParam(HS_ResetCountersCmd, const HS_ResetCmd_t *, BufPtr);
+    UT_GenStub_AddParam(HS_ResetCountersCmd, const HS_ResetCountersCmd_t *, BufPtr);
 
     UT_GenStub_Execute(HS_ResetCountersCmd, Basic, NULL);
 

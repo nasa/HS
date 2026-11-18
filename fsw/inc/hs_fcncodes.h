@@ -77,7 +77,7 @@
  *       Resets the HS housekeeping counters
  *
  *  \par Command Structure
- *       #HS_ResetCmd_t
+ *       #HS_ResetCountersCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with

@@ -255,14 +255,14 @@ void HS_NoopVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_ResetVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_ResetCmd_t);
+    size_t ExpectedLength = sizeof(HS_ResetCountersCmd_t);
 
     /*
     ** Verify message packet length
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_ResetCountersCmd((const HS_ResetCmd_t *)BufPtr);
+        HS_ResetCountersCmd((const HS_ResetCountersCmd_t *)BufPtr);
     }
 }
 
