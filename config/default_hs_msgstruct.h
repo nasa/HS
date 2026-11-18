@@ -57,12 +57,12 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_RESET_CC
+ *  For command details see #HS_RESET_COUNTERS_CC
  */
 typedef struct
 {
     CFE_MSG_CommandHeader_t CommandHeader; /**< \brief Command header */
-} HS_ResetCmd_t;
+} HS_ResetCountersCmd_t;
 
 /**
  *  \brief No Arguments Command

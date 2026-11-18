@@ -52,7 +52,7 @@ static const EdsDispatchTable_EdsComponent_HS_Application_CFE_SB_Telecommand_t H
         .EnableCpuHogCmd_indication = HS_EnableCpuHogCmd,
         .EnableEventMonCmd_indication = HS_EnableEventMonCmd,
         .NoopCmd_indication = HS_NoopCmd,
-        .ResetCmd_indication = HS_ResetCmd,
+        .ResetCountersCmd_indication = HS_ResetCountersCmd,
         .ResetResetsPerformedCmd_indication = HS_ResetResetsPerformedCmd,
         .SetMaxResetsCmd_indication = HS_SetMaxResetsCmd,
     },
@@ -91,7 +91,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                               CFE_EVS_EventType_ERROR,
                               "Invalid command pipe message ID: 0x%08lX",
                               (unsigned long)CFE_SB_MsgIdToValue(MsgId));
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
         }
         else if (Status == CFE_STATUS_WRONG_MSG_LENGTH)
         {
@@ -119,7 +119,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                                   (unsigned long)CFE_SB_MsgIdToValue(MsgId),
                                   (int)MsgFc,
                                   (int)MsgSize);
-                HS_AppData.CmdErrCount++;
+                HS_AppData.CommandErrCounter++;
             }
         }
         else
@@ -129,7 +129,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
                               "Invalid command code: ID = 0x%08lX, CC = %d",
                               (unsigned long)CFE_SB_MsgIdToValue(MsgId),
                               (int)MsgFc);
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
         }
     }
 }

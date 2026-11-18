@@ -73,15 +73,15 @@
 
        <ContainerDataType name="HkTlm_Payload" shortDescription="HK housekeeping">
         <EntryList>
-          <Entry name="CmdCount" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
-          <Entry name="CmdErrCount" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
+          <Entry name="CommandCounter" type="BASE_TYPES/uint8" shortDescription="Count of valid commands received" />
+          <Entry name="CommandErrCounter" type="BASE_TYPES/uint8" shortDescription="Count of invalid commands received" />
 
           <Entry name="CurrentAppMonState" type="State" />
           <Entry name="CurrentEventMonState" type="State" />
           <Entry name="CurrentAlivenessState" type="State" />
           <Entry name="CurrentCPUHogState" type="State" />
           <Entry name="StatusFlags" type="BASE_TYPES/uint8" />
-          <Entry name="SpareBytes" type="BASE_TYPES/uint8" />
+          <PaddingEntry sizeInBits="8" shortDescription="Padding for 32-bit alignment"/>
           <Entry name="ResetsPerformed" type="BASE_TYPES/uint16" />
           <Entry name="MaxResets" type="BASE_TYPES/uint16" />
           <Entry name="EventsMonitoredCount" type="BASE_TYPES/uint32" />
@@ -100,7 +100,7 @@
        <ContainerDataType name="SetMaxResets_Payload">
         <EntryList>
           <Entry name="MaxResets" type="BASE_TYPES/uint16" />
-          <Entry name="Padding" type="BASE_TYPES/uint16" />
+          <PaddingEntry sizeInBits="16" shortDescription="Padding for 32-bit alignment"/>
         </EntryList>
       </ContainerDataType>
 
@@ -116,7 +116,7 @@
         </ConstraintSet>
       </ContainerDataType>
 
-      <ContainerDataType name="ResetCmd" baseType="CMD">
+      <ContainerDataType name="ResetCountersCmd" baseType="CMD">
         <ConstraintSet>
           <ValueConstraint entry="Sec.FunctionCode" value="1" />
         </ConstraintSet>

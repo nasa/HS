@@ -67,7 +67,7 @@ typedef union
     CFE_MSG_Message_t Msg;
 
     HS_NoopCmd_t                 NoopCmd;
-    HS_ResetCmd_t                ResetCmd;
+    HS_ResetCountersCmd_t        ResetCmd;
     HS_EnableAppMonCmd_t         EnableAppMonCmd;
     HS_DisableAppMonCmd_t        DisableAppMonCmd;
     HS_EnableEventMonCmd_t       EnableEventMonCmd;

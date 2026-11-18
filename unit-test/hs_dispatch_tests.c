@@ -77,7 +77,7 @@ void HS_VerifyMsgLength_Test(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_HKREQ_LEN_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
-    UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 0);
+    UtAssert_UINT8_EQ(HS_AppData.CommandErrCounter, 0);
 
     HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), 0, 1);
 
@@ -87,7 +87,7 @@ void HS_VerifyMsgLength_Test(void)
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 2);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventID, HS_CMD_LEN_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[1].EventType, CFE_EVS_EventType_ERROR);
-    UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT8_EQ(HS_AppData.CommandErrCounter, 1);
 }
 
 void HS_AppPipe_Test_SendHK(void)
@@ -132,20 +132,20 @@ void HS_AppPipe_Test_Noop(void)
 
 void HS_AppPipe_Test_Reset(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_CC, sizeof(UT_CmdBuf.ResetCmd));
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_COUNTERS_CC, sizeof(UT_CmdBuf.ResetCmd));
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);
-    UtAssert_STUB_COUNT(HS_ResetCmd, 1);
+    UtAssert_STUB_COUNT(HS_ResetCountersCmd, 1);
 
     /* Now with an invalid size */
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_CC, 1);
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_COUNTERS_CC, 1);
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);
 
     /* Should NOT have invoked the handler */
-    UtAssert_STUB_COUNT(HS_ResetCmd, 1);
+    UtAssert_STUB_COUNT(HS_ResetCountersCmd, 1);
 }
 
 void HS_AppPipe_Test_EnableAppMon(void)
@@ -350,7 +350,7 @@ void HS_AppPipe_Test_InvalidCC(void)
     HS_AppPipe(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT8_EQ(HS_AppData.CommandErrCounter, 1);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_CC_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);
@@ -364,7 +364,7 @@ void HS_AppPipe_Test_InvalidMID(void)
     HS_AppPipe(&UT_CmdBuf.Buf);
 
     /* Verify results */
-    UtAssert_UINT8_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT8_EQ(HS_AppData.CommandErrCounter, 1);
     UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 1);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_MID_ERR_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_ERROR);

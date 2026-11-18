@@ -80,7 +80,7 @@ bool HS_VerifyMsgLength(const CFE_MSG_Message_t *MsgPtr, size_t ExpectedLength)
                               (int)CommandCode,
                               (int)ActualLength,
                               (int)ExpectedLength);
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
         }
 
         result = false;
@@ -107,7 +107,7 @@ void HS_AppProcessGroundCmd(const CFE_SB_Buffer_t *BufPtr)
             HS_NoopVerifyDispatch(BufPtr);
             break;
 
-        case HS_RESET_CC:
+        case HS_RESET_COUNTERS_CC:
             HS_ResetVerifyDispatch(BufPtr);
             break;
 
@@ -158,7 +158,7 @@ void HS_AppProcessGroundCmd(const CFE_SB_Buffer_t *BufPtr)
                               (unsigned long)CFE_SB_MsgIdToValue(MessageID),
                               CommandCode);
 
-            HS_AppData.CmdErrCount++;
+            HS_AppData.CommandErrCounter++;
             break;
 
     } /* end CommandCode switch */
@@ -204,7 +204,7 @@ void HS_AppPipe(const CFE_SB_Buffer_t *BufPtr)
         /*
         ** Unrecognized Message ID
         */
-        HS_AppData.CmdErrCount++;
+        HS_AppData.CommandErrCounter++;
         CFE_EVS_SendEvent(HS_MID_ERR_EID,
                           CFE_EVS_EventType_ERROR,
                           "Invalid command pipe message ID: 0x%08lX",
@@ -255,14 +255,14 @@ void HS_NoopVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void HS_ResetVerifyDispatch(const CFE_SB_Buffer_t *BufPtr)
 {
-    size_t ExpectedLength = sizeof(HS_ResetCmd_t);
+    size_t ExpectedLength = sizeof(HS_ResetCountersCmd_t);
 
     /*
     ** Verify message packet length
     */
     if (HS_VerifyMsgLength(&BufPtr->Msg, ExpectedLength))
     {
-        HS_ResetCmd((const HS_ResetCmd_t *)BufPtr);
+        HS_ResetCountersCmd((const HS_ResetCountersCmd_t *)BufPtr);
     }
 }
 

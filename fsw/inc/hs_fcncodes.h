@@ -51,7 +51,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - The #HS_NOOP_INF_EID informational event message will be
  *         generated when the command is received
  *
@@ -60,13 +60,13 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
  *       None
  *
- *  \sa #HS_RESET_CC
+ *  \sa #HS_RESET_COUNTERS_CC
  */
 #define HS_NOOP_CC HS_CCVAL(NOOP)
 
@@ -77,12 +77,12 @@
  *       Resets the HS housekeeping counters
  *
  *  \par Command Structure
- *       #HS_ResetCmd_t
+ *       #HS_ResetCountersCmd_t
  *
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will be cleared
+ *       - #HS_HkTlm_Payload_t.CommandCounter will be cleared
  *       - The #HS_RESET_INF_EID informational event message will be
  *         generated when the command is executed
  *
@@ -91,7 +91,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -99,7 +99,7 @@
  *
  *  \sa #HS_NOOP_CC
  */
-#define HS_RESET_CC HS_CCVAL(RESET)
+#define HS_RESET_COUNTERS_CC HS_CCVAL(RESET_COUNTERS)
 
 /**
  * \brief Enable Applications Monitor
@@ -113,7 +113,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentAppMonState will be set to Enabled
  *       - The #HS_ENABLE_APPMON_INF_EID informational event message will be
  *         generated when the command is executed
@@ -123,7 +123,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -145,7 +145,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentAppMonState will be set to Disabled
  *       - The #HS_DISABLE_APPMON_INF_EID informational event message will be
  *         generated when the command is executed
@@ -155,7 +155,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -177,7 +177,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentEventMonState will be set to Enabled
  *       - The #HS_ENABLE_EVENTMON_INF_EID informational event message will be
  *         generated when the command is executed
@@ -187,7 +187,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -209,7 +209,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentEventMonState will be set to Disabled
  *       - The #HS_DISABLE_EVENTMON_INF_EID informational event message will be
  *         generated when the command is executed
@@ -219,7 +219,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -241,7 +241,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentAlivenessState will be set to Enabled
  *       - The #HS_ENABLE_ALIVENESS_INF_EID informational event message will be
  *         generated when the command is executed
@@ -251,7 +251,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -273,7 +273,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentAlivenessState will be set to Disabled
  *       - The #HS_DISABLE_ALIVENESS_INF_EID informational event message will be
  *         generated when the command is executed
@@ -283,7 +283,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -305,7 +305,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.ResetsPerformed will be set to 0
  *       - The #HS_RESET_RESETS_INF_EID informational event message will be
  *         generated when the command is executed
@@ -315,7 +315,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -337,7 +337,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.MaxResets will be set to the provided value
  *       - The #HS_SET_MAX_RESETS_INF_EID informational event message will be
  *         generated when the command is executed
@@ -347,7 +347,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -369,7 +369,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentCPUHogState will be set to Enabled
  *       - The #HS_ENABLE_CPUHOG_INF_EID informational event message will be
  *         generated when the command is executed
@@ -379,7 +379,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality
@@ -401,7 +401,7 @@
  *  \par Command Verification
  *       Successful execution of this command may be verified with
  *       the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandCounter will increment
  *       - #HS_HkTlm_Payload_t.CurrentCPUHogState will be set to Disabled
  *       - The #HS_DISABLE_CPUHOG_INF_EID informational event message will be
  *         generated when the command is executed
@@ -411,7 +411,7 @@
  *       - Command packet length not as expected
  *
  *  \par Evidence of failure may be found in the following telemetry:
- *       - #HS_HkTlm_Payload_t.CmdErrCount will increment
+ *       - #HS_HkTlm_Payload_t.CommandErrCounter will increment
  *       - Error specific event message #HS_CMD_LEN_ERR_EID
  *
  *  \par Criticality

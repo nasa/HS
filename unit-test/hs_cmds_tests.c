@@ -69,8 +69,8 @@ void HS_SendHkCmd_Test_InvalidEventMon(void)
     /* Fail first, succeed on second */
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
-    HS_AppData.CmdCount                = 1;
-    HS_AppData.CmdErrCount             = 2;
+    HS_AppData.CommandCounter          = 1;
+    HS_AppData.CommandErrCounter       = 2;
     HS_AppData.CurrentAppMonState      = 3;
     HS_AppData.CurrentEventMonState    = 4;
     HS_AppData.CurrentAlivenessState   = 5;
@@ -93,8 +93,8 @@ void HS_SendHkCmd_Test_InvalidEventMon(void)
 
     /* Verify results */
     PayloadPtr = &HkPkt.Payload;
-    UtAssert_UINT32_EQ(PayloadPtr->CmdCount, 1);
-    UtAssert_UINT32_EQ(PayloadPtr->CmdErrCount, 2);
+    UtAssert_UINT32_EQ(PayloadPtr->CommandCounter, 1);
+    UtAssert_UINT32_EQ(PayloadPtr->CommandErrCounter, 2);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentAppMonState, 3);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentEventMonState, 4);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentAlivenessState, 5);
@@ -145,8 +145,8 @@ void HS_SendHkCmd_Test_NullEventMonTable(void)
     UT_SetDeferredRetcode(UT_KEY(CFE_ES_GetAppIDByName), 1, -1);
 
     /* initialize hk counters */
-    HS_AppData.CmdCount                = 1;
-    HS_AppData.CmdErrCount             = 2;
+    HS_AppData.CommandCounter          = 1;
+    HS_AppData.CommandErrCounter       = 2;
     HS_AppData.CurrentAppMonState      = 3;
     HS_AppData.CurrentEventMonState    = 4;
     HS_AppData.CurrentAlivenessState   = 5;
@@ -168,8 +168,8 @@ void HS_SendHkCmd_Test_NullEventMonTable(void)
 
     /* Verify general housekeeping fields weren't affected */
     PayloadPtr = &HkPkt.Payload;
-    UtAssert_UINT8_EQ(PayloadPtr->CmdCount, 1);
-    UtAssert_UINT8_EQ(PayloadPtr->CmdErrCount, 2);
+    UtAssert_UINT8_EQ(PayloadPtr->CommandCounter, 1);
+    UtAssert_UINT8_EQ(PayloadPtr->CommandErrCounter, 2);
     UtAssert_UINT8_EQ(PayloadPtr->CurrentAppMonState, 3);
     UtAssert_UINT8_EQ(PayloadPtr->CurrentEventMonState, 4);
     UtAssert_UINT8_EQ(PayloadPtr->CurrentAlivenessState, 5);
@@ -233,8 +233,8 @@ void HS_SendHkCmd_Test_AllFlagsEnabled(void)
 
     HS_AppData.EMTablePtr[0].ActionType = HS_EMTActType_NOACT;
 
-    HS_AppData.CmdCount                = 1;
-    HS_AppData.CmdErrCount             = 2;
+    HS_AppData.CommandCounter          = 1;
+    HS_AppData.CommandErrCounter       = 2;
     HS_AppData.CurrentAppMonState      = 3;
     HS_AppData.CurrentEventMonState    = 4;
     HS_AppData.CurrentAlivenessState   = 5;
@@ -261,8 +261,8 @@ void HS_SendHkCmd_Test_AllFlagsEnabled(void)
 
     /* Verify results */
     PayloadPtr = &HkPkt.Payload;
-    UtAssert_UINT32_EQ(PayloadPtr->CmdCount, 1);
-    UtAssert_UINT32_EQ(PayloadPtr->CmdErrCount, 2);
+    UtAssert_UINT32_EQ(PayloadPtr->CommandCounter, 1);
+    UtAssert_UINT32_EQ(PayloadPtr->CommandErrCounter, 2);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentAppMonState, 3);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentEventMonState, 4);
     UtAssert_UINT32_EQ(PayloadPtr->CurrentAlivenessState, 5);
@@ -314,7 +314,7 @@ void HS_Noop_Test(void)
     HS_NoopCmd(&UT_CmdBuf.NoopCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_NOOP_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
@@ -337,18 +337,18 @@ void HS_ResetCmd_Test(void)
     snprintf(ExpectedEventString[0], CFE_MISSION_EVS_MAX_MESSAGE_LENGTH, "Reset counters command");
 
     TestMsgId = CFE_SB_ValueToMsgId(HS_CMD_MID);
-    FcnCode   = HS_RESET_CC;
+    FcnCode   = HS_RESET_COUNTERS_CC;
     MsgSize   = sizeof(UT_CmdBuf.ResetCmd);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);
     UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &MsgSize, sizeof(MsgSize), false);
 
     /* Execute the function being tested */
-    HS_ResetCmd(&UT_CmdBuf.ResetCmd);
+    HS_ResetCountersCmd(&UT_CmdBuf.ResetCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 0);
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 0);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 0);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 0);
     UtAssert_UINT32_EQ(HS_AppData.EventsMonitoredCount, 0);
     UtAssert_UINT32_EQ(HS_AppData.MsgActExec, 0);
 
@@ -391,7 +391,7 @@ void HS_EnableAppMonCmd_Test(void)
     HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAppMonState, HS_State_ENABLED);
 
@@ -428,7 +428,7 @@ void HS_EnableAppMonCmd_Test_NotLoaded(void)
     HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAppMonState, HS_State_ENABLED);
 
@@ -466,7 +466,7 @@ void HS_EnableAppMonCmd_Test_AlreadyEnabled(void)
     HS_EnableAppMonCmd(&UT_CmdBuf.EnableAppMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAppMonState, HS_State_ENABLED);
 
@@ -504,7 +504,7 @@ void HS_DisableAppMonCmd_Test(void)
     HS_DisableAppMonCmd(&UT_CmdBuf.DisableAppMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAppMonState, HS_State_DISABLED);
 
@@ -544,7 +544,7 @@ void HS_DisableAppMonCmd_Test_AlreadyDisabled(void)
     HS_DisableAppMonCmd(&UT_CmdBuf.DisableAppMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAppMonState, HS_State_DISABLED);
 
@@ -581,7 +581,7 @@ void HS_EnableEventMonCmd_Test_Disabled(void)
     HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_ENABLED);
 
@@ -618,7 +618,7 @@ void HS_EnableEventMonCmd_Test_AlreadyEnabled(void)
     HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_ENABLED);
 
@@ -659,7 +659,7 @@ void HS_EnableEventMonCmd_Test_SubscribeLongError(void)
     HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_DISABLED);
 
@@ -700,7 +700,7 @@ void HS_EnableEventMonCmd_Test_SubscribeShortError(void)
     HS_EnableEventMonCmd(&UT_CmdBuf.EnableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_DISABLED);
 
@@ -737,7 +737,7 @@ void HS_DisableEventMonCmd_Test_Enabled(void)
     HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_DISABLED);
 
@@ -774,7 +774,7 @@ void HS_DisableEventMonCmd_Test_AlreadyDisabled(void)
     HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_DISABLED);
 
@@ -815,7 +815,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeLongError(void)
     HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_ENABLED);
 
@@ -856,7 +856,7 @@ void HS_DisableEventMonCmd_Test_UnsubscribeShortError(void)
     HS_DisableEventMonCmd(&UT_CmdBuf.DisableEventMonCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdErrCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandErrCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentEventMonState, HS_State_ENABLED);
 
@@ -893,7 +893,7 @@ void HS_EnableAlivenessCmd_Test(void)
     HS_EnableAlivenessCmd(&UT_CmdBuf.EnableAlivenessCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAlivenessState, HS_State_ENABLED);
 
@@ -930,7 +930,7 @@ void HS_EnableAlivenessCmd_Test_AlreadyEnabled(void)
     HS_EnableAlivenessCmd(&UT_CmdBuf.EnableAlivenessCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAlivenessState, HS_State_ENABLED);
 
@@ -967,7 +967,7 @@ void HS_DisableAlivenessCmd_Test(void)
     HS_DisableAlivenessCmd(&UT_CmdBuf.DisableAlivenessCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAlivenessState, HS_State_DISABLED);
 
@@ -1004,7 +1004,7 @@ void HS_DisableAlivenessCmd_Test_AlreadyDisabled(void)
     HS_DisableAlivenessCmd(&UT_CmdBuf.DisableAlivenessCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentAlivenessState, HS_State_DISABLED);
 
@@ -1041,7 +1041,7 @@ void HS_EnableCpuHogCmd_Test(void)
     HS_EnableCpuHogCmd(&UT_CmdBuf.EnableCpuHogCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHogState, HS_State_ENABLED);
 
@@ -1078,7 +1078,7 @@ void HS_EnableCpuHogCmd_Test_AlreadyEnabled(void)
     HS_EnableCpuHogCmd(&UT_CmdBuf.EnableCpuHogCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHogState, HS_State_ENABLED);
 
@@ -1115,7 +1115,7 @@ void HS_DisableCpuHogCmd_Test(void)
     HS_DisableCpuHogCmd(&UT_CmdBuf.DisableCpuHogCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHogState, HS_State_DISABLED);
 
@@ -1152,7 +1152,7 @@ void HS_DisableCpuHogCmd_Test_AlreadyDisabled(void)
     HS_DisableCpuHogCmd(&UT_CmdBuf.DisableCpuHogCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_UINT32_EQ(HS_AppData.CurrentCPUHogState, HS_State_DISABLED);
 
@@ -1189,7 +1189,7 @@ void HS_ResetResetsPerformedCmd_Test(void)
     HS_ResetResetsPerformedCmd(&UT_CmdBuf.ResetResetsPerformedCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_RESET_RESETS_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);
@@ -1231,7 +1231,7 @@ void HS_SetMaxResetsCmd_Test(void)
     HS_SetMaxResetsCmd(&UT_CmdBuf.SetMaxResetsCmd);
 
     /* Verify results */
-    UtAssert_UINT32_EQ(HS_AppData.CmdCount, 1);
+    UtAssert_UINT32_EQ(HS_AppData.CommandCounter, 1);
 
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventID, HS_SET_MAX_RESETS_INF_EID);
     UtAssert_INT32_EQ(context_CFE_EVS_SendEvent[0].EventType, CFE_EVS_EventType_INFORMATION);

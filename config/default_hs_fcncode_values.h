@@ -37,7 +37,7 @@
 enum HS_FunctionCode_
 {
     HS_FunctionCode_NOOP                   = 0,
-    HS_FunctionCode_RESET                  = 1,
+    HS_FunctionCode_RESET_COUNTERS         = 1,
     HS_FunctionCode_ENABLE_APP_MON         = 2,
     HS_FunctionCode_DISABLE_APP_MON        = 3,
     HS_FunctionCode_ENABLE_EVENT_MON       = 4,

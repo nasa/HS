@@ -91,7 +91,7 @@ void HS_NoopVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
  *
  * Verifies and processes the received command
  *
- *  \sa #HS_RESET_CC
+ *  \sa #HS_RESET_COUNTERS_CC
  */
 void HS_ResetVerifyDispatch(const CFE_SB_Buffer_t *BufPtr);
 
