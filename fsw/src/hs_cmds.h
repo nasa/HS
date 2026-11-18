@@ -76,7 +76,7 @@ CFE_Status_t HS_NoopCmd(const HS_NoopCmd_t *BufPtr);
  *
  *  \param[in] BufPtr Pointer to Software Bus buffer
  *
- *  \sa #HS_RESET_CC
+ *  \sa #HS_RESET_COUNTERS_CC
  */
 CFE_Status_t HS_ResetCountersCmd(const HS_ResetCountersCmd_t *BufPtr);
 

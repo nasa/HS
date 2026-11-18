@@ -66,7 +66,7 @@
  *  \par Criticality
  *       None
  *
- *  \sa #HS_RESET_CC
+ *  \sa #HS_RESET_COUNTERS_CC
  */
 #define HS_NOOP_CC HS_CCVAL(NOOP)
 
@@ -99,7 +99,7 @@
  *
  *  \sa #HS_NOOP_CC
  */
-#define HS_RESET_CC HS_CCVAL(RESET)
+#define HS_RESET_COUNTERS_CC HS_CCVAL(RESET_COUNTERS)
 
 /**
  * \brief Enable Applications Monitor

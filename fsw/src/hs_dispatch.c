@@ -107,7 +107,7 @@ void HS_AppProcessGroundCmd(const CFE_SB_Buffer_t *BufPtr)
             HS_NoopVerifyDispatch(BufPtr);
             break;
 
-        case HS_RESET_CC:
+        case HS_RESET_COUNTERS_CC:
             HS_ResetVerifyDispatch(BufPtr);
             break;
 

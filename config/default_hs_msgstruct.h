@@ -57,7 +57,7 @@ typedef struct
 /**
  *  \brief No Arguments Command
  *
- *  For command details see #HS_RESET_CC
+ *  For command details see #HS_RESET_COUNTERS_CC
  */
 typedef struct
 {

@@ -132,14 +132,14 @@ void HS_AppPipe_Test_Noop(void)
 
 void HS_AppPipe_Test_Reset(void)
 {
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_CC, sizeof(UT_CmdBuf.ResetCmd));
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_COUNTERS_CC, sizeof(UT_CmdBuf.ResetCmd));
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);
     UtAssert_STUB_COUNT(HS_ResetCountersCmd, 1);
 
     /* Now with an invalid size */
-    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_CC, 1);
+    HS_Dispatch_Test_SetupMsg(CFE_SB_ValueToMsgId(HS_CMD_MID), HS_RESET_COUNTERS_CC, 1);
 
     /* Execute the function being tested */
     HS_AppPipe(&UT_CmdBuf.Buf);
