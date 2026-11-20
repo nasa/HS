@@ -40,6 +40,26 @@
  * Function Definitions
  */
 
+void HS_EventMon_TriggerAction_Test_NoAction(void)
+{
+    HS_EMTEntry_t Entry;
+
+    memset(&Entry, 0, sizeof(Entry));
+    Entry.ActionType = HS_EMTActType_NOACT;
+
+    HS_EventMon_TriggerAction(&Entry);
+
+    UtAssert_STUB_COUNT(HS_MsgAct_TriggerAction, 0);
+    UtAssert_STUB_COUNT(CFE_EVS_SendEvent, 0);
+    UtAssert_STUB_COUNT(OS_TaskDelay, 0);
+    UtAssert_STUB_COUNT(CFE_ES_WriteToSysLog, 0);
+    UtAssert_STUB_COUNT(CFE_ES_ResetCFE, 0);
+    UtAssert_STUB_COUNT(CFE_ES_GetAppIDByName, 0);
+    UtAssert_STUB_COUNT(CFE_ES_RestartApp, 0);
+    UtAssert_STUB_COUNT(CFE_ES_DeleteApp, 0);
+    UtAssert_STUB_COUNT(CFE_SB_TransmitMsg, 0);
+}
+
 void HS_EventMon_Check_Test_EventMonTblPtrNull(void)
 {
     CFE_EVS_LongEventTlm_t Packet;
@@ -1088,6 +1108,10 @@ void HS_EventMon_CheckEntries_Test_InvalidName(void)
  */
 void UtTest_Setup(void)
 {
+    UtTest_Add(HS_EventMon_TriggerAction_Test_NoAction,
+               HS_Test_Setup,
+               HS_Test_TearDown,
+               "HS_EventMon_TriggerAction_Test_NoAction");
     UtTest_Add(HS_EventMon_Check_Test_EventMonTblPtrNull,
                HS_Test_Setup,
                HS_Test_TearDown,

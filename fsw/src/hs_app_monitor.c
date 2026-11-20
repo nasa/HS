@@ -110,6 +110,9 @@ void HS_AppMon_TriggerAction(const HS_AMTEntry_t *AMEntryPtr, CFE_ES_AppId_t App
 
     switch (AMEntryPtr->ActionType)
     {
+        case HS_AMTActType_NOACT:
+            break;
+
         case HS_AMTActType_PROC_RESET:
             CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID,
                               CFE_EVS_EventType_ERROR,
